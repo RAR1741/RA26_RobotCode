@@ -9,6 +9,7 @@ import frc.robot.Constants.FieldConstants.k_hubHeight;
 import frc.robot.Constants.FieldConstants.k_hubX;
 import frc.robot.Constants.FieldConstants.k_hubY;
 import frc.robot.Constants.FieldConstants.k_fuelRadius;
+import frc.robot.Constants.FieldConstants.k_ceilingHeight;
 
 public class TurretSystem extends SubsystemBase {
 
