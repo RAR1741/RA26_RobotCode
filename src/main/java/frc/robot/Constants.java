@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
     public static class SwerveDriveConstants {
-        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics();
+        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(); //get this in when we know bot dims
         public static final double k_maxSpeed = Units.feetToMeters(14.5); 
     }
 
@@ -29,4 +29,10 @@ public class Constants {
         public static final double k_minYVelocityToHub = Math.sqrt(2.0 * k_gravitationalAcceleration * k_minYHeightToHub);
         
     } // TODO check and adjust constants
+
+    
+    public static class FieldConstants {
+        public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+        public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
+    }
 }
