@@ -20,13 +20,7 @@ public class Constants {
 
     public static class TurretConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
         public static final double k_gravitationalAcceleration = 32.174;
-        public static final double k_turretHeight = 2.0; // adjust to real design
-        public static final double k_extraTimeToPassSensor = 1.0; // test on field
-    }
-
-    public static class FieldConstants { // feet (NOT INCHES)
-        public static final double k_hubWidth = 41.7 / 12.0;
-        public static final double k_hubRadius = hubWidth / Math.sqrt(3.0);
+        public static final double k_turretHeight = 2.0;
         public static final double k_hubHeight = 6.0;
         public static final double k_ceilingHeight = 15.0;
         public static final double k_fuelRadius = 0.246063;
