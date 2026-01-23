@@ -32,9 +32,11 @@ public class SwerveSystem extends SubsystemBase {
     SwerveDriveOdometry odometry;
     SwerveParser parser;
     SwerveInputStream driveInputStream;
+    LimelightSystem m_limelight;
 
     public SwerveSystem() {
         this.m_kinematics = Constants.SwerveDriveConstants.k_kinematics;
+        this.m_limelight = new LimelightSystem(swerveDrive);
 
         File swerveDir = new File(Filesystem.getDeployDirectory(), "swerve"); 
         
@@ -52,11 +54,10 @@ public class SwerveSystem extends SubsystemBase {
         this.swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation);
 
         this.m_gyro = this.swerveDrive.getGyro();
-    
-        //TODO: LimeLightSys
 
         Command onEnable = Commands.runOnce(() -> {
-            Telemetry.log("running..."); //change this for limelights once that it done
+            Telemetry.log("running...");
+            m_limelight.onEnabled();
         });
 
         RobotModeTriggers.teleop().onTrue(onEnable);
@@ -72,7 +73,9 @@ public class SwerveSystem extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){} //add code when limelight is done
+    public void periodic(){
+        m_limelight.periodic();
+    }
 
     @Override
     public void simulationPeriodic() {}
