@@ -28,7 +28,6 @@ public class LimelightSystem extends SubsystemBase {
     private Limelight limelight;
     private SwerveDrive swerveDrive; 
     private Optional<PoseEstimate> visionEstimate;
-    private boolean allowed;
 
     public LimelightSystem(SwerveDrive swerve){
         limelight = new Limelight("limelight");
@@ -48,12 +47,24 @@ public class LimelightSystem extends SubsystemBase {
         visionEstimate = limelight.createPoseEstimator(EstimationMode.MEGATAG2).getPoseEstimate();
     }
 
+    public double getPitchVelocity(double degs){
+       
+        
+        return 0.0;
+    }
+
     @Override
-    public void periodic(){
+    public void periodic() {
+        // Rotation3d type
+        limelight.getSettings()
+		 .withRobotOrientation(new Orientation3d(swerveDrive.getGyro().getRotation3d(),
+												 new AngularVelocity3d(DegreesPerSecond.of(swerveDrive.getPitch().getRadians()), 
+																	   DegreesPerSecond.of(swerveDrive.getRoll().getRadians()),
+																	   DegreesPerSecond.of(swerveDrive.getYaw().getRadians()))))
+		 .save();
         //if the pose is there
         visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-            this.allowed = this.exceptions(poseEstimate);
-            if (this.allowed) {
+            if (this.exceptions(poseEstimate)) {
                 swerveDrive.addVisionMeasurement(
                     poseEstimate.pose.toPose2d(),
                     poseEstimate.timestampSeconds);
@@ -72,10 +83,7 @@ public class LimelightSystem extends SubsystemBase {
         if (foo.tagCount <= 0) { return false; }
         if (foo.pose.getX() <= 0 || foo.pose.getX() > Constants.FieldConstants.k_length) { return false; }
         if (foo.pose.getY() <= 0 || foo.pose.getY() > Constants.FieldConstants.k_width) { return false;}
-        if (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) > 720) { return false; }
-        if (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) > 720) { return false; }
-
-        // TODO make sure the april tag area is legibi
+        if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Math.PI) { return false; }
 
         return true;
         

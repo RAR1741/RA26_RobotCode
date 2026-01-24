@@ -1,29 +1,26 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-
+import frc.robot.Constants.TurretConstants.k_gravitationalAcceleration;
+import frc.robot.Constants.TurretConstants.k_turretHeight;
+import frc.robot.Constants.TurretConstants.k_extraTimeToPassSensor;
+import frc.robot.Constants.FieldConstants.k_hubRadius;
+import frc.robot.Constants.FieldConstants.k_hubHeight;
+import frc.robot.Constants.FieldConstants.k_hubX;
+import frc.robot.Constants.FieldConstants.k_hubY;
+import frc.robot.Constants.FieldConstants.k_fuelRadius;
+import frc.robot.Constants.FieldConstants.k_ceilingHeight;
 
 public class TurretSystem extends SubsystemBase {
-
+    String a = "ldlkfals";
+    int b = 123213;
+    boolean c = true;
+    double d = 1.2;
+    float e = 1.213f;
+    
+    String[] ar = {"a", "b"};
 
     public TurretSystem() {
 
-    }
-
-    public static double calculateLaunchVelocity(double launchAngle, double xDisplacement, double yDisplacement) {
-        double cos = Math.cos(Math.toRadians(launchAngle));
-        double sin = Math.sin(Math.toRadians(launchAngle));
-        double divisor = 2.0 * cos * (xDisplacement * sin - yDisplacement * cos);
-        double radicand = Constants.TurretConstants.k_gravitationalAcceleration / divisor;
-        return xDisplacement * Math.sqrt(radicand);
-    }
-    public static double calculateLaunchAngle(double launchVelocity, double xDisplacement, double yDisplacement) {
-        return 0.0;
-    }
-    public static double calculateMaxHeightFromLaunch(double launchAngle, double launchVelocity) {
-        double vYSquared = Math.pow(launchVelocity * Math.sin(Math.toRadians(launchAngle)), 2.0);
-        double twoG = 2.0 * Constants.TurretConstants.k_gravitationalAcceleration;
-        return vYSquared / twoG;
     }
 }
