@@ -5,7 +5,7 @@ import edu.wpi.first.math.util.Units;
 
 public class Constants {
     public static class SwerveDriveConstants {
-        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(); //get this in when we know bot dims
+        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics();
         public static final double k_maxSpeed = Units.feetToMeters(14.5); 
     }
 
@@ -20,19 +20,23 @@ public class Constants {
 
     public static class TurretConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
         public static final double k_gravitationalAcceleration = 32.174;
-        public static final double k_turretHeight = 2.0;
-        public static final double k_hubHeight = 6.0;
-        public static final double k_ceilingHeight = 15.0;
-        public static final double k_fuelRadius = 0.246063;
-        public static final double k_fuelMass = 0.474; // estimate
-        public static final double k_minYHeightToHub = 0.5 + k_fuelRadius + k_hubHeight - k_turretHeight; 
-        public static final double k_minYVelocityToHub = Math.sqrt(2.0 * k_gravitationalAcceleration * k_minYHeightToHub);
-        
-    } // TODO check and adjust constants
-
-    
-    public static class FieldConstants {
-        public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
-        public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
+        public static final double k_turretHeight = 2.0; // adjust to real design
+        public static final double k_extraTimeToPassSensor = 1.0; // test on field
     }
-}
+
+    public static class FieldConstants { // feet (NOT INCHES)
+        public static final double k_fieldWidth = 26.0 + 5.0 / 12.0;
+        public static final double k_fieldLength = 57.0 + (6.0 + (7.0 / 8.0)) / 12.0;
+        public static final double k_allianceZoneLength = 158.6 / 12.0;
+        public static final double k_hubZoneLength = 47.0 / 12.0;
+        public static final double k_neutralZoneLength = k_fieldLength - 2.0 * (k_allianceZoneLength + k_hubZoneLength);
+        public static final double k_hubWidth = 41.7 / 12.0;
+        public static final double k_hubRadius = k_hubWidth / Math.sqrt(3.0);
+        public static final double k_hubHeight = 6.0;
+        public static final double k_hubX = 0.0; // adjust to field coordinate convention
+        public static final double k_hubY = k_allianceZoneLength + k_hubZoneLength / 2.0; // same as above
+        public static final double k_fuelRadius = 5.91 / 2.0 / 12.0;
+        public static final double k_fuelMass = 0.474; // average
+        public static final double k_ceilingHeight = 15.0; // estimated
+    }
+} // check and adjust constants
