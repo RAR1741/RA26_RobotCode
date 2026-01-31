@@ -15,6 +15,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
+    System.out.println("RobotContainer initialized");
     
     m_swerve.setDefaultCommand( 
       m_swerve.driveCommand( 
