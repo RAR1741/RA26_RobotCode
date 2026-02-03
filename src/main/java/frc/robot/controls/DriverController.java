@@ -30,7 +30,7 @@ public class DriverController {
 
     public static void testGetControllerButtonA(){
         controller.a().onTrue(Commands.runOnce(() -> {
-            System.out.println("Button A Pressed");
+            new Exception("We love Erros!!!");
         }));       
     }
     

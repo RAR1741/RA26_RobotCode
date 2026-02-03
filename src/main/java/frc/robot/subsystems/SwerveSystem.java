@@ -37,7 +37,7 @@ public class SwerveSystem extends SubsystemBase {
 
     public SwerveSystem() {
         this.m_kinematics = Constants.SwerveDriveConstants.k_kinematics;
-        this.m_limelight = new LimelightSystem(swerveDrive);
+        //this.m_limelight = new LimelightSystem(swerveDrive);
 
         File swerveDir = new File(Filesystem.getDeployDirectory(), "swerve"); 
         

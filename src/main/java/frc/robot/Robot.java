@@ -9,15 +9,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.SwerveSystem;
+import frc.robot.controls.DriverController;
 import frc.robot.subsystems.LimelightSystem;
 import frc.robot.subsystems.TurretSystem;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private SwerveSystem m_swerve;
+  private SwerveSystem m_swerve = new SwerveSystem();
   private LimelightSystem m_limelight;
-    private TurretSystem m_TurretSystem;
+  private TurretSystem m_TurretSystem;
 
   private Subsystem[] m_subsystems = {m_swerve, m_limelight, m_TurretSystem};
 
@@ -25,13 +26,14 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    DriverController.configure(0, m_swerve);
   }
 
   @Override
   public void robotPeriodic() {
-    for (Subsystem system : m_subsystems){
+    /*for (Subsystem system : m_subsystems){
       system.periodic();
-    }
+    }*/
     CommandScheduler.getInstance().run(); //how is it going
   }
 
@@ -82,4 +84,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
+
+  @Override
+  public void simulationPeriodic(){
+    DriverController.testGetControllerButtonA();
+  }
 }
