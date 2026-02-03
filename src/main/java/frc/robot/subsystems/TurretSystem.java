@@ -11,6 +11,11 @@ public class TurretSystem extends SubsystemBase {
 
     }
 
+    @Override
+    public void periodic(){
+        
+    }
+
     public static double calculateLaunchVelocity(double launchAngle, double xDisplacement, double yDisplacement) {
         double cos = Math.cos(Math.toRadians(launchAngle));
         double sin = Math.sin(Math.toRadians(launchAngle));

@@ -7,9 +7,19 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.SwerveSystem;
+import frc.robot.subsystems.LimelightSystem;
+import frc.robot.subsystems.TurretSystem;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+
+  private SwerveSystem m_swerve;
+  private LimelightSystem m_limelight;
+    private TurretSystem m_TurretSystem;
+
+  private Subsystem[] m_subsystems = {m_swerve, m_limelight, m_TurretSystem};
 
   private final RobotContainer m_robotContainer;
 
@@ -19,7 +29,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
+    for (Subsystem system : m_subsystems){
+      system.periodic();
+    }
+    CommandScheduler.getInstance().run(); //how is it going
   }
 
   @Override

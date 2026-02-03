@@ -1,11 +1,16 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
     public static class SwerveDriveConstants {
-        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(); //get this in when we know bot dims
+        private static final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
+        private static final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
+        private static final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
+        private static final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation); //get this in when we know bot dims
         public static final double k_maxSpeed = Units.feetToMeters(14.5); 
     }
 

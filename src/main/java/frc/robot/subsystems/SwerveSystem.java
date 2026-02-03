@@ -21,6 +21,7 @@ import swervelib.math.SwerveMath;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import frc.robot.Telemetry;
+import frc.robot.controls.DriverController;
 import swervelib.SwerveInputStream;
 
 public class SwerveSystem extends SubsystemBase {
@@ -74,7 +75,7 @@ public class SwerveSystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        m_limelight.periodic();
+        DriverController.testGetControllerButtonA();
     }
 
     @Override
