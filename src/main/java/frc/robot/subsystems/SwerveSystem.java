@@ -21,7 +21,6 @@ import swervelib.math.SwerveMath;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import frc.robot.Telemetry;
-import frc.robot.controls.DriverController;
 import swervelib.SwerveInputStream;
 
 public class SwerveSystem extends SubsystemBase {
