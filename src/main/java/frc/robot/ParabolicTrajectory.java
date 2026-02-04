@@ -72,7 +72,7 @@ public class ParabolicTrajectory {
         double xDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
         double yDistance = k_hubHeight - k_turretHeight;
         double launchAngle = solveUpperLaunchAngle(launchVelocity, xDistance, yDistance);
-        double launchDirection = Math.atan2(k_hubY - launchY, k_hubX - launchX);
+        double launchDirection = Math.toDegrees(Math.atan2(k_hubY - launchY, k_hubX - launchX));
         if (launchAngle == Double.NaN) {return null;}
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
@@ -160,15 +160,15 @@ public class ParabolicTrajectory {
         pXArr[0] = hubRadius * cos(210 - approachAngle % 60);
         pXArr[1] = hubRadius * cos(150 - approachAngle % 60);
         pXArr[2] = hubRadius * cos(90 - approachAngle % 60);
-        pXArr[3] = hubRadius * cos(30 - approachAngle % 60);
-        int intersectingSide = 
-            (sideOffset < pXArr[0] || sideOffset > pXArr[3])? -1 : 
-                ((sideOffset < pXArr[1])? 0 : 
+       pXArr[3] = hubRadius * cos(30 - approachAngle % 60);
+       int intersectingSide = 
+           (sideOffset < pXArr[0] || sideOffset > pXArr[3])? -1 : 
+               ((sideOffset < pXArr[1])? 0 : 
                     ((sideOffset < pXArr[2])? 1 : 2));
-        if (intersectingSide == -1) {return Double.NaN;}
-        double p1X = pXArr[intersectingSide];
-        double p2X = pXArr[intersectingSide + 1];
-        double p1Y = Math.sqrt(hubRadius * hubRadius - p1X * p1X);
+       if (intersectingSide == -1) {return Double.NaN;}
+       double p1X = pXArr[intersectingSide];
+       double p2X = pXArr[intersectingSide + 1];
+       double p1Y = Math.sqrt(hubRadius * hubRadius - p1X * p1X);
         double p2Y = Math.sqrt(hubRadius * hubRadius - p2X * p2X);
         double p1Scale = (sideOffset - p2X) / (p1X - p2X);
         double p2Scale = (sideOffset - p1X) / (p2X - p1X);
