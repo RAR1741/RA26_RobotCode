@@ -1,20 +1,24 @@
 package frc.robot;
 
 import frc.robot.Constants.TurretConstants;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.FieldConstants;
 
 public class ParabolicTrajectory {
+    public static String k_alliance = DriverStation.getAlliance().toString();
 
     public static double k_gravitationalAcceleration = TurretConstants.k_gravitationalAcceleration;
     public static double k_turretHeight = TurretConstants.k_turretHeight;
     public static double k_fieldWidth = FieldConstants.k_fieldWidth;
     public static double k_fieldLength = FieldConstants.k_fieldLength;
-    public static double k_allianceZoneLength = FieldConstants.k_allianceZoneLength;
-    public static double k_hubZoneLength = FieldConstants.k_hubZoneLength;
-    public static double k_neutralZoneLength = FieldConstants.k_neutralZoneLength;
+    public static double k_allianceZoneDepth = FieldConstants.k_allianceZoneDepth;
+    public static double k_hubZoneDepth = FieldConstants.k_hubZoneDepth;
+    public static double k_neutralZoneDepth = FieldConstants.k_neutralZoneDepth;
     public static double k_hubRadius = FieldConstants.k_hubRadius;
     public static double k_hubHeight = FieldConstants.k_hubHeight;
-    public static double k_hubX = FieldConstants.k_hubX;
+    public static double k_hubX = (k_alliance == "Red")? FieldConstants.k_redHubX : 
+                                      (k_alliance == "Blue")? FieldConstants.k_blueHubX :
+                                          Double.NaN;
     public static double k_hubY = FieldConstants.k_hubY;
 
     final double launchDirection;
@@ -38,6 +42,24 @@ public class ParabolicTrajectory {
     // launch geometry and calculations
     // constructors
 
+    public static ParabolicTrajectory toXYHFromVXYHMinimizeAngle(double targetX, double targetY, double targetHeight, double launchX, 
+                                                                 double launchY, double launchHeight, double launchVelocity) {
+        double launchDirection = Math.atan2(k_hubY - launchY, k_hubX - launchX);
+        double xDistance = Math.hypot(targetX - launchX, targetY - launchY);
+        double yDistance = targetHeight - launchHeight;
+        double launchAngle = solveLowerLaunchAngle(launchVelocity, xDistance, yDistance);
+        if (launchAngle == Double.NaN) {return null;}
+        if (launchAngle < TurretConstants.k_minLaunchAngle) {
+            launchAngle = TurretConstants.k_minLaunchAngle;
+            launchVelocity = solveLaunchVelocity(launchAngle, xDistance, yDistance);
+            if (launchVelocity == Double.NaN) {return null;}
+        } else if (launchAngle > TurretConstants.k_maxLaunchAngle) {
+            launchAngle = TurretConstants.k_maxLaunchAngle;
+            launchVelocity = solveLaunchVelocity(launchAngle, xDistance, yDistance);
+            if (launchVelocity == Double.NaN) {return null;}
+        }
+        return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, launchHeight);
+    }
     public static ParabolicTrajectory toHubFromAXY(double launchAngle, double launchX, double launchY) {
         double xDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
         double yDistance = k_hubHeight - k_turretHeight;
@@ -51,19 +73,13 @@ public class ParabolicTrajectory {
         double yDistance = k_hubHeight - k_turretHeight;
         double launchAngle = solveUpperLaunchAngle(launchVelocity, xDistance, yDistance);
         double launchDirection = Math.atan2(k_hubY - launchY, k_hubX - launchX);
-
+        if (launchAngle == Double.NaN) {return null;}
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
-    public static ParabolicTrajectory toOppositeZoneFromXY(double launchX, double launchY) { // opposite from whichever one the robot is currently at, not based on robot alliance
-        double targetX;
-        double targetY;
-        if (launchX > k_fieldLength / 2.0) {
-            targetX = k_allianceZoneLength;
-        } else {
-            targetX = k_fieldLength - k_allianceZoneLength;
-        }
-        if (launchY > k_fieldWidth / 2)
-        return new ParabolicTrajectory(, , , launchX, launchY, k_turretHeight)
+    public static ParabolicTrajectory toOppositeZoneFromXY(double launchX, double launchY, boolean isBlueTeam) { // chooses the zone closer to (0, 0), based on the coordinates inputted
+        double targetX = isBlueTeam? k_allianceZoneDepth : k_fieldLength - k_allianceZoneDepth;
+        double targetY = k_fieldWidth / 2.0 + () * (launchY > k_fieldWidth / 2.0? 1 : -1);
+        ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, )
     }
     
     public static double solveLaunchVelocity(double launchAngle, double xDistance, double yDistance) {
