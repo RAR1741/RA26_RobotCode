@@ -5,13 +5,16 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.simulation.JoystickSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.SwerveSystem;
 import frc.robot.controls.DriverController;
 import frc.robot.subsystems.LimelightSystem;
 import frc.robot.subsystems.TurretSystem;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -26,7 +29,6 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    DriverController.configure(0, m_swerve);
   }
 
   @Override
@@ -86,7 +88,12 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   @Override
+  public void simulationInit(){
+    DriverController.configure(0, m_swerve);
+  }
+
+  @Override
   public void simulationPeriodic(){
-    DriverController.testGetControllerButtonA();
+   System.out.println(DriverController.getController().getLeftX());
   }
 }

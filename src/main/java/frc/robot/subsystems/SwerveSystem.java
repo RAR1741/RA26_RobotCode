@@ -75,7 +75,7 @@ public class SwerveSystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        DriverController.testGetControllerButtonA();
+        
     }
 
     @Override

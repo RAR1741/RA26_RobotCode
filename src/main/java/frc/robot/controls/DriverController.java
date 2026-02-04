@@ -1,6 +1,4 @@
 package frc.robot.controls;
-
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.SwerveSystem;
 import swervelib.SwerveInputStream;
@@ -27,54 +25,4 @@ public class DriverController {
     public static CommandXboxController getController(){
         return controller;
     }
-
-    public static void testGetControllerButtonA(){
-        controller.a().onTrue(Commands.runOnce(() -> {
-            new Exception("We love Erros!!!");
-        }));       
-    }
-    
-    public static void testGetControllerButtonB(){
-        controller.b().onTrue(Commands.runOnce(() -> {
-            System.out.println("Button B Pressed");
-        }));
-    }
-
-    public static void testGetControllerButtonX(){
-        controller.x().onTrue(Commands.runOnce(() -> {
-            System.out.println("Button X Pressed");
-
-        }));
-    }
-    public static void testGetControllerButtonY(){
-        controller.y().onTrue(Commands.runOnce(() -> {
-            System.out.println("Button Y Pressed");
-        }));
-    }
-
-    public static void testGetControllerTriggerRight(){
-        controller.rightTrigger().onTrue(Commands.runOnce(() -> {
-            System.out.println("Trigger Right Pressed");
-        }));
-    }
-
-    public static void testGetControllerTriggerLeft(){
-        controller.leftTrigger().onTrue(Commands.runOnce(() -> {
-            System.out.println("Trigger Left Pressed");
-        }));
-    }
-
-    public static void testGetControllerBumperRight(){
-        controller.rightBumper().onTrue(Commands.runOnce(() -> {
-            System.out.println("Bumper Right Pressed");
-
-        }));
-    }
-        
-    public static void testGetControllerBumperLeft(){
-        controller.leftBumper().onTrue(Commands.runOnce(() -> {
-            System.out.println("Bumper Left Pressed");
-        }));
-    }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    //why are we here?
