@@ -52,7 +52,7 @@ public class LimelightSystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //if the pose is there
+        // if the pose is there
         visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
             this.allowed = this.rejectUpdate(poseEstimate);
             if (!this.allowed) {
@@ -69,22 +69,21 @@ public class LimelightSystem extends SubsystemBase {
             .withImuAssistAlpha(0.01)
             .save();
     }
-        
-    public boolean rejectUpdate(PoseEstimate foo) {
+    /*
+    
+    */
+    public boolean rejectUpdate(PoseEstimate poseEstimate) {
         /*
         returns true if Pose didn't pass tests
         returns false if Pose passed tests
         */
-        if (foo.tagCount <= 0) { return true; }
-        if (foo.getAvgTagAmbiguity() > 0.7 ) { return true; }
-        if (foo.pose.getX() <= 0 || foo.pose.getX() > Constants.FieldConstants.k_length) { return true; }
-        if (foo.pose.getY() <= 0 || foo.pose.getY() > Constants.FieldConstants.k_width) { return true;}
+       
+        if (poseEstimate.getAvgTagAmbiguity() > 0.7 ) { return true; }
+        if (poseEstimate.pose.getX() <= 0 || poseEstimate.pose.getX() > Constants.FieldConstants.k_length) { return true; }
+        if (poseEstimate.pose.getY() <= 0 || poseEstimate.pose.getY() > Constants.FieldConstants.k_width) { return true; } 
         if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Math.PI * 2) { return true; }
         if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Math.PI * 2) { return true; }
 
-        // TODO make sure the april tag area is legible
-
-        return true;
-        
+        return false;
     }
 }

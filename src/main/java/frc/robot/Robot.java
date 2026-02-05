@@ -17,7 +17,7 @@ public class Robot extends TimedRobot {
 
   private SwerveSystem m_swerve;
   private LimelightSystem m_limelight;
-    private TurretSystem m_TurretSystem;
+  private TurretSystem m_TurretSystem;
 
   private Subsystem[] m_subsystems = {m_swerve, m_limelight, m_TurretSystem};
 
