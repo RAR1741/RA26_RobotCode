@@ -2,8 +2,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-
+// import frc.robot.Constants;
+// import frc.robot.ParabolicTrajectory;
+// import frc.robot.subsystems.LimelightSystem;
 
 public class TurretSystem extends SubsystemBase {
 
@@ -15,6 +16,6 @@ public class TurretSystem extends SubsystemBase {
     public void periodic() {}
 
     public Command aimToHub() {
-        return new Command();
+        return null;
     }
 }

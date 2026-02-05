@@ -70,8 +70,8 @@ public class LimelightSystem extends SubsystemBase {
         
     public boolean exceptions(PoseEstimate foo) {
         if (foo.tagCount <= 0) { return false; }
-        if (foo.pose.getX() <= 0 || foo.pose.getX() > Constants.FieldConstants.k_length) { return false; }
-        if (foo.pose.getY() <= 0 || foo.pose.getY() > Constants.FieldConstants.k_width) { return false;}
+        if (foo.pose.getX() <= 0 || foo.pose.getX() > Constants.FieldConstants.k_fieldLength) { return false; }
+        if (foo.pose.getY() <= 0 || foo.pose.getY() > Constants.FieldConstants.k_fieldWidth) { return false;}
         if (Math.abs(swerveDrive.getRobotVelocity().vxMetersPerSecond) > 720) { return false; }
         if (Math.abs(swerveDrive.getRobotVelocity().vyMetersPerSecond) > 720) { return false; }
 

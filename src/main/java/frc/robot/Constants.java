@@ -20,12 +20,16 @@ public class Constants {
 
     public static class TurretConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
         public static final double k_gravitationalAcceleration = 32.174;
-        public static final double k_turretHeight = 2.0; // adjust to real design
-        public static final double k_extraTimeToPassSensor = 1.0; // test on 
+        public static final double k_turretHeight = 21.0 / 12.0;
+        public static final double k_extraTimeToPassSensor = 1.0; // test this
         public static final double k_maxRPM = 99999999999999.0;
-        public static final double k_maxLaunchVelocity = 50.0;
-        public static final double k_minLaunchAngle = 45;
-        public static final double k_maxLaunchAngle = 80;
+        public static final double k_maxLaunchVelocity = 5000000000000000.0;
+        public static final double k_minLaunchAngle = 45.0;
+        public static final double k_maxLaunchAngle = 80.0;
+        public static final double k_RPMTolerance = 2000000000000000.0;
+        public static final double k_launchVelocityTolerance = 20000000000.0;
+        public static final double k_launchDirectionTolerance = 2000000000000.0;
+        public static final double k_launchAngleTolerance = 200000000000.0;
     }
 
     public static class FieldConstants { // feet (NOT INCHES)
@@ -35,8 +39,9 @@ public class Constants {
         public static final double k_trenchBumpBarrierWidth = (65.65 - 50.34) / 12.0;
         public static final double k_bumpWidth = 73.0 / 12.0;
         public static final double k_hubBodyWidth = 47.0 / 12.0;
+        public static final double k_hubBodyDepth = 47.0 / 12.0;
         public static final double k_allianceZoneDepth = 158.6 / 12.0;
-        public static final double k_hubZoneDepth = 47.0 / 12.0;
+        public static final double k_hubZoneDepth = k_hubBodyDepth;
         public static final double k_neutralZoneDepth = k_fieldLength - 2.0 * (k_allianceZoneDepth + k_hubZoneDepth);
         public static final double k_hubWidth = 41.7 / 12.0;
         public static final double k_hubRadius = k_hubWidth / Math.sqrt(3.0);

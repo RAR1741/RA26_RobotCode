@@ -14,12 +14,18 @@ public class ParabolicTrajectory {
     public static double k_allianceZoneDepth = FieldConstants.k_allianceZoneDepth;
     public static double k_hubZoneDepth = FieldConstants.k_hubZoneDepth;
     public static double k_neutralZoneDepth = FieldConstants.k_neutralZoneDepth;
+    public static double k_hubBodyWidth = FieldConstants.k_hubBodyWidth;
+    public static double k_hubBodyDepth = FieldConstants.k_hubBodyDepth;
     public static double k_hubRadius = FieldConstants.k_hubRadius;
     public static double k_hubHeight = FieldConstants.k_hubHeight;
     public static double k_hubX = (k_alliance == "Red")? FieldConstants.k_redHubX : 
                                       (k_alliance == "Blue")? FieldConstants.k_blueHubX :
                                           Double.NaN;
     public static double k_hubY = FieldConstants.k_hubY;
+    public static double k_fuelRadius = FieldConstants.k_fuelRadius;
+    public static double k_launchDirectionTolerance = TurretConstants.k_launchDirectionTolerance;
+    public static double k_launchAngleTolerance = TurretConstants.k_launchAngleTolerance;
+    public static double k_launchVelocityTolerance = TurretConstants.k_launchVelocityTolerance;
 
     final double launchDirection;
     final double launchAngle;
@@ -76,10 +82,33 @@ public class ParabolicTrajectory {
         if (launchAngle == Double.NaN) {return null;}
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
-    public static ParabolicTrajectory toOppositeZoneFromXY(double launchX, double launchY, boolean isBlueTeam) { // chooses the zone closer to (0, 0), based on the coordinates inputted
-        double targetX = isBlueTeam? k_allianceZoneDepth : k_fieldLength - k_allianceZoneDepth;
-        double targetY = k_fieldWidth / 2.0 + () * (launchY > k_fieldWidth / 2.0? 1 : -1);
-        ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, )
+    public static ParabolicTrajectory toOppositeZoneFromXY(double launchX, double launchY, double idealLaunchVelocity, boolean isBlueTeam) { // chooses the zone closer to (0, 0), based on the coordinates inputted
+        double targetX = isBlueTeam? k_allianceZoneDepth + k_hubBodyWidth / 2.0 : k_fieldLength - k_allianceZoneDepth - k_hubBodyWidth / 2.0;
+        double targetY = k_fieldWidth / 2.0;
+        if (isBlueTeam && launchX < k_allianceZoneDepth + k_hubZoneDepth) {
+            targetX = 0.0;
+        } else if (!isBlueTeam && launchX > k_fieldLength - k_allianceZoneDepth - k_hubZoneDepth) {
+            targetX = k_fieldLength;
+        } else if (Math.abs(targetY - launchY) > k_hubBodyWidth / 2.0 + k_fuelRadius) {
+            if (launchY > k_fieldWidth) {
+                targetY += k_hubBodyWidth / 2.0;
+
+                double hubCornerX = isBlueTeam? k_allianceZoneDepth: k_fieldLength - k_allianceZoneDepth;
+                double hubCornerY = targetY;
+                double angleToHubCorner = atan2(hubCornerY, hubCornerX);
+                double targetAngle = angleToHubCorner + k_launchDirectionTolerance;
+
+            } else {
+                targetY -= 
+            }
+        }
+        ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
+        if (trajectory == null) {
+            return null;
+        } else if (trajectory.launchVelocity != idealLaunchVelocity) {
+            1;
+        } else if ()
+        return trajectory;
     }
     
     public static double solveLaunchVelocity(double launchAngle, double xDistance, double yDistance) {
@@ -181,4 +210,5 @@ public class ParabolicTrajectory {
     public static double cos(double degrees) {return Math.cos(Math.toRadians(degrees));}
     public static double arcsin(double ratio) {return Math.toDegrees(Math.asin(ratio));}
     public static double arccos(double ratio) {return Math.toDegrees(Math.acos(ratio));}
+    public static double atan2(double y, double x) {return Math.toDegrees(Math.atan2(y, x));}
 }
