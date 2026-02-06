@@ -82,32 +82,51 @@ public class ParabolicTrajectory {
         if (launchAngle == Double.NaN) {return null;}
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
-    public static ParabolicTrajectory toOppositeZoneFromXY(double launchX, double launchY, double idealLaunchVelocity, boolean isBlueTeam) { // chooses the zone closer to (0, 0), based on the coordinates inputted
+    public static ParabolicTrajectory toZoneFromXY(double launchX, double launchY, double idealLaunchVelocity, boolean isBlueTeam) { // chooses the zone closer to (0, 0), based on the coordinates inputted
         double targetX = isBlueTeam? k_allianceZoneDepth + k_hubBodyWidth / 2.0 : k_fieldLength - k_allianceZoneDepth - k_hubBodyWidth / 2.0;
         double targetY = k_fieldWidth / 2.0;
+        boolean topHalf = launchY > k_fieldWidth / 2.0;
         if (isBlueTeam && launchX < k_allianceZoneDepth + k_hubZoneDepth) {
             targetX = 0.0;
         } else if (!isBlueTeam && launchX > k_fieldLength - k_allianceZoneDepth - k_hubZoneDepth) {
             targetX = k_fieldLength;
         } else if (Math.abs(targetY - launchY) > k_hubBodyWidth / 2.0 + k_fuelRadius) {
-            if (launchY > k_fieldWidth) {
-                targetY += k_hubBodyWidth / 2.0;
-
-                double hubCornerX = isBlueTeam? k_allianceZoneDepth: k_fieldLength - k_allianceZoneDepth;
-                double hubCornerY = targetY;
-                double angleToHubCorner = atan2(hubCornerY, hubCornerX);
-                double targetAngle = angleToHubCorner + k_launchDirectionTolerance;
-
-            } else {
-                targetY -= 
-            }
+            double hubCornerX = isBlueTeam? k_allianceZoneDepth : k_fieldLength - k_allianceZoneDepth;
+            double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
+            double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
+            double targetDirection = directionToHubCorner - k_launchDirectionTolerance * (topHalf? 1.0 : -1.0) * (isBlueTeam? 1.0 : -1.0);
+            targetY = launchY + (targetX - launchX) * tan(targetDirection);
+            if (targetY < 0 || targetY > k_fieldWidth) {return null;}
+        } else if (isBlueTeam && launchX > k_fieldLength - k_allianceZoneDepth) {
+            double hubCornerX = isBlueTeam? k_fieldLength - k_allianceZoneDepth : k_allianceZoneDepth;
+            double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
+            double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
+            double targetDirection = directionToHubCorner - k_launchDirectionTolerance * (topHalf? 1.0 : -1.0);
+            targetY = launchY + (targetX - launchX) * tan(targetDirection);
+            if (targetY < 0 || targetY > k_fieldWidth) {return null;}
+        } else if (!isBlueTeam && launchX < k_allianceZoneDepth) {
+            double hubCornerX = k_allianceZoneDepth;
+            double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
+            double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
+            double targetDirection = directionToHubCorner + k_launchDirectionTolerance * (topHalf? 1.0 : -1.0);
+            targetY = launchY + (targetX - launchX) * tan(targetDirection);
+            if (targetY < 0 || targetY > k_fieldWidth) {return null;}
+        } else {
+            double hubCornerX = isBlueTeam? k_allianceZoneDepth : k_fieldLength - k_allianceZoneDepth;
+            double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
+            double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
+            double targetDirection = directionToHubCorner - k_launchDirectionTolerance * (topHalf? 1.0 : -1.0) * (isBlueTeam? 1.0 : -1.0);
+            targetY = launchY + (targetX - launchX) * tan(targetDirection);
+            if (targetY < 0 || targetY > k_fieldWidth) {return null;}
         }
         ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
         if (trajectory == null) {
             return null;
         } else if (trajectory.launchVelocity != idealLaunchVelocity) {
-            1;
-        } else if ()
+            
+        } else if () {
+
+        }
         return trajectory;
     }
     
@@ -208,6 +227,7 @@ public class ParabolicTrajectory {
     
     public static double sin(double degrees) {return Math.sin(Math.toRadians(degrees));}
     public static double cos(double degrees) {return Math.cos(Math.toRadians(degrees));}
+    public static double tan(double degrees) {return Math.tan(Math.toRadians(degrees));}
     public static double arcsin(double ratio) {return Math.toDegrees(Math.asin(ratio));}
     public static double arccos(double ratio) {return Math.toDegrees(Math.acos(ratio));}
     public static double atan2(double y, double x) {return Math.toDegrees(Math.atan2(y, x));}
