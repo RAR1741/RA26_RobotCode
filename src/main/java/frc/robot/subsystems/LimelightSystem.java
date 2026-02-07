@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.Optional;
 
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import limelight.Limelight;
@@ -79,5 +80,9 @@ public class LimelightSystem extends SubsystemBase {
 
         return true;
         
+    }
+
+    public Optional<PoseEstimate> getMeasurements(){
+        return limelight.createPoseEstimator(EstimationMode.MEGATAG2).getPoseEstimate();
     }
 }
