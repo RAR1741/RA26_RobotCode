@@ -1,7 +1,6 @@
 package frc.robot.auto.tasks;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.SwerveSystem;
 import limelight.networktables.PoseEstimate;
 import frc.robot.subsystems.LimelightSystem;

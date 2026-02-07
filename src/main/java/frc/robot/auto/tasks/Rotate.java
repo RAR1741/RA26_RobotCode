@@ -3,7 +3,6 @@ package frc.robot.auto.tasks;
 import frc.robot.subsystems.SwerveSystem;
 import limelight.networktables.PoseEstimate;
 import frc.robot.subsystems.LimelightSystem;
-import frc.robot.Telemetry;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 

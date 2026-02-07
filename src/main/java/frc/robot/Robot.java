@@ -4,12 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import org.littletonrobotics.junction.LoggedRobot;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
+  private Simulation sim;
 
   private final RobotContainer m_robotContainer;
 
@@ -72,6 +74,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationInit() {
-      new Simulation();
+      sim = new Simulation(m_robotContainer.getSwerveSystem());
+
+      sim.init();
+  }
+
+  @Override
+  public void simulationPeriodic(){
+    sim.periodic();  
   }
 }

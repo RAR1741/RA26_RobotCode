@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import swervelib.parser.SwerveParser;
+import swervelib.simulation.SwerveIMUSimulation;
+import swervelib.simulation.ironmaple.simulation.drivesims.GyroSimulation;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -29,6 +31,7 @@ public class SwerveSystem extends SubsystemBase {
     SwerveDriveKinematics m_kinematics;
     SwerveDriveOdometry m_odometry;
     SwerveIMU m_gyro;
+    SwerveIMUSimulation m_simGyro;
     SwerveDrive swerveDrive;
     SwerveModule[] swerveModules;
     SwerveDriveOdometry odometry;
@@ -38,7 +41,7 @@ public class SwerveSystem extends SubsystemBase {
 
     public SwerveSystem() {
         this.m_kinematics = Constants.SwerveDriveConstants.k_kinematics;
-        this.m_limelight = new LimelightSystem(swerveDrive);
+        this.m_limelight = Constants.SimulationConstants.k_isInSimulation ? null : new LimelightSystem(swerveDrive);
 
         File swerveDir = new File(Filesystem.getDeployDirectory(), "swerve"); 
         
@@ -56,10 +59,14 @@ public class SwerveSystem extends SubsystemBase {
         this.swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation);
 
         this.m_gyro = this.swerveDrive.getGyro();
+        this.m_simGyro = new SwerveIMUSimulation(new GyroSimulation(0, 0));
 
         Command onEnable = Commands.runOnce(() -> {
             Telemetry.log("running...");
-            m_limelight.onEnabled();
+            if (Constants.SimulationConstants.k_isInSimulation){}
+            else{
+                m_limelight.onEnabled();
+            }
         });
 
         RobotModeTriggers.teleop().onTrue(onEnable);
@@ -68,7 +75,7 @@ public class SwerveSystem extends SubsystemBase {
 
         this.odometry = new SwerveDriveOdometry(
             this.m_kinematics,
-            this.m_gyro.getRotation3d().toRotation2d(),
+            Constants.SimulationConstants.k_isInSimulation ? this.m_simGyro.getGyroRotation3d().toRotation2d() : this.m_gyro.getRotation3d().toRotation2d(),
             new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition()},
             new Pose2d(0, 0, new Rotation2d())   
         );
@@ -76,7 +83,10 @@ public class SwerveSystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        m_limelight.periodic();
+        if (Constants.SimulationConstants.k_isInSimulation){}
+        else{
+            m_limelight.periodic();
+        }
     }
 
     @Override
@@ -99,8 +109,9 @@ public class SwerveSystem extends SubsystemBase {
         SwerveModuleState[] swerveModuleStates = Constants.SwerveDriveConstants.k_kinematics.toSwerveModuleStates(
             basedOnField
             ? ChassisSpeeds.fromFieldRelativeSpeeds(speedX, speedY, rot,
-                this.getSwerveDrive().getGyro().getRawRotation3d().toRotation2d())
-            : new ChassisSpeeds(speedX, speedY, rot));
+                Constants.SimulationConstants.k_isInSimulation ? this.m_simGyro.getGyroRotation3d().toRotation2d() : m_gyro.getRotation3d().toRotation2d()
+            ) : new ChassisSpeeds(speedX, speedY, rot)
+        );
 
         double maxBoostSpeed = Constants.SwerveDriveConstants.k_maxSpeed * Constants.SwerveDriveConstants.k_boostScaler;
 
@@ -118,5 +129,9 @@ public class SwerveSystem extends SubsystemBase {
 
     public void setDriveInputStream(SwerveInputStream stream) {
         this.driveInputStream = stream;
+    }
+
+    public SwerveDriveOdometry getOdometry(){
+        return this.odometry;
     }
 }
