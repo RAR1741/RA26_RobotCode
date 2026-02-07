@@ -7,6 +7,11 @@ public class Constants {
     public static class SwerveDriveConstants {
         public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(); //get this in when we know bot dims
         public static final double k_maxSpeed = Units.feetToMeters(14.5); 
+
+        public static final double k_maxDriverSpeed = 1.0; // Meters per second
+        public static final double k_maxDriverBoostSpeed = 4.5;
+
+        public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
     }
 
     public static class ControllerConstants{
@@ -34,5 +39,9 @@ public class Constants {
     public static class FieldConstants {
         public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
         public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
+    }
+
+    public static class SimulationConstants{
+        public final static boolean k_isInSimulation = true;
     }
 }

@@ -1,7 +1,10 @@
 package frc.robot.auto.modes;
+import frc.robot.auto.tasks.DriveTask;
 import frc.robot.auto.tasks.Tasks;
 
 import java.util.ArrayList;
+
+//left, right, center, score
 
 public abstract class Modes {
   private ArrayList<Tasks> m_tasks;
@@ -30,7 +33,7 @@ public abstract class Modes {
   }
 
   public void queueEnd() {
-    //queueTask(new DriveForwardTask(0, 0));
+    queueTask(new DriveTask(0, 0));
   }
 
   public abstract void queueTasks();

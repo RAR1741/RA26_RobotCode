@@ -7,7 +7,8 @@ import limelight.networktables.PoseEstimate;
 import frc.robot.subsystems.LimelightSystem;
 import frc.robot.Telemetry;
 
-public class DriveForwardTask extends Tasks{
+//Drive Forward Based on Field
+public class DriveTask extends Tasks{
     private SwerveSystem m_swerve;
     private LimelightSystem m_limelight;
     private double m_targetDistance;
@@ -15,20 +16,26 @@ public class DriveForwardTask extends Tasks{
     private Pose2d m_startPose;
     private Pose2d m_curPose;
     private Pose2d m_checkerPose;
-
-    private Timer m_runningTimer = new Timer();
-
-    public DriveForwardTask(double distance, double speed){
+    private double m_speedX = 0.0;
+    private double m_speedY = 0.0;
+    
+    public DriveTask(double distance, double speed){
         m_swerve = new SwerveSystem();
         m_limelight = new LimelightSystem(m_swerve.getSwerveDrive());
         m_targetDistance = distance;
         m_speed = speed;
     }
 
+    public DriveTask(double distance, double xSpeed, double ySpeed){
+        m_swerve = new SwerveSystem();
+        m_limelight = new LimelightSystem(m_swerve.getSwerveDrive());
+        m_targetDistance = distance;
+        m_speedX = xSpeed;
+        m_speedY = ySpeed;
+    }
+
     @Override
     public void prepare() {
-        m_runningTimer.reset();
-        m_runningTimer.start();
 
         m_limelight.getMeasurements().ifPresent((PoseEstimate pose) -> {
             m_startPose = pose.pose.toPose2d();    
@@ -39,18 +46,23 @@ public class DriveForwardTask extends Tasks{
 
     @Override
     public void update() {
-        logIsRunning(m_isFinished);
-        
-        m_limelight.getMeasurements().ifPresent((PoseEstimate pose) -> {
-            m_curPose = pose.pose.toPose2d();    
-        });
+        if (m_speedX != 0.0 || m_speedY != 0.0){
+            m_swerve.driveSpeedCommand(m_speedX, m_speedY, 0, false);
+        }
+        else{
+            logIsRunning(m_isFinished);
+            
+            m_limelight.getMeasurements().ifPresent((PoseEstimate pose) -> {
+                m_curPose = pose.pose.toPose2d();    
+            });
 
-        // Vx = V * cos(theta)
-        double xSpeed = m_speed * Math.cos(m_curPose.getRotation().getRadians());
-        // Vy = V * sin(theta)
-        double ySpeed = m_speed * Math.sin(m_curPose.getRotation().getRadians());
+            // Vx = V * cos(theta)
+            double xSpeed = m_speed * Math.cos(m_curPose.getRotation().getRadians());
+            // Vy = V * sin(theta)
+            double ySpeed = m_speed * Math.sin(m_curPose.getRotation().getRadians());
 
-        m_swerve.driveCommand(xSpeed, ySpeed, 0);
+            m_swerve.driveSpeedCommand(xSpeed, ySpeed, 0, false);
+        }
     }
 
     @Override
@@ -68,6 +80,6 @@ public class DriveForwardTask extends Tasks{
         logIsRunning(false);
 
         Telemetry.logString("DriveForwardTask", "Auto driving done");
-        m_swerve.driveCommand(0.0, 0.0, 0.0);
+        m_swerve.driveSpeedCommand(0.0, 0.0, 0.0, false);
     }
 }

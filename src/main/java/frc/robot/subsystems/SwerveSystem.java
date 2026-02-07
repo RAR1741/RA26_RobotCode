@@ -7,10 +7,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import frc.robot.Constants;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -91,6 +93,23 @@ public class SwerveSystem extends SubsystemBase {
             true,
             false);
         });
+    }
+
+    public void driveSpeedCommand(double speedX, double speedY, double rot, boolean basedOnField) {
+        SwerveModuleState[] swerveModuleStates = Constants.SwerveDriveConstants.k_kinematics.toSwerveModuleStates(
+            basedOnField
+            ? ChassisSpeeds.fromFieldRelativeSpeeds(speedX, speedY, rot,
+                this.getSwerveDrive().getGyro().getRawRotation3d().toRotation2d())
+            : new ChassisSpeeds(speedX, speedY, rot));
+
+        double maxBoostSpeed = Constants.SwerveDriveConstants.k_maxSpeed * Constants.SwerveDriveConstants.k_boostScaler;
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, maxBoostSpeed);
+
+        SwerveModule[] modules = this.swerveDrive.getModules();
+        for (int i = 0; i < modules.length; i++) {
+            modules[i].setDesiredState(swerveModuleStates[i], false, false);
+        }
     }
 
     public SwerveDrive getSwerveDrive() {
