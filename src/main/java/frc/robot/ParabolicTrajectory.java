@@ -14,6 +14,7 @@ public class ParabolicTrajectory {
     public static double k_allianceZoneDepth = FieldConstants.k_allianceZoneDepth;
     public static double k_hubZoneDepth = FieldConstants.k_hubZoneDepth;
     public static double k_neutralZoneDepth = FieldConstants.k_neutralZoneDepth;
+    public static double k_trenchWidth = FieldConstants.k_trenchWidth;
     public static double k_hubBodyWidth = FieldConstants.k_hubBodyWidth;
     public static double k_hubBodyDepth = FieldConstants.k_hubBodyDepth;
     public static double k_hubRadius = FieldConstants.k_hubRadius;
@@ -66,6 +67,7 @@ public class ParabolicTrajectory {
         }
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, launchHeight);
     }
+
     public static ParabolicTrajectory toHubFromAXY(double launchAngle, double launchX, double launchY) {
         double xDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
         double yDistance = k_hubHeight - k_turretHeight;
@@ -96,28 +98,24 @@ public class ParabolicTrajectory {
             double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
             double targetDirection = directionToHubCorner - k_launchDirectionTolerance * (topHalf? 1.0 : -1.0) * (isBlueTeam? 1.0 : -1.0);
             targetY = launchY + (targetX - launchX) * tan(targetDirection);
-            if (targetY < 0 || targetY > k_fieldWidth) {return null;}
-        } else if (isBlueTeam && launchX > k_fieldLength - k_allianceZoneDepth) {
-            double hubCornerX = isBlueTeam? k_fieldLength - k_allianceZoneDepth : k_allianceZoneDepth;
-            double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
-            double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
-            double targetDirection = directionToHubCorner - k_launchDirectionTolerance * (topHalf? 1.0 : -1.0);
-            targetY = launchY + (targetX - launchX) * tan(targetDirection);
-            if (targetY < 0 || targetY > k_fieldWidth) {return null;}
-        } else if (!isBlueTeam && launchX < k_allianceZoneDepth) {
-            double hubCornerX = k_allianceZoneDepth;
-            double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
-            double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
-            double targetDirection = directionToHubCorner + k_launchDirectionTolerance * (topHalf? 1.0 : -1.0);
-            targetY = launchY + (targetX - launchX) * tan(targetDirection);
-            if (targetY < 0 || targetY > k_fieldWidth) {return null;}
-        } else {
+            if (targetY < 0 || targetY > k_fieldWidth) {
+                return null;
+            } else if (targetY < k_trenchWidth || targetY > k_fieldWidth - k_trenchWidth) {
+                targetY = Math.min(k_trenchWidth, Math.max(k_fieldWidth - k_trenchWidth, targetY));
+            }
+        } else if (launchX > k_allianceZoneDepth && launchX < k_fieldLength - k_allianceZoneDepth) {
             double hubCornerX = isBlueTeam? k_allianceZoneDepth : k_fieldLength - k_allianceZoneDepth;
             double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
             double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
             double targetDirection = directionToHubCorner - k_launchDirectionTolerance * (topHalf? 1.0 : -1.0) * (isBlueTeam? 1.0 : -1.0);
             targetY = launchY + (targetX - launchX) * tan(targetDirection);
-            if (targetY < 0 || targetY > k_fieldWidth) {return null;}
+            if (targetY < 0 || targetY > k_fieldWidth) {
+                return null;
+            } else if (targetY < k_trenchWidth || targetY > k_fieldWidth - k_trenchWidth) {
+                targetY = Math.min(k_trenchWidth, Math.max(k_fieldWidth - k_trenchWidth, targetY));
+            }
+        } else {
+            return null;
         }
         ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
         if (trajectory == null) {
