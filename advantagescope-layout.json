@@ -1,24 +1,21 @@
 {
   "hubs": [
     {
-      "x": 100,
-      "y": 0,
+      "x": 3007,
+      "y": 157,
       "width": 1607,
       "height": 808,
       "state": {
         "sidebar": {
           "width": 300,
           "expanded": [
-            "/SmartDashboard/Field",
             "/SmartDashboard/Field/OdometryPose",
             "/SmartDashboard/Field/Robot",
-            "/SmartDashboard/MapleSim/MatchData",
             "/SmartDashboard/Field/XModules",
-            "/SmartDashboard/Swerve Drive",
-            "/SmartDashboard",
+            "/SmartDashboard/swerve/advantagescope",
             "/SmartDashboard/MapleSim",
-            "/SmartDashboard/swerve",
-            "/SmartDashboard/swerve/advantagescope"
+            "/AdvantageKit/RealOutputs/Sim/RobotPose",
+            "/SmartDashboard/swerve"
           ]
         },
         "tabs": {
@@ -75,14 +72,21 @@
               "controller": {
                 "sources": [
                   {
-                    "type": "robotLegacy",
-                    "logKey": "NT:/SmartDashboard/Field/OdometryPose",
-                    "logType": "NumberArray",
+                    "type": "robot",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Sim/RobotPose",
+                    "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "model": "2026 KitBot",
-                      "format": "Pose2d",
-                      "units": "radians"
+                      "model": "2026 KitBot"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Fuel",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {
+                      "variant": "Fuel"
                     }
                   }
                 ],
@@ -93,9 +97,9 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  1.4695761589768238e-15,
-                  5.999999999999999,
-                  -12
+                  3.1633543281769336,
+                  6.109330082975031,
+                  -6.816309206052037
                 ],
                 "cameraTarget": [
                   0,
@@ -103,6 +107,57 @@
                   0
                 ]
               },
+              "controlsHeight": 200
+            },
+            {
+              "type": 9,
+              "title": "Swerve",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "states",
+                    "logKey": "NT:/SmartDashboard/swerve/advantagescope/currentStates",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "arrangement": "0,1,2,3"
+                    }
+                  },
+                  {
+                    "type": "states",
+                    "logKey": "NT:/SmartDashboard/swerve/advantagescope/desiredStates",
+                    "logType": "SwerveModuleState[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff",
+                      "arrangement": "0,1,2,3"
+                    }
+                  },
+                  {
+                    "type": "chassisSpeeds",
+                    "logKey": "NT:/SmartDashboard/swerve/advantagescope/desiredChassisSpeeds",
+                    "logType": "ChassisSpeeds",
+                    "visible": true,
+                    "options": {
+                      "color": "#0000ff"
+                    }
+                  },
+                  {
+                    "type": "rotation",
+                    "logKey": "NT:/SmartDashboard/swerve/advantagescope/robotRotation",
+                    "logType": "Rotation2d",
+                    "visible": true,
+                    "options": {}
+                  }
+                ],
+                "maxSpeed": 5,
+                "sizeX": 0.65,
+                "sizeY": 0.65,
+                "orientation": 1
+              },
+              "controllerUUID": "dlzbn4u6wah7cpafohlmyohrj3a5rozt",
+              "renderer": null,
               "controlsHeight": 200
             }
           ]
