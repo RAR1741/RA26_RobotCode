@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -105,6 +106,12 @@ public class SwerveSystem extends SubsystemBase {
         });
     }
 
+    public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
+        return run(() -> {
+            swerveDrive.driveFieldOriented(velocity.get());
+        });
+    }
+
     public void driveSpeedCommand(double speedX, double speedY, double rot, boolean basedOnField) {
         SwerveModuleState[] swerveModuleStates = Constants.SwerveDriveConstants.k_kinematics.toSwerveModuleStates(
             basedOnField
@@ -125,10 +132,6 @@ public class SwerveSystem extends SubsystemBase {
 
     public SwerveDrive getSwerveDrive() {
         return this.swerveDrive;
-    }
-
-    public void setDriveInputStream(SwerveInputStream stream) {
-        this.driveInputStream = stream;
     }
 
     public SwerveDriveOdometry getOdometry(){

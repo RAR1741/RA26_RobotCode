@@ -1,0 +1,115 @@
+{
+  "hubs": [
+    {
+      "x": 100,
+      "y": 0,
+      "width": 1607,
+      "height": 808,
+      "state": {
+        "sidebar": {
+          "width": 300,
+          "expanded": [
+            "/SmartDashboard/Field",
+            "/SmartDashboard/Field/OdometryPose",
+            "/SmartDashboard/Field/Robot",
+            "/SmartDashboard/MapleSim/MatchData",
+            "/SmartDashboard/Field/XModules",
+            "/SmartDashboard/Swerve Drive",
+            "/SmartDashboard",
+            "/SmartDashboard/MapleSim",
+            "/SmartDashboard/swerve",
+            "/SmartDashboard/swerve/advantagescope"
+          ]
+        },
+        "tabs": {
+          "selected": 3,
+          "tabs": [
+            {
+              "type": 0,
+              "title": "",
+              "controller": null,
+              "controllerUUID": "loy0vs5fjh42ly5j6azpwuon54lsm5nf",
+              "renderer": "",
+              "controlsHeight": 0
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "v8eqw2uqjo9n76steymeyw5g88i3biae",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 2,
+              "title": "2D Field",
+              "controller": {
+                "sources": [],
+                "field": "FRC:2026 Field",
+                "orientation": 0,
+                "size": "large"
+              },
+              "controllerUUID": "dox8w70if5g8tlnoza04ddj3f0dbyo0y",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robotLegacy",
+                    "logKey": "NT:/SmartDashboard/Field/OdometryPose",
+                    "logType": "NumberArray",
+                    "visible": true,
+                    "options": {
+                      "model": "2026 KitBot",
+                      "format": "Pose2d",
+                      "units": "radians"
+                    }
+                  }
+                ],
+                "game": "FRC:2026 Field"
+              },
+              "controllerUUID": "hqfgw1v7wxguag7mnwu6tr4abtw76zrj",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  1.4695761589768238e-15,
+                  5.999999999999999,
+                  -12
+                ],
+                "cameraTarget": [
+                  0,
+                  0.5,
+                  0
+                ]
+              },
+              "controlsHeight": 200
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [],
+  "version": "26.0.0"
+}

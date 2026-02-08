@@ -5,11 +5,9 @@ import frc.robot.subsystems.SwerveSystem;
 import swervelib.SwerveInputStream;
 import frc.robot.Constants;
 
-public class DriverController {
-    private static CommandXboxController controller;
-
+public class DriverControls {
     public static void configure(int port, SwerveSystem drivetrain) {
-        controller = new CommandXboxController(port);
+        CommandXboxController controller = new CommandXboxController(port);
     
         SwerveInputStream driveInputStream = SwerveInputStream.of(drivetrain.getSwerveDrive(),
             () -> controller.getLeftY() * -1,
@@ -20,10 +18,7 @@ public class DriverController {
             // .scaleTranslation(0.25) // TODO: Tune speed scaling
             .deadband(Constants.ControllerConstants.k_DEADBAND);
 
-        drivetrain.setDriveInputStream(driveInputStream);
-    }
-
-    public static CommandXboxController getController(){
-        return controller;
+        drivetrain.setDefaultCommand(
+            drivetrain.driveFieldOriented(driveInputStream).withName("Drive"));
     }
 }
