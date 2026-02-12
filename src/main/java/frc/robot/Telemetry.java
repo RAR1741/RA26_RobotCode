@@ -20,14 +20,14 @@ public class Telemetry {
     /** Log a number to SmartDashboard. */
     public static void logNumber(String key, double value) {
         if (!enabled) return;
-
+        
         SmartDashboard.putNumber(key, value);
     }
 
     /** Log a string to SmartDashboard. */
     public static void logString(String key, String value) {
         if (!enabled) return;
-
+        
         SmartDashboard.putString(key, value);
     }
 
@@ -35,4 +35,5 @@ public class Telemetry {
     private static String timestamp() {
         return String.format("%.3f", Timer.getFPGATimestamp());
     }
+    
 }
