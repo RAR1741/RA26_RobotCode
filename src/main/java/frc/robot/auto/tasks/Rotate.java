@@ -47,6 +47,7 @@ public class Rotate extends Tasks {
     @Override
     public void done(){
         logIsRunning(false);
+        Telemetry.logString("DriveForwardTask", "Auto driving done");
     }
     
 }
