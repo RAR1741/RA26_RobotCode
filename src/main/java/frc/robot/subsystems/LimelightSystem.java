@@ -107,7 +107,7 @@ public class LimelightSystem extends SubsystemBase {
             lastRejectReason = "vy too high: " + swerveDrive.getRobotVelocity().vyMetersPerSecond;
             return false; }
 
-        // TODO make sure the april tag area is legibi
+        // tOdO make sure the april tag area is legibi
         lastRejectReason = "";
 
         return true;

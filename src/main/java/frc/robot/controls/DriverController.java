@@ -17,7 +17,7 @@ public class DriverController {
             .withControllerRotationAxis(() -> controller.getRightX() * -1)
             .robotRelative(false)
             .allianceRelativeControl(true)
-            // .scaleTranslation(0.25) // TODO: Tune speed scaling
+            // .scaleTranslation(0.25) // tOdO: Tune speed scaling
             .deadband(Constants.ControllerConstants.k_DEADBAND);
 
         drivetrain.setDriveInputStream(driveInputStream);

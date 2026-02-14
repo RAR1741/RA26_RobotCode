@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -31,6 +32,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 // import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 
@@ -38,7 +40,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
-// import frc.robot.ParabolicTrajectory;
+import frc.robot.ParabolicTrajectory;
 // import frc.robot.Telemetry;
 // import frc.robot.subsystems.LimelightSystem;
 import yams.gearing.GearBox;
@@ -112,7 +114,7 @@ public class TurretSystem extends SubsystemBase {
 
     private final PivotConfig turretYawConfig = new PivotConfig(smcTurretYaw)
         .withStartingPosition(Degrees.of(0))
-        .withMOI(0.05)
+        // .withMOI(0.05)   tOdO check this with engineering
         .withTelemetry("TurretYaw", TelemetryVerbosity.HIGH)
         .withMechanismPositionConfig(new MechanismPositionConfig()
             .withMovementPlane(Plane.XY)
@@ -136,11 +138,12 @@ public class TurretSystem extends SubsystemBase {
     private SmartMotorController smcTurretPitch = new SparkWrapper(pitchMotorSpark, DCMotor.getNEO(1), smcConfigTurretPitch);
 
     private final PivotConfig turretPitchConfig = new PivotConfig(smcTurretPitch)
-        .withStartingPosition(Degrees.of(0))
-        .withMOI(0.05)
+        .withStartingPosition(Degrees.of(80))
+        .withHardLimit(Degrees.of(TurretConstants.k_minLaunchAngle), Degrees.of(TurretConstants.k_maxLaunchAngle))
+        // .withMOI(0.05)   tOdO check this with engineering
         .withTelemetry("TurretPitch", TelemetryVerbosity.HIGH)
         .withMechanismPositionConfig(new MechanismPositionConfig()
-            .withMovementPlane(Plane.XY)
+            .withMovementPlane(Plane.XZ)
             .withRelativePosition(turretTranslation));
 
     private Pivot turretPitch = new Pivot(turretPitchConfig);
@@ -164,8 +167,27 @@ public class TurretSystem extends SubsystemBase {
         });
     }
 
-    public Command aimToHub() {
-        return turretPitch.setAngle(Degrees.of(80));
+    public Pose3d getTurretPosition() {
+        return new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)); // tOdO gibb dis
+    }
+    public Translation2d getTurretVelocity() { // tOdO gib mehr
+        return new Translation2d(0, 0);
+    }
+
+
+
+    public Command aimToHub(
+            Supplier<Angle> turretYawSupplier, 
+            Supplier<Angle> turretPitchSupplier, 
+            Supplier<AngularVelocity> shooterSpeedSupplier) {
+        return Commands.parallel(
+            turretYaw.setAngle(turretYawSupplier), 
+            turretPitch.setAngle(turretPitchSupplier), 
+            shooter.setSpeed(shooterSpeedSupplier));
+        // Pose3d position = getTurretPosition();
+        // Translation2d velocity = getTurretVelocity();
+        // ParabolicTrajectory trajectory = ParabolicTrajectory.toHubFromXYWhileDriving(
+        //     position.getX(), position.getY(), velocity.getX(), velocity.getY());
     }
 
     public Command setSpeed(AngularVelocity speed) {
@@ -213,7 +235,6 @@ public class TurretSystem extends SubsystemBase {
     public Command sysIds() {
         return Commands.sequence(
             shooter.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(10)),
-            turretYaw.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(10)),
             turretPitch.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(10))
         );
     }
@@ -274,4 +295,118 @@ public class TurretSystem extends SubsystemBase {
     public Command rezeroYaw() {
         return Commands.runOnce(() -> yawMotorSpark.getEncoder().setPosition(0), this).withName("TurretYaw.Rezero");
     }
+
+//     public class ShootOnTheMoveCommand extends Command {
+//         public ShootOnTheMoveCommand(SwerveSubsystem drivetrain, Superstructure superstructure,
+//       Supplier<Translation3d> aimPointSupplier) {
+//     this.drivetrain = drivetrain;
+//     this.superstructure = superstructure;
+//     this.aimPointSupplier = aimPointSupplier;
+
+//     // We use the drivetrain to determine linear velocity, but don't require it for
+//     // control. We
+//     // will be using the superstructure to control the shooting mechanism so it's a
+//     // requirement.
+//     // addRequirements(superstructure);
+
+//     // TODO: figure out if the above is actually required. Right now, when you start
+//     // some other command, the auto aim can't start back up again
+//   }
+
+//   @Override
+//   public void initialize() {
+//     super.initialize();
+
+//     latestHoodAngle = superstructure.getHoodAngle();
+//     latestTurretAngle = superstructure.getTurretAngle();
+//     latestShootSpeed = superstructure.getShooterSpeed();
+
+//     // TODO: when this current command ends, we should probably cancel the dynamic
+//     // aim command
+//     superstructure.aimDynamicCommand(
+//         () -> {
+//           return this.latestShootSpeed;
+//         },
+//         () -> {
+//           return this.latestTurretAngle;
+//         },
+//         () -> {
+//           return this.latestHoodAngle;
+//         }).schedule();
+//   }
+
+//   @Override
+//   public boolean isFinished() {
+//     return false;
+//   }
+
+//   @Override
+//   public void execute() {
+//     // Calculate trajectory to aimPoint
+//     var target = aimPointSupplier.get();
+
+//     var shooterLocation = drivetrain.getPose3d().getTranslation()
+//         .plus(superstructure.getShooterPose().getTranslation());
+
+//     // Ignore this parameter for now, the range tables will account for it :/
+//     // var deltaH = target.getMeasureZ().minus(shooterLocation.getMeasureZ());
+//     var shooterOnGround = new Translation2d(shooterLocation.getX(), shooterLocation.getY());
+//     var targetOnGround = new Translation2d(target.getX(), target.getY());
+
+//     var distanceToTarget = Meters.of(shooterOnGround.getDistance(targetOnGround));
+
+//     // Get time of flight. We could try to do this analytically but for now it's
+//     // easier and more realistic
+//     // to use a simple linear approximation based on empirical data.
+//     double timeOfFlight = getFlightTime(distanceToTarget);
+
+//     // Calculate corrective vector based on our current velocity multiplied by time
+//     // of flight.
+//     // If we're stationary, this should be zero. If we're backing up, this will be
+//     // "ahead" of the target, etc.
+//     var updatedPosition = drivetrain.getFieldVelocity().times(timeOfFlight);
+//     var correctiveVector = new Translation2d(updatedPosition.vxMetersPerSecond, updatedPosition.vyMetersPerSecond)
+//         .unaryMinus();
+//     var correctiveVector3d = new Translation3d(correctiveVector.getX(), correctiveVector.getY(), 0);
+
+//     Logger.recordOutput("FieldSimulation/AimTargetCorrected",
+//         new Pose3d(target.plus(correctiveVector3d), Rotation3d.kZero));
+
+//     var correctedTarget = targetOnGround.plus(correctiveVector);
+
+//     var vectorToTarget = drivetrain.getPose().getTranslation().minus(correctedTarget);
+
+//     var correctedDistance = Meters.of(vectorToTarget.getNorm());
+//     var calculatedHeading = vectorToTarget.getAngle()
+//         .rotateBy(drivetrain.getHeading().unaryMinus())
+//         .getMeasure();
+
+//     Logger.recordOutput("ShootOnTheMove/RobotHeading", drivetrain.getHeading());
+//     Logger.recordOutput("ShootOnTheMove/CalculatedHeading", calculatedHeading);
+//     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
+
+//     latestTurretAngle = calculatedHeading;
+//     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
+
+//     // TODO: add this back if/when we have a real hood, for now, just set it to the
+//     // current angle
+//     // latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
+//     latestHoodAngle = superstructure.getHoodAngle();
+
+//     superstructure.setShooterSetpoints(
+//         latestShootSpeed,
+//         latestTurretAngle,
+//         latestHoodAngle);
+
+//     // System.out.println("Shooting at distance: " + correctedDistance + " requires
+//     // speed: " + latestShootSpeed
+//     // + ", hood angle: " + latestHoodAngle + ", turret angle: " +
+//     // latestTurretAngle);
+//   }
+
+//   private double getFlightTime(Distance distanceToTarget) {
+//     // Simple linear approximation based on empirical data.
+//     return TIME_OF_FLIGHT_BY_DISTANCE.get(distanceToTarget.in(Meters));
+//   }
+//     }
 }

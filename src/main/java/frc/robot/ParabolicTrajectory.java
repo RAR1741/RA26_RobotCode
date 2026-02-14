@@ -1,8 +1,11 @@
 package frc.robot;
 
 import frc.robot.Constants.TurretConstants;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants.FieldConstants;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class ParabolicTrajectory {
     public static String k_alliance = DriverStation.getAlliance().toString();
@@ -27,6 +30,16 @@ public class ParabolicTrajectory {
     public static double k_launchDirectionTolerance = TurretConstants.k_launchDirectionTolerance;
     public static double k_launchAngleTolerance = TurretConstants.k_launchAngleTolerance;
     public static double k_launchVelocityTolerance = TurretConstants.k_launchVelocityTolerance;
+
+    public static double targetLaunchVY = TurretConstants.k_targetLaunchVY;
+    public static double slopeMaxDegrees = tan(TurretConstants.k_maxLaunchAngle);
+    public static double slopeMinDegrees = tan(TurretConstants.k_maxLaunchAngle);
+    public static double minLaunchVX = targetLaunchVY / slopeMaxDegrees;
+    public static double maxLaunchVX = targetLaunchVY / slopeMinDegrees;
+    public static double verticalDistance = k_hubHeight + k_fuelRadius - k_turretHeight;
+    public static double targetVXCoefficient = k_gravitationalAcceleration / 
+        (targetLaunchVY + Math.sqrt(targetLaunchVY * targetLaunchVY - 2.0 * k_gravitationalAcceleration * verticalDistance));
+    public static double sqrtHalfGravity = Math.sqrt(k_gravitationalAcceleration / 2.0);
 
     final double launchDirection;
     final double launchAngle;
@@ -84,6 +97,43 @@ public class ParabolicTrajectory {
         if (launchAngle == Double.NaN) {return null;}
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
+
+    public static double timeToHubFromXY(double launchX, double launchY) {
+        double horizontalDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
+        double launchHorizontalVelocity = targetVXCoefficient * horizontalDistance;
+        if (launchHorizontalVelocity < minLaunchVX) {
+            return horizontalDistance / minLaunchVX;
+        } else if (launchHorizontalVelocity > maxLaunchVX) {
+            return Math.sqrt(horizontalDistance - verticalDistance) / sqrtHalfGravity;
+        }
+        return 1.0 / targetVXCoefficient;
+    }
+
+    public static ParabolicTrajectory toHubFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
+        double time = timeToHubFromXY(launchX, launchY);
+        if (time == Double.NaN) {return null;}
+        double xDisplacement = k_hubX - launchX - time * turretVX;
+        double yDisplacement = k_hubY - launchY - time * turretVY;
+        double horizontalDistance = Math.hypot(xDisplacement, yDisplacement);
+        double launchHorizontalVelocity = targetVXCoefficient * horizontalDistance;
+        double launchVerticalVelocity = targetLaunchVY;
+        double launchAngle;
+        if (launchHorizontalVelocity < minLaunchVX) {
+            launchHorizontalVelocity = minLaunchVX;
+            launchAngle = TurretConstants.k_maxLaunchAngle;
+        } else if (launchHorizontalVelocity > maxLaunchVX) {
+            launchHorizontalVelocity = sqrtHalfGravity * horizontalDistance / Math.sqrt(horizontalDistance - verticalDistance);
+            launchVerticalVelocity = launchHorizontalVelocity * slopeMinDegrees;
+            launchAngle = TurretConstants.k_minLaunchAngle;
+        } else {
+            launchAngle = atan2(launchVerticalVelocity, launchHorizontalVelocity);
+        }
+        if (launchHorizontalVelocity == Double.NaN) {return null;}
+        double launchVelocity = Math.hypot(launchHorizontalVelocity, launchVerticalVelocity);
+        double launchDirection = atan2(yDisplacement, xDisplacement);
+        return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
+    }
+
     public static ParabolicTrajectory toZoneFromXY(double launchX, double launchY, double idealLaunchVelocity, boolean isBlueTeam) { // chooses the zone closer to (0, 0), based on the coordinates inputted
         double targetX = isBlueTeam? k_allianceZoneDepth + k_hubBodyWidth / 2.0 : k_fieldLength - k_allianceZoneDepth - k_hubBodyWidth / 2.0;
         double targetY = k_fieldWidth / 2.0;
@@ -158,13 +208,13 @@ public class ParabolicTrajectory {
         double dropFactor = 0.5 * time * k_gravitationalAcceleration * k_gravitationalAcceleration;
         return k_turretHeight + launchFactor - dropFactor;
     }
-    public double secondTimeToAbsHeight(double launchAngle, double launchVelocity, double testHeight) {
+    public double secondTimeToAbsHeight(double testHeight) {
         double VxSin = launchVelocity * sin(launchAngle);
         double radicand = VxSin * VxSin - 2.0 * k_gravitationalAcceleration * (testHeight - k_turretHeight);
         return (VxSin + Math.sqrt(radicand)) / k_gravitationalAcceleration;
     }
     public double farDistanceToAbsHeight(double launchAngle, double launchVelocity, double testHeight) {
-        return launchVelocity * cos(launchAngle) * secondTimeToAbsHeight(launchAngle, launchVelocity, testHeight);
+        return launchVelocity * cos(launchAngle) * secondTimeToAbsHeight(testHeight);
     }
     public double trajectorySlopeAtDistance(double launchAngle, double launchVelocity, double testX) {
         double xVelocity = launchVelocity * cos(launchAngle);
@@ -192,7 +242,7 @@ public class ParabolicTrajectory {
         return clearsHub;
     }
     public double timeToHubScoring(double launchAngle, double launchVelocity) {
-        return TurretConstants.k_extraTimeToPassSensor + secondTimeToAbsHeight(launchAngle, launchVelocity, k_hubHeight);
+        return TurretConstants.k_extraTimeToPassSensor + secondTimeToAbsHeight(k_hubHeight);
     }
     
     // field geometry and calculations

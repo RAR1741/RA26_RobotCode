@@ -24,6 +24,7 @@ public class Constants {
         public static final double k_turretRelativeY = 9999999999.0;
         public static final double k_turretHeight = 21.0 / 12.0;
         public static final double k_extraTimeToPassSensor = 1.0; // test this
+        public static final double k_targetLaunchVY = 20.0;
         public static final double k_maxRPM = 99999999999999.0;
         public static final double k_maxLaunchVelocity = 5000000000000000.0;
         public static final double k_minLaunchAngle = 45.0;
