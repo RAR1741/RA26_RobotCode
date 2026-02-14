@@ -20,6 +20,8 @@ public class Constants {
 
     public static class TurretConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
         public static final double k_gravitationalAcceleration = 32.174;
+        public static final double k_turretRelativeX = 9999999999.0;
+        public static final double k_turretRelativeY = 9999999999.0;
         public static final double k_turretHeight = 21.0 / 12.0;
         public static final double k_extraTimeToPassSensor = 1.0; // test this
         public static final double k_maxRPM = 99999999999999.0;
@@ -30,6 +32,11 @@ public class Constants {
         public static final double k_launchVelocityTolerance = 20000000000.0;
         public static final double k_launchDirectionTolerance = 2000000000000.0;
         public static final double k_launchAngleTolerance = 200000000000.0;
+        public static final double k_wheelRadius = 34567893456789.0;
+        public static final int k_yawMotorId = 9999;
+        public static final int k_pitchMotorId = 9999;
+        public static final int k_flywheelMotorIdA = 9999;
+        public static final int k_flywheelMotorIdB = 9999;
     }
 
     public static class FieldConstants { // feet (NOT INCHES)
