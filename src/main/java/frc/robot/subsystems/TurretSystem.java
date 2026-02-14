@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.function.Supplier;
 
-// import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.ParabolicTrajectory;
+import frc.robot.Telemetry;
 // import frc.robot.subsystems.LimelightSystem;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -75,6 +76,7 @@ public class TurretSystem extends SubsystemBase {
 
     }
 
+    @Override
     public void periodic() {
         Logger.recordOutput("Shooter/LeaderVelocity", leaderSpark.getEncoder().getVelocity());
         Logger.recordOutput("Shooter/FollowerVelocity", followerSpark.getEncoder().getVelocity());
@@ -85,74 +87,68 @@ public class TurretSystem extends SubsystemBase {
     }
 
     public Command setSpeed(AngularVelocity speed) {
-    return shooter.setSpeed(speed);
-  }
+        return shooter.setSpeed(speed);
+    }
 
-  public Command setSpeedDynamic(Supplier<AngularVelocity> speedSupplier) {
-    return shooter.setSpeed(speedSupplier);
-  }
+    public Command setSpeedDynamic(Supplier<AngularVelocity> speedSupplier) {
+        return shooter.setSpeed(speedSupplier);
+    }
 
-  public Command spinUp() {
-    return setSpeed(RPM.of(5500));
+    public Command spinUp() {
+        return setSpeed(RPM.of(5500));
 
-    // return setSpeed(RotationsPerSecond.of(50));
+        // return setSpeed(RotationsPerSecond.of(50));
 
-    // return run(() -> {
-    // // followerNova.follow(leaderNova.getID());
-    // // followerNova.setInverted(true);
+        // return run(() -> {
+        // // followerNova.follow(leaderNova.getID());
+        // // followerNova.setInverted(true);
 
-    // // leaderNova.setPercent(SHOOTER_SPEED);
-    // // followerNova.setPercent(SHOOTER_SPEED);
+        // // leaderNova.setPercent(SHOOTER_SPEED);
+        // // followerNova.setPercent(SHOOTER_SPEED);
 
-    // // followerNova.setPercent(0.5);
-    // });
+        // // followerNova.setPercent(0.5);
+        // });
 
-    // return shooter.set(0.5);
-    // return shooter.setSpeed(RotationsPerSecond.of(500));
-  }
+        // return shooter.set(0.5);
+        // return shooter.setSpeed(RotationsPerSecond.of(500));
+    }
 
-  public Command stop() {
-    return setSpeed(RPM.of(0));
-    // return run(() -> {
+    public Command stop() {
+        return setSpeed(RPM.of(0));
+        // return run(() -> {
 
-    // // leaderNova.setPercent(0);
-    // // followerNova.setPercent(0);
-    // // followerNova.setPercent(0.5);
-    // });
-    // return shooter.set(0);
-  }
+        // // leaderNova.setPercent(0);
+        // // followerNova.setPercent(0);
+        // // followerNova.setPercent(0.5);
+        // });
+        // return shooter.set(0);
+    }
 
-  public AngularVelocity getSpeed() {
-    return shooter.getSpeed();
-  }
+    public AngularVelocity getSpeed() {
+        return shooter.getSpeed();
+    }
 
-  // public Command set(double dutyCycle) {
-  // return shooter.set(dutyCycle);
-  // }
+    // public Command set(double dutyCycle) {
+    // return shooter.set(dutyCycle);
+    // }
 
-  public Command sysId() {
-    return shooter.sysId(Volts.of(12), Volts.of(3).per(Second), Seconds.of(7));
-  }
+    public Command sysId() {
+        return shooter.sysId(Volts.of(12), Volts.of(3).per(Second), Seconds.of(7));
+    }
 
-  @Override
-  public void periodic() {
-    .recordOutput("Shooter/LeaderVelocity", leaderSpark.getEncoder().getVelocity());
-    Logger.recordOutput("Shooter/FollowerVelocity", followerSpark.getEncoder().getVelocity());
-  }
+    @Override
+    public void simulationPeriodic() {
+        shooter.simIterate();
+    }
 
-  @Override
-  public void simulationPeriodic() {
-    shooter.simIterate();
-  }
+    private Distance wheelRadius() {
+        return Inches.of(4).div(2);
+    }
 
-  private Distance wheelRadius() {
-    return Inches.of(4).div(2);
-  }
+    public LinearVelocity getTangentialVelocity() {
+        // Calculate tangential velocity at the edge of the wheel and convert to
+        // LinearVelocity
 
-  public LinearVelocity getTangentialVelocity() {
-    // Calculate tangential velocity at the edge of the wheel and convert to
-    // LinearVelocity
-
-    return MetersPerSecond.of(getSpeed().in(RadiansPerSecond)  * wheelRadius().in(Meters));
-  }
+        return MetersPerSecond.of(getSpeed().in(RadiansPerSecond)  * wheelRadius().in(Meters));
+    }
 }
