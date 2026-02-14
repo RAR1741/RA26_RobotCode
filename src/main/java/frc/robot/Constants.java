@@ -30,6 +30,11 @@ public class Constants {
         
     } // TODO check and adjust constants
 
+    public static class IntakeConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
+        public static final int k_pivotMotorId = 99999;
+        public static final int k_rollerMotorId = 99999;
+    }
+
     
     public static class FieldConstants {
         public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
