@@ -42,7 +42,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.ParabolicTrajectory;
 // import frc.robot.Telemetry;
-// import frc.robot.subsystems.LimelightSystem;
+import frc.robot.subsystems.SwerveSystem;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 
@@ -176,14 +176,11 @@ public class TurretSystem extends SubsystemBase {
 
 
 
-    public Command aimToHub(
-            Supplier<Angle> turretYawSupplier, 
-            Supplier<Angle> turretPitchSupplier, 
-            Supplier<AngularVelocity> shooterSpeedSupplier) {
+    public Command aimToHub(Supplier<ParabolicTrajectory> trajectorySupplier) {
         return Commands.parallel(
-            turretYaw.setAngle(turretYawSupplier), 
-            turretPitch.setAngle(turretPitchSupplier), 
-            shooter.setSpeed(shooterSpeedSupplier));
+            setAnglesDynamic(() -> {return toRobotOrientation(trajectorySupplier.get().launchDirection);}, 
+                             () -> {return trajectorySupplier.get().launchAngle;}),
+            setSpeedDynamic(() -> {return launchVelocityToAngular(trajectorySupplier.get().launchVelocity);}));
         // Pose3d position = getTurretPosition();
         // Translation2d velocity = getTurretVelocity();
         // ParabolicTrajectory trajectory = ParabolicTrajectory.toHubFromXYWhileDriving(
@@ -232,7 +229,7 @@ public class TurretSystem extends SubsystemBase {
         return shooter.getSpeed();
     }
 
-    public Command sysIds() {
+    public Command sysId() {
         return Commands.sequence(
             shooter.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(10)),
             turretPitch.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(10))
@@ -244,6 +241,14 @@ public class TurretSystem extends SubsystemBase {
         shooter.simIterate();
         turretYaw.simIterate();
         turretPitch.simIterate();
+    }
+
+    public static Angle toRobotOrientation(double fieldDirection) {
+        return Degrees.of(fieldDirection - SwerveSystem.getInstance().getSwerveDrive().getRotation().in(Degrees)); // how to actually access robot SwerveSystem?
+    }
+
+    public static AngularVelocity launchVelocityToAngular(double launchVelocity) {
+        return RadiansPerSecond.of(launchVelocity / TurretConstants.k_wheelRadius);
     }
 
     public LinearVelocity getTangentialVelocity() {
@@ -271,17 +276,17 @@ public class TurretSystem extends SubsystemBase {
             turretPitch.setAngle(Degrees.of(80)));
     }
 
-    public Angle getRobotAdjustedYaw() {
-        // Returns the turret angle in the robot's coordinate frame
+    public Angle getRobotRelativeYaw() {
+        // Returns the turret angle in the robot's coordinate frame ---- shouldn't this already be from the robot's frame?
         return turretYaw.getAngle();
     }
 
-    public Angle getRawYaw() {
-        return turretYaw.getAngle();
+    public Angle getFieldRelativeYaw() {
+        return turretYaw.getAngle(); // shouldn't this one be the one that needs to be converted?
     }
 
     public Angle getRawPitch() {
-        return turretPitch.getAngle();
+        return turretPitch.getAngle(); // this one does need to be converted
     }
 
     public Command setYawDutyCycle(double dutyCycle) {
@@ -295,7 +300,7 @@ public class TurretSystem extends SubsystemBase {
     public Command rezeroYaw() {
         return Commands.runOnce(() -> yawMotorSpark.getEncoder().setPosition(0), this).withName("TurretYaw.Rezero");
     }
-
+}
 //     public class ShootOnTheMoveCommand extends Command {
 //         public ShootOnTheMoveCommand(SwerveSubsystem drivetrain, Superstructure superstructure,
 //       Supplier<Translation3d> aimPointSupplier) {
@@ -409,4 +414,3 @@ public class TurretSystem extends SubsystemBase {
 //     return TIME_OF_FLIGHT_BY_DISTANCE.get(distanceToTarget.in(Meters));
 //   }
 //     }
-}

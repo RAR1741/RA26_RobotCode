@@ -57,10 +57,7 @@ public class ParabolicTrajectory {
         this.launchHeight = launchHeight;
     }
 
-    // add desmos graph link
-
-    // launch geometry and calculations
-    // constructors
+    // graph link: https://www.desmos.com/calculator/67orqpt33w
 
     public static ParabolicTrajectory toXYHFromVXYHMinimizeAngle(double targetX, double targetY, double targetHeight, double launchX, 
                                                                  double launchY, double launchHeight, double launchVelocity) {
@@ -86,7 +83,6 @@ public class ParabolicTrajectory {
         double yDistance = k_hubHeight - k_turretHeight;
         double launchVelocity = solveLaunchVelocity(launchAngle, xDistance, yDistance);
         double launchDirection = Math.atan2(k_hubY - launchY, k_hubX - launchX);
-
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
     public static ParabolicTrajectory toHubFromVXY(double launchVelocity, double launchX, double launchY) {
