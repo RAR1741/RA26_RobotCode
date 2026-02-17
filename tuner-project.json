@@ -1,0 +1,232 @@
+{
+  "Version": "1.0.0.0",
+  "LastState": 11,
+  "Modules": [
+    {
+      "ModuleName": "Front Left",
+      "ModuleId": 0,
+      "Encoder": {
+        "Id": 14,
+        "Name": "FrontLeftEncoder",
+        "Model": "CANCoder",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": null
+      },
+      "SteerMotor": {
+        "Id": 18,
+        "Name": "FrontLeftTurn",
+        "Model": "Talon FX vers. F",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": {
+          "Name": "WCP Kraken x44",
+          "FreeSpeedRps": 125.5,
+          "SlipCurrentLimit": 120,
+          "StatorCurrentLimit": 60
+        }
+      },
+      "DriveMotor": {
+        "Id": 14,
+        "Name": "FrontLeftDrive",
+        "Model": "Talon FX vers. C",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": {
+          "Name": "WCP Kraken x60",
+          "FreeSpeedRps": 96.7,
+          "SlipCurrentLimit": 120,
+          "StatorCurrentLimit": 60
+        }
+      },
+      "IsEncoderInverted": false,
+      "IsSteerInverted": false,
+      "SelectedEncoderType": "CANcoder",
+      "EncoderOffset": 0.359375,
+      "DriveMotorSelectionState": 1,
+      "SteerMotorSelectionState": 1,
+      "SteerEncoderSelectionState": 1,
+      "IsModuleValidationComplete": true,
+      "ValidatedSteerId": 18,
+      "ValidatedDriveId": 14,
+      "ValidatedEncoderId": 14
+    },
+    {
+      "ModuleName": "Front Right",
+      "ModuleId": 1,
+      "Encoder": {
+        "Id": 11,
+        "Name": "FrontRightEncoder",
+        "Model": "CANCoder",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": null
+      },
+      "SteerMotor": {
+        "Id": 19,
+        "Name": "FrontRightTurn",
+        "Model": "Talon FX vers. F",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": {
+          "Name": "WCP Kraken x44",
+          "FreeSpeedRps": 125.5,
+          "SlipCurrentLimit": 120,
+          "StatorCurrentLimit": 60
+        }
+      },
+      "DriveMotor": {
+        "Id": 15,
+        "Name": "FrontRightDrive",
+        "Model": "Talon FX vers. C",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": {
+          "Name": "WCP Kraken x60",
+          "FreeSpeedRps": 96.7,
+          "SlipCurrentLimit": 120,
+          "StatorCurrentLimit": 60
+        }
+      },
+      "IsEncoderInverted": false,
+      "IsSteerInverted": false,
+      "SelectedEncoderType": "CANcoder",
+      "EncoderOffset": -0.281005859375,
+      "DriveMotorSelectionState": 1,
+      "SteerMotorSelectionState": 1,
+      "SteerEncoderSelectionState": 1,
+      "IsModuleValidationComplete": true,
+      "ValidatedSteerId": 19,
+      "ValidatedDriveId": 15,
+      "ValidatedEncoderId": 11
+    },
+    {
+      "ModuleName": "Back Left",
+      "ModuleId": 2,
+      "Encoder": {
+        "Id": 12,
+        "Name": "BackLeftEncoder",
+        "Model": "CANCoder",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": null
+      },
+      "SteerMotor": {
+        "Id": 20,
+        "Name": "BackLeftTurn",
+        "Model": "Talon FX vers. F",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": {
+          "Name": "WCP Kraken x44",
+          "FreeSpeedRps": 125.5,
+          "SlipCurrentLimit": 120,
+          "StatorCurrentLimit": 60
+        }
+      },
+      "DriveMotor": {
+        "Id": 16,
+        "Name": "BackLeftDrive",
+        "Model": "Talon FX vers. C",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": {
+          "Name": "WCP Kraken x60",
+          "FreeSpeedRps": 96.7,
+          "SlipCurrentLimit": 120,
+          "StatorCurrentLimit": 60
+        }
+      },
+      "IsEncoderInverted": false,
+      "IsSteerInverted": false,
+      "SelectedEncoderType": "CANcoder",
+      "EncoderOffset": -0.01318359375,
+      "DriveMotorSelectionState": 1,
+      "SteerMotorSelectionState": 1,
+      "SteerEncoderSelectionState": 1,
+      "IsModuleValidationComplete": true,
+      "ValidatedSteerId": 20,
+      "ValidatedDriveId": 16,
+      "ValidatedEncoderId": 12
+    },
+    {
+      "ModuleName": "Back Right",
+      "ModuleId": 3,
+      "Encoder": {
+        "Id": 13,
+        "Name": "BackRightEncoder",
+        "Model": "CANCoder",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": null
+      },
+      "SteerMotor": {
+        "Id": 21,
+        "Name": "BackRightTurn",
+        "Model": "Talon FX vers. F",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": {
+          "Name": "WCP Kraken x44",
+          "FreeSpeedRps": 125.5,
+          "SlipCurrentLimit": 120,
+          "StatorCurrentLimit": 60
+        }
+      },
+      "DriveMotor": {
+        "Id": 17,
+        "Name": "BackRightDrive",
+        "Model": "Talon FX vers. C",
+        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbusFriendly": "Drivetrain",
+        "SelectedMotorType": {
+          "Name": "WCP Kraken x60",
+          "FreeSpeedRps": 96.7,
+          "SlipCurrentLimit": 120,
+          "StatorCurrentLimit": 60
+        }
+      },
+      "IsEncoderInverted": false,
+      "IsSteerInverted": false,
+      "SelectedEncoderType": "CANcoder",
+      "EncoderOffset": 0.169677734375,
+      "DriveMotorSelectionState": 1,
+      "SteerMotorSelectionState": 1,
+      "SteerEncoderSelectionState": 1,
+      "IsModuleValidationComplete": true,
+      "ValidatedSteerId": 21,
+      "ValidatedDriveId": 17,
+      "ValidatedEncoderId": 13
+    }
+  ],
+  "SwerveOptions": {
+    "Gyro": {
+      "Id": 22,
+      "Name": "Pigeon ",
+      "Model": "Pigeon 2 vers. S",
+      "CANbus": "EDF4087C50374E53202020473A3810FF",
+      "CANbusFriendly": "Drivetrain",
+      "SelectedMotorType": null
+    },
+    "IsValidGyroCANbus": true,
+    "VerticalTrackSizeInches": 20.0,
+    "HorizontalTrackSizeInches": 20.0,
+    "WheelRadiusInches": 2.0,
+    "IsLeftSideInverted": false,
+    "IsRightSideInverted": true,
+    "SwerveModuleType": 7,
+    "SwerveModuleConfiguration": {
+      "ModuleBrand": 7,
+      "DriveRatio": 6.026785714285714,
+      "SteerRatio": 26.09090909090909,
+      "CouplingRatio": 3.857142857142857,
+      "CustomName": "R2"
+    },
+    "HasVerifiedSteer": true,
+    "SelectedModuleManufacturer": "Swerve Drive Specialties (SDS)",
+    "HasVerifiedDrive": true,
+    "IsValidConfiguration": true
+  },
+  "TeamNumber": 1741,
+  "schema_version": "1"
+}
