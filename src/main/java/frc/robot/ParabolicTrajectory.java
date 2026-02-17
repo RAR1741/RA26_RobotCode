@@ -4,11 +4,11 @@ import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.FieldConstants;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 public class ParabolicTrajectory {
     public static String k_alliance = DriverStation.getAlliance().toString();
+    public static Boolean isBlueTeam = k_alliance == "Blue";
+    public static Boolean isRedTeam = k_alliance == "Red";
 
     public static double k_gravitationalAcceleration = TurretConstants.k_gravitationalAcceleration;
     public static double k_turretHeight = TurretConstants.k_turretHeight;
@@ -22,14 +22,15 @@ public class ParabolicTrajectory {
     public static double k_hubBodyDepth = FieldConstants.k_hubBodyDepth;
     public static double k_hubRadius = FieldConstants.k_hubRadius;
     public static double k_hubHeight = FieldConstants.k_hubHeight;
-    public static double k_hubX = (k_alliance == "Red")? FieldConstants.k_redHubX : 
-                                      (k_alliance == "Blue")? FieldConstants.k_blueHubX :
+    public static double k_hubX = (isRedTeam)? FieldConstants.k_redHubX : 
+                                      (isBlueTeam)? FieldConstants.k_blueHubX :
                                           Double.NaN;
     public static double k_hubY = FieldConstants.k_hubY;
     public static double k_fuelRadius = FieldConstants.k_fuelRadius;
     public static double k_launchDirectionTolerance = TurretConstants.k_launchDirectionTolerance;
     public static double k_launchAngleTolerance = TurretConstants.k_launchAngleTolerance;
     public static double k_launchVelocityTolerance = TurretConstants.k_launchVelocityTolerance;
+    public static double k_maxLaunchVelocity = TurretConstants.k_maxLaunchVelocity;
 
     public static double targetLaunchVY = TurretConstants.k_targetLaunchVY;
     public static double slopeMaxDegrees = tan(TurretConstants.k_maxLaunchAngle);
@@ -41,12 +42,12 @@ public class ParabolicTrajectory {
         (targetLaunchVY + Math.sqrt(targetLaunchVY * targetLaunchVY - 2.0 * k_gravitationalAcceleration * verticalDistance));
     public static double sqrtHalfGravity = Math.sqrt(k_gravitationalAcceleration / 2.0);
 
-    final double launchDirection;
-    final double launchAngle;
-    final double launchVelocity;
-    final double launchX;
-    final double launchY;
-    final double launchHeight;
+    public final double launchDirection;
+    public final double launchAngle;
+    public final double launchVelocity;
+    public final double launchX;
+    public final double launchY;
+    public final double launchHeight;
 
     public ParabolicTrajectory(double launchDirection, double launchAngle, double launchVelocity, double launchX, double launchY, double launchHeight) {
         this.launchDirection = launchDirection;
@@ -105,7 +106,8 @@ public class ParabolicTrajectory {
         return 1.0 / targetVXCoefficient;
     }
 
-    public static ParabolicTrajectory toHubFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
+    public static ParabolicTrajectory toHubFromXYWhileDriving(double[] launch) { // launchX, double launchY, double turretVX, double turretVY) {
+        double launchX = launch[0]; double launchY = launch[1]; double turretVX = launch[2]; double turretVY = launch[3];
         double time = timeToHubFromXY(launchX, launchY);
         if (time == Double.NaN) {return null;}
         double xDisplacement = k_hubX - launchX - time * turretVX;
@@ -130,7 +132,8 @@ public class ParabolicTrajectory {
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
 
-    public static ParabolicTrajectory toZoneFromXY(double launchX, double launchY, double idealLaunchVelocity, boolean isBlueTeam) { // chooses the zone closer to (0, 0), based on the coordinates inputted
+    public static ParabolicTrajectory toZoneFromXYWhileDriving(double[] launch) { // launchX, double launchY, double turretVX, double turretVY) {
+        double launchX = launch[0]; double launchY = launch[1]; double turretVX = launch[2]; double turretVY = launch[3];
         double targetX = isBlueTeam? k_allianceZoneDepth + k_hubBodyWidth / 2.0 : k_fieldLength - k_allianceZoneDepth - k_hubBodyWidth / 2.0;
         double targetY = k_fieldWidth / 2.0;
         boolean topHalf = launchY > k_fieldWidth / 2.0;
@@ -163,15 +166,13 @@ public class ParabolicTrajectory {
         } else {
             return null;
         }
+        double targetDistance = Math.hypot(targetX - launchX, targetY - launchY);
+        double idealLaunchVelocity = targetDistance * TurretConstants.k_maxLaunchVelocity / TurretConstants.k_maxZoneLaunchDistance;
         ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
-        if (trajectory == null) {
-            return null;
-        } else if (trajectory.launchVelocity != idealLaunchVelocity) {
-            
-        } else if () {
-
-        }
-        return trajectory;
+        if (trajectory == null) {return null;}
+        double time = targetDistance / trajectory.getHorizontalLaunchVelocity();
+        trajectory = toXYHFromVXYHMinimizeAngle(targetX - turretVX * time, targetY - turretVY * time, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
+        return (trajectory != null && trajectory.testValid())? trajectory : null;
     }
     
     public static double solveLaunchVelocity(double launchAngle, double xDistance, double yDistance) {
@@ -194,54 +195,46 @@ public class ParabolicTrajectory {
 
     // instance methods
 
-    public double maxLaunchHeight(double launchAngle, double launchVelocity) {
-        double vYSquared = Math.pow(launchVelocity * sin(launchAngle), 2.0);
-        return 0.5 * vYSquared / k_gravitationalAcceleration;
+    public double getHorizontalLaunchVelocity() {
+        return launchVelocity * cos(launchAngle);
     }
-    public double absHeightAtDistance(double launchAngle, double launchVelocity, double testX) {
-        double time = testX / (launchVelocity * cos(launchAngle));
-        double launchFactor = time * launchVelocity * sin(launchAngle);
-        double dropFactor = 0.5 * time * k_gravitationalAcceleration * k_gravitationalAcceleration;
+    public double getVerticalLaunchVelocity() {
+        return launchVelocity * sin(launchAngle);
+    }
+    public double maxLaunchHeight() {
+        return Math.pow(getVerticalLaunchVelocity(), 2.0) / k_gravitationalAcceleration / 2.0;
+    }
+    public double absHeightAtDistance(double testX) {
+        double time = testX / getHorizontalLaunchVelocity();
+        double launchFactor = testX * tan(launchAngle);
+        double dropFactor = time * k_gravitationalAcceleration * k_gravitationalAcceleration / 2.0;
         return k_turretHeight + launchFactor - dropFactor;
     }
     public double secondTimeToAbsHeight(double testHeight) {
-        double VxSin = launchVelocity * sin(launchAngle);
-        double radicand = VxSin * VxSin - 2.0 * k_gravitationalAcceleration * (testHeight - k_turretHeight);
-        return (VxSin + Math.sqrt(radicand)) / k_gravitationalAcceleration;
+        double launchVY = getVerticalLaunchVelocity();
+        double radicand = launchVY * launchVY - 2.0 * k_gravitationalAcceleration * (testHeight - k_turretHeight);
+        return (launchVY + Math.sqrt(radicand)) / k_gravitationalAcceleration;
     }
     public double farDistanceToAbsHeight(double launchAngle, double launchVelocity, double testHeight) {
-        return launchVelocity * cos(launchAngle) * secondTimeToAbsHeight(testHeight);
+        return getHorizontalLaunchVelocity() * secondTimeToAbsHeight(testHeight);
     }
     public double trajectorySlopeAtDistance(double launchAngle, double launchVelocity, double testX) {
-        double xVelocity = launchVelocity * cos(launchAngle);
+        double xVelocity = getHorizontalLaunchVelocity();
         double time = testX / xVelocity;
-        double yVelocity = launchVelocity * sin(launchAngle) - time * k_gravitationalAcceleration;
+        double yVelocity = getVerticalLaunchVelocity() - time * k_gravitationalAcceleration;
         return yVelocity / xVelocity;
     }
-    public boolean testValidHubTrajectory(double launchDirection, double launchAngle, double launchVelocity, 
-                                                 double turretX, double turretY, double sideClearance, double verticalClearance) {
-        // turret x, y, height should be measured as the location of the bottom of the fuel at the moment it is launched from the turret
-        // weather permitting, air resistance may be neglected
-        double distance = Math.hypot(k_hubX - turretX, k_hubY - turretY);
-        double sideOffset = Math.abs(cos(launchDirection) * (k_hubY - turretY) - sin(launchDirection) * (k_hubX - turretX));
-        double launchDistance = Math.sqrt(distance * distance - sideOffset * sideOffset);
-        double nearEdgeDistance = launchDistance + hubNearEdgeOffset(launchDirection, sideOffset, 0.0);
-        double entranceDistance = farDistanceToAbsHeight(launchAngle, launchVelocity, k_hubHeight);
-        double entranceHeight = absHeightAtDistance(launchAngle, launchVelocity, nearEdgeDistance);
-        double maxHeight = 2.0 * FieldConstants.k_fuelRadius + maxLaunchHeight(launchAngle, launchVelocity);
-        double nearClearanceDistance = launchDistance - hubNearEdgeOffset(launchDirection, sideOffset, sideClearance);
-        double farClearanceDistance = launchDistance + hubFarEdgeOffset(launchDirection, sideOffset, sideClearance);
-        boolean clearsHub = entranceHeight >= verticalClearance  // measured at the center of the fuel entering the space above the funnel
-                         && entranceDistance >= nearClearanceDistance  // measured at the bottom of the fuel hitting 72 inches above the ground
-                         && entranceDistance <= farClearanceDistance  // clearance treats the funnel opening as if it has been shrunk
-                         && maxHeight <= FieldConstants.k_ceilingHeight;  // it is admittedly unlikely that the turret will hit the ceiling, but still
-        return clearsHub;
+    public boolean testValid() {
+        return launchVelocity > 0 && launchVelocity <= k_maxLaunchVelocity && 
+               launchAngle >= TurretConstants.k_minLaunchAngle && launchAngle <= TurretConstants.k_maxLaunchAngle && 
+               launchX >= 0.0 && launchX <= k_fieldLength && 
+               launchY >= 0.0 && launchY <= k_fieldWidth && 
+               launchHeight >= 0.0 && launchHeight <= FieldConstants.k_ceilingHeight;
     }
-    public double timeToHubScoring(double launchAngle, double launchVelocity) {
+    public double timeToHubScoring() {
         return TurretConstants.k_extraTimeToPassSensor + secondTimeToAbsHeight(k_hubHeight);
     }
-    
-    // field geometry and calculations
+
     
     public static double hubNearEdgeOffset(double approachAngle, double sideOffset, double clearance) {
         return hubFarEdgeOffset(approachAngle, -sideOffset, clearance); // Exploits the hub's hexagonal symmetry
@@ -252,22 +245,20 @@ public class ParabolicTrajectory {
         pXArr[0] = hubRadius * cos(210 - approachAngle % 60);
         pXArr[1] = hubRadius * cos(150 - approachAngle % 60);
         pXArr[2] = hubRadius * cos(90 - approachAngle % 60);
-       pXArr[3] = hubRadius * cos(30 - approachAngle % 60);
-       int intersectingSide = 
-           (sideOffset < pXArr[0] || sideOffset > pXArr[3])? -1 : 
-               ((sideOffset < pXArr[1])? 0 : 
+        pXArr[3] = hubRadius * cos(30 - approachAngle % 60);
+        int intersectingSide = 
+            (sideOffset < pXArr[0] || sideOffset > pXArr[3])? -1 : 
+                ((sideOffset < pXArr[1])? 0 : 
                     ((sideOffset < pXArr[2])? 1 : 2));
-       if (intersectingSide == -1) {return Double.NaN;}
-       double p1X = pXArr[intersectingSide];
-       double p2X = pXArr[intersectingSide + 1];
-       double p1Y = Math.sqrt(hubRadius * hubRadius - p1X * p1X);
+        if (intersectingSide == -1) {return Double.NaN;}
+        double p1X = pXArr[intersectingSide];
+        double p2X = pXArr[intersectingSide + 1];
+        double p1Y = Math.sqrt(hubRadius * hubRadius - p1X * p1X);
         double p2Y = Math.sqrt(hubRadius * hubRadius - p2X * p2X);
         double p1Scale = (sideOffset - p2X) / (p1X - p2X);
         double p2Scale = (sideOffset - p1X) / (p2X - p1X);
         return p1Y * p1Scale + p2Y * p2Scale;
     }
-    
-    // math helpers
     
     public static double sin(double degrees) {return Math.sin(Math.toRadians(degrees));}
     public static double cos(double degrees) {return Math.cos(Math.toRadians(degrees));}

@@ -29,6 +29,8 @@ public class Constants {
         public static final double k_maxLaunchVelocity = 5000000000000000.0;
         public static final double k_minLaunchAngle = 45.0;
         public static final double k_maxLaunchAngle = 80.0;
+        public static final double k_maxHubLaunchDistance = Math.hypot(FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
+        public static final double k_maxZoneLaunchDistance = Math.hypot(FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
         public static final double k_RPMTolerance = 2000000000000000.0;
         public static final double k_launchVelocityTolerance = 20000000000.0;
         public static final double k_launchDirectionTolerance = 2000000000000.0;

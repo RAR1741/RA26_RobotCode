@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.function.Supplier;
+import java.util.function.Function;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -9,12 +10,15 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+// import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
+// import edu.wpi.first.math.util.Units;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 // import static edu.wpi.first.units.Units.Feet;
@@ -32,7 +36,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
 // import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 
@@ -42,7 +45,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.ParabolicTrajectory;
 // import frc.robot.Telemetry;
-import frc.robot.subsystems.SwerveSystem;
+// import frc.robot.subsystems.SwerveSystem;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 
@@ -167,24 +170,36 @@ public class TurretSystem extends SubsystemBase {
         });
     }
 
-    public Pose3d getTurretPosition() {
+    public Pose3d getTurretPose() {
         return new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)); // tOdO gibb dis
     }
     public Translation2d getTurretVelocity() { // tOdO gib mehr
         return new Translation2d(0, 0);
     }
 
+    public Command aimToHub() {return aimToTrajectoryFunction(
+        () -> getTurretPose(), () -> getTurretVelocity(), () -> ParabolicTrajectory.toHubFromXYWhileDriving()
+    );}
+    // aimToTrajectoryFunction(() -> turretPos, () -> turretVel, () -> robotDir, ParabolicTrajectory.toHubFromXYWhileDriving)
+    public Command aimToTrajectoryFunction(Supplier<Pose3d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier,
+                                           Function<Double[], ParabolicTrajectory> trajectoryFunction) {
+        return aimToSuppliedTrajectory(
+            () -> {
+                Double[] trajectoryArguments = {
+                    turretPositionSupplier.get().getX(), turretPositionSupplier.get().getY(),  // this and below are verifiably function soup
+                    turretVelocitySupplier.get().getX(), turretVelocitySupplier.get().getY()}; // wouldn't it be nice if java just had first class function support
+                return trajectoryFunction.apply(trajectoryArguments);
+            }, 
+            robotOrientationSupplier);
+    }
 
-
-    public Command aimToHub(Supplier<ParabolicTrajectory> trajectorySupplier) {
+    public Command aimToSuppliedTrajectory(Supplier<ParabolicTrajectory> trajectorySupplier, Supplier<Double> robotOrientationSupplier) {
         return Commands.parallel(
-            setAnglesDynamic(() -> {return toRobotOrientation(trajectorySupplier.get().launchDirection);}, 
-                             () -> {return trajectorySupplier.get().launchAngle;}),
+            setAnglesDynamic(() -> {return toRobotOrientation(
+                                trajectorySupplier.get().launchDirection, 
+                                robotOrientationSupplier.get());}, 
+                            () -> {return Degrees.of(trajectorySupplier.get().launchAngle);}),
             setSpeedDynamic(() -> {return launchVelocityToAngular(trajectorySupplier.get().launchVelocity);}));
-        // Pose3d position = getTurretPosition();
-        // Translation2d velocity = getTurretVelocity();
-        // ParabolicTrajectory trajectory = ParabolicTrajectory.toHubFromXYWhileDriving(
-        //     position.getX(), position.getY(), velocity.getX(), velocity.getY());
     }
 
     public Command setSpeed(AngularVelocity speed) {
@@ -243,8 +258,8 @@ public class TurretSystem extends SubsystemBase {
         turretPitch.simIterate();
     }
 
-    public static Angle toRobotOrientation(double fieldDirection) {
-        return Degrees.of(fieldDirection - SwerveSystem.getInstance().getSwerveDrive().getRotation().in(Degrees)); // how to actually access robot SwerveSystem?
+    public static Angle toRobotOrientation(double fieldDirection, double robotOrientation) {
+        return Degrees.of(fieldDirection - robotOrientation); // how to actually access robot SwerveSystem?
     }
 
     public static AngularVelocity launchVelocityToAngular(double launchVelocity) {
