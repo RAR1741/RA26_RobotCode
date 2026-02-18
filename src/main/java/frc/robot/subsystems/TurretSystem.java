@@ -38,11 +38,12 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 // import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.ParabolicTrajectory;
 // import frc.robot.Telemetry;
 // import frc.robot.subsystems.SwerveSystem;
@@ -65,6 +66,10 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class TurretSystem extends SubsystemBase {
+
+    public static String k_alliance = DriverStation.getAlliance().toString();
+    public static Boolean isBlueTeam = k_alliance == "Blue";
+    public static Boolean isRedTeam = k_alliance == "Red";
 
     public final Translation3d turretTranslation = new Translation3d(
         TurretConstants.k_turretRelativeX, 
@@ -170,6 +175,20 @@ public class TurretSystem extends SubsystemBase {
         });
     }
 
+    public static int getZone(double turretX) {
+        return (turretX < 0.0 || turretX > FieldConstants.k_fieldLength)? -1 : 
+            (turretX < FieldConstants.k_allianceZoneDepth)? 1 : 
+            (turretX < FieldConstants.k_allianceZoneDepth + FieldConstants.k_hubZoneDepth)? 2 : 
+            (turretX < FieldConstants.k_allianceZoneDepth + FieldConstants.k_hubZoneDepth + FieldConstants.k_neutralZoneDepth)? 3 : 
+            (turretX < FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth)? 4 : 5;
+    }
+
+    public double getMinAllowedAngle() {
+        double trenchDistance = 0.0;
+        double availableTime = 0.0;
+        return 70.0; // bruh
+    }
+
     public Pose3d getTurretPose() {
         return new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)); // tOdO gibb dis
     }
@@ -177,29 +196,69 @@ public class TurretSystem extends SubsystemBase {
         return new Translation2d(0, 0);
     }
 
-    public Command aimToHub() {return aimToTrajectoryFunction(
-        () -> getTurretPose(), () -> getTurretVelocity(), () -> ParabolicTrajectory.toHubFromXYWhileDriving()
-    );}
-    // aimToTrajectoryFunction(() -> turretPos, () -> turretVel, () -> robotDir, ParabolicTrajectory.toHubFromXYWhileDriving)
-    public Command aimToTrajectoryFunction(Supplier<Pose3d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier,
-                                           Function<Double[], ParabolicTrajectory> trajectoryFunction) {
-        return aimToSuppliedTrajectory(
-            () -> {
-                Double[] trajectoryArguments = {
-                    turretPositionSupplier.get().getX(), turretPositionSupplier.get().getY(),  // this and below are verifiably function soup
-                    turretVelocitySupplier.get().getX(), turretVelocitySupplier.get().getY()}; // wouldn't it be nice if java just had first class function support
-                return trajectoryFunction.apply(trajectoryArguments);
-            }, 
-            robotOrientationSupplier);
+    public TurretInstruction generateInstruction(Supplier<Pose2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier) {
+        Pose2d turretPosition = turretPositionSupplier.get();
+        double turretX = turretPosition.getX();
+        double turretY = turretPosition.getY();
+        Translation2d turretVelocity = turretVelocitySupplier.get();
+        double turretVX = turretVelocity.getX();
+        double turretVY = turretVelocity.getY();
+
+        if (isBlueTeam && getZone(turretX) == 2 || isRedTeam && getZone(turretX) == 4) {
+            ParabolicTrajectory testTrajectoryHub = ParabolicTrajectory.toHubFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
+            ParabolicTrajectory testTrajectoryZone = ParabolicTrajectory.toZoneFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
+            if (testTrajectoryHub == null || testTrajectoryZone == null) {return TurretInstruction.HoldStateDontShoot();}
+            double hubWeight = isBlueTeam? (turretX - FieldConstants.k_allianceZoneDepth) / FieldConstants.k_hubZoneDepth : 
+                                           (FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth - turretX) / FieldConstants.k_hubZoneDepth;
+            ParabolicTrajectory testTrajectory = new ParabolicTrajectory(
+                testTrajectoryHub.launchDirection * hubWeight + testTrajectoryZone.launchDirection * (1.0 - hubWeight), 
+                TurretConstants.k_maxAngleUnderTrench, 
+                testTrajectoryHub.launchVelocity * hubWeight + testTrajectoryZone.launchVelocity * (1.0 - hubWeight), 
+                turretX, turretY, TurretConstants.k_turretHeight);
+            return new TurretInstruction(false, Degrees.of(testTrajectory.launchDirection), 
+                                                Degrees.of(testTrajectory.launchAngle), 
+                                                launchVelocityToAngular(testTrajectory.launchVelocity));
+        } else {
+            ParabolicTrajectory testTrajectory;
+
+            if (isBlueTeam && getZone(turretX) == 1 || isRedTeam && getZone(turretX) == 5) {
+                testTrajectory = ParabolicTrajectory.toHubFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
+            } else {
+                testTrajectory = ParabolicTrajectory.toZoneFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
+            }
+
+            if (testTrajectory == null) {
+                return TurretInstruction.HoldStateDontShoot();
+            }
+            TurretInstruction testInstruction = new TurretInstruction(true, Degrees.of(testTrajectory.launchDirection), 
+                                                                            Degrees.of(testTrajectory.launchAngle), 
+                                                                            launchVelocityToAngular(testTrajectory.launchVelocity));
+            double minAllowedAngle = getMinAllowedAngle();
+            if (testTrajectory.launchAngle < minAllowedAngle) {
+                testInstruction.doShoot = false;
+                testInstruction.targetPitch = Degrees.of(minAllowedAngle);
+            }
+            return testInstruction;
+        }
     }
 
-    public Command aimToSuppliedTrajectory(Supplier<ParabolicTrajectory> trajectorySupplier, Supplier<Double> robotOrientationSupplier) {
+    // aimToTrajectoryFunction(() -> turretPos, () -> turretVel, () -> robotDir, ParabolicTrajectory.toHubFromXYWhileDriving)
+    public Command aimToHub(Supplier<Pose2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier, Supplier<Angle> robotOrientationSupplier) {
+        return aimToInstruction(() -> generateInstruction(turretPositionSupplier, turretVelocitySupplier), robotOrientationSupplier);
+            // () -> {
+            //     Double[] trajectoryArguments = {
+            //         turretPositionSupplier.get().getX(), turretPositionSupplier.get().getY(),  // this and below are verifiably function soup
+            //         turretVelocitySupplier.get().getX(), turretVelocitySupplier.get().getY()}; // wouldn't it be nice if java just had first class function support
+            //     return ParabolicTrajectory.toHubFromXYWhileDriving(trajectoryArguments);
+            // },
+    }
+
+    public Command aimToInstruction(Supplier<TurretInstruction> instructionSupplier, Supplier<Angle> robotOrientationSupplier) {
         return Commands.parallel(
-            setAnglesDynamic(() -> {return toRobotOrientation(
-                                trajectorySupplier.get().launchDirection, 
-                                robotOrientationSupplier.get());}, 
-                            () -> {return Degrees.of(trajectorySupplier.get().launchAngle);}),
-            setSpeedDynamic(() -> {return launchVelocityToAngular(trajectorySupplier.get().launchVelocity);}));
+            setAnglesDynamic(() -> instructionSupplier.get().targetYaw.minus(robotOrientationSupplier.get()), 
+                            () -> instructionSupplier.get().targetPitch),
+            setSpeedDynamic(() -> instructionSupplier.get().targetVelocity),
+            setKickerActivity(() -> instructionSupplier.get().doShoot));
     }
 
     public Command setSpeed(AngularVelocity speed) {
@@ -258,10 +317,6 @@ public class TurretSystem extends SubsystemBase {
         turretPitch.simIterate();
     }
 
-    public static Angle toRobotOrientation(double fieldDirection, double robotOrientation) {
-        return Degrees.of(fieldDirection - robotOrientation); // how to actually access robot SwerveSystem?
-    }
-
     public static AngularVelocity launchVelocityToAngular(double launchVelocity) {
         return RadiansPerSecond.of(launchVelocity / TurretConstants.k_wheelRadius);
     }
@@ -314,6 +369,30 @@ public class TurretSystem extends SubsystemBase {
 
     public Command rezeroYaw() {
         return Commands.runOnce(() -> yawMotorSpark.getEncoder().setPosition(0), this).withName("TurretYaw.Rezero");
+    }
+
+    
+    public Command setKickerActivity(boolean active) {
+        return KickerSubsystem.getInstance().setSpeed(RPM.of(active? TurretConstants.k_kickerSpeed : 0.0)); // create kicker system and understand controls
+    }
+
+
+    public class TurretInstruction {
+        public boolean doShoot;
+        public Angle targetYaw;
+        public Angle targetPitch;
+        public AngularVelocity targetVelocity;
+
+        public TurretInstruction(boolean doShoot, Angle targetYaw, Angle targetPitch, AngularVelocity targetVelocity) {
+            this.doShoot = doShoot;
+            this.targetYaw = targetYaw;
+            this.targetPitch = targetPitch;
+            this.targetVelocity = targetVelocity;
+        }
+
+        static TurretInstruction HoldStateDontShoot() {
+            return null; // DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+        }
     }
 }
 //     public class ShootOnTheMoveCommand extends Command {

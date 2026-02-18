@@ -106,8 +106,8 @@ public class ParabolicTrajectory {
         return 1.0 / targetVXCoefficient;
     }
 
-    public static ParabolicTrajectory toHubFromXYWhileDriving(double[] launch) { // launchX, double launchY, double turretVX, double turretVY) {
-        double launchX = launch[0]; double launchY = launch[1]; double turretVX = launch[2]; double turretVY = launch[3];
+    public static ParabolicTrajectory toHubFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
+        // double launchX = launch[0]; double launchY = launch[1]; double turretVX = launch[2]; double turretVY = launch[3];
         double time = timeToHubFromXY(launchX, launchY);
         if (time == Double.NaN) {return null;}
         double xDisplacement = k_hubX - launchX - time * turretVX;
@@ -132,8 +132,8 @@ public class ParabolicTrajectory {
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
 
-    public static ParabolicTrajectory toZoneFromXYWhileDriving(double[] launch) { // launchX, double launchY, double turretVX, double turretVY) {
-        double launchX = launch[0]; double launchY = launch[1]; double turretVX = launch[2]; double turretVY = launch[3];
+    public static ParabolicTrajectory toZoneFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
+        // double launchX = launch[0]; double launchY = launch[1]; double turretVX = launch[2]; double turretVY = launch[3];
         double targetX = isBlueTeam? k_allianceZoneDepth + k_hubBodyWidth / 2.0 : k_fieldLength - k_allianceZoneDepth - k_hubBodyWidth / 2.0;
         double targetY = k_fieldWidth / 2.0;
         boolean topHalf = launchY > k_fieldWidth / 2.0;
