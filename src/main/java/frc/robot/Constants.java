@@ -31,7 +31,7 @@ public class Constants {
         public static final double k_maxLaunchAngle = 80.0;
         public static final double k_maxHubLaunchDistance = Math.hypot(FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
         public static final double k_maxZoneLaunchDistance = Math.hypot(FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
-        public static final double k_maxAngleUnderTrench = 70.0; // GET DOUBLE TRIPLE QUADRUPLE CHECKED BY ENGINEERING
+        public static final double k_minAngleUnderTrench = 70.0; // GET DOUBLE TRIPLE QUADRUPLE CHECKED BY ENGINEERING
         public static final double k_RPMTolerance = 2000000000000000.0;
         public static final double k_launchVelocityTolerance = 20000000000.0;
         public static final double k_launchDirectionTolerance = 2000000000000.0;
@@ -53,6 +53,7 @@ public class Constants {
         public static final double k_hubBodyDepth = 47.0 / 12.0;
         public static final double k_allianceZoneDepth = 158.6 / 12.0;
         public static final double k_hubZoneDepth = k_hubBodyDepth;
+        public static final double k_trenchBarDepth = 3.5 / 12.0;
         public static final double k_neutralZoneDepth = k_fieldLength - 2.0 * (k_allianceZoneDepth + k_hubZoneDepth);
         public static final double k_hubWidth = 41.7 / 12.0;
         public static final double k_hubRadius = k_hubWidth / Math.sqrt(3.0);

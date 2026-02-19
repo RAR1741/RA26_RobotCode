@@ -183,8 +183,26 @@ public class TurretSystem extends SubsystemBase {
             (turretX < FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth)? 4 : 5;
     }
 
-    public double getMinAllowedAngle() {
-        double trenchDistance = 0.0;
+    public static boolean getYInTrench(double turretY) {
+        return turretY <= FieldConstants.k_trenchWidth || turretY >= FieldConstants.k_fieldWidth - FieldConstants.k_trenchWidth;
+    }
+
+    public double getMinAllowedAngle(double turretX, double turretY, double turretVX, double turretVY) {
+        boolean yInTrench = getYInTrench(turretY);
+        double trenchDistance = Math.abs(turretX - (FieldConstants.k_fieldLength + 
+            (FieldConstants.k_neutralZoneDepth + FieldConstants.k_hubZoneDepth) * 
+                ((turretX > FieldConstants.k_fieldLength / 2.0)? 1.0 : -1.0)) / 2.0)
+             - FieldConstants.k_hubZoneDepth / 2.0;
+        if (!yInTrench) {
+            trenchDistance = Math.hypot(trenchDistance, 
+                FieldConstants.k_fieldWidth / 2.0 - FieldConstants.k_trenchWidth - 
+                    Math.abs(turretY - FieldConstants.k_fieldWidth / 2.0));
+        } else if (trenchDistance < 0.0) {return TurretConstants.k_minAngleUnderTrench;}
+        double trenchDistanceGradientX = yInTrench? // :)  :D  :P  we love gradients  :>  C:  'v'  yaaaay  :]  :3  'u'
+            ((turretX > FieldConstants.k_blueHubX || (turretX > FieldConstants.fieldLength / 2.0 && turretX < FieldConstants.k_redHubX))? 1.0 : -1.0) : 
+            ();
+        double trenchDistanceGradientY = yInTrench? 0.0 : 
+            ();
         double availableTime = 0.0;
         return 70.0; // bruh
     }
@@ -212,7 +230,7 @@ public class TurretSystem extends SubsystemBase {
                                            (FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth - turretX) / FieldConstants.k_hubZoneDepth;
             ParabolicTrajectory testTrajectory = new ParabolicTrajectory(
                 testTrajectoryHub.launchDirection * hubWeight + testTrajectoryZone.launchDirection * (1.0 - hubWeight), 
-                TurretConstants.k_maxAngleUnderTrench, 
+                TurretConstants.k_minAngleUnderTrench, 
                 testTrajectoryHub.launchVelocity * hubWeight + testTrajectoryZone.launchVelocity * (1.0 - hubWeight), 
                 turretX, turretY, TurretConstants.k_turretHeight);
             return new TurretInstruction(false, Degrees.of(testTrajectory.launchDirection), 
@@ -233,7 +251,7 @@ public class TurretSystem extends SubsystemBase {
             TurretInstruction testInstruction = new TurretInstruction(true, Degrees.of(testTrajectory.launchDirection), 
                                                                             Degrees.of(testTrajectory.launchAngle), 
                                                                             launchVelocityToAngular(testTrajectory.launchVelocity));
-            double minAllowedAngle = getMinAllowedAngle();
+            double minAllowedAngle = getMinAllowedAngle(turretX, turretY, turretVX, turretVY);
             if (testTrajectory.launchAngle < minAllowedAngle) {
                 testInstruction.doShoot = false;
                 testInstruction.targetPitch = Degrees.of(minAllowedAngle);
@@ -245,12 +263,6 @@ public class TurretSystem extends SubsystemBase {
     // aimToTrajectoryFunction(() -> turretPos, () -> turretVel, () -> robotDir, ParabolicTrajectory.toHubFromXYWhileDriving)
     public Command aimToHub(Supplier<Pose2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier, Supplier<Angle> robotOrientationSupplier) {
         return aimToInstruction(() -> generateInstruction(turretPositionSupplier, turretVelocitySupplier), robotOrientationSupplier);
-            // () -> {
-            //     Double[] trajectoryArguments = {
-            //         turretPositionSupplier.get().getX(), turretPositionSupplier.get().getY(),  // this and below are verifiably function soup
-            //         turretVelocitySupplier.get().getX(), turretVelocitySupplier.get().getY()}; // wouldn't it be nice if java just had first class function support
-            //     return ParabolicTrajectory.toHubFromXYWhileDriving(trajectoryArguments);
-            // },
     }
 
     public Command aimToInstruction(Supplier<TurretInstruction> instructionSupplier, Supplier<Angle> robotOrientationSupplier) {
@@ -271,32 +283,10 @@ public class TurretSystem extends SubsystemBase {
 
     public Command spinUp() {
         return setSpeed(RPM.of(5500));
-
-        // return setSpeed(RotationsPerSecond.of(50));
-
-        // return run(() -> {
-        // // followerNova.follow(leaderNova.getID());
-        // // followerNova.setInverted(true);
-
-        // // leaderNova.setPercent(SHOOTER_SPEED);
-        // // followerNova.setPercent(SHOOTER_SPEED);
-
-        // // followerNova.setPercent(0.5);
-        // });
-
-        // return shooter.set(0.5);
-        // return shooter.setSpeed(RotationsPerSecond.of(500));
     }
 
     public Command stop() {
         return setSpeed(RPM.of(0));
-        // return run(() -> {
-
-        // // leaderNova.setPercent(0);
-        // // followerNova.setPercent(0);
-        // // followerNova.setPercent(0.5);
-        // });
-        // return shooter.set(0);
     }
 
     public AngularVelocity getSpeed() {
@@ -347,12 +337,11 @@ public class TurretSystem extends SubsystemBase {
     }
 
     public Angle getRobotRelativeYaw() {
-        // Returns the turret angle in the robot's coordinate frame ---- shouldn't this already be from the robot's frame?
         return turretYaw.getAngle();
     }
 
-    public Angle getFieldRelativeYaw() {
-        return turretYaw.getAngle(); // shouldn't this one be the one that needs to be converted?
+    public Angle getFieldRelativeYaw(Angle robotOrientation) {
+        return turretYaw.getAngle().minus(robotOrientation);
     }
 
     public Angle getRawPitch() {
