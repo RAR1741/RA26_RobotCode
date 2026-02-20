@@ -187,22 +187,39 @@ public class TurretSystem extends SubsystemBase {
         return turretY <= FieldConstants.k_trenchWidth || turretY >= FieldConstants.k_fieldWidth - FieldConstants.k_trenchWidth;
     }
 
-    public double getMinAllowedAngle(double turretX, double turretY, double turretVX, double turretVY) {
-        boolean yInTrench = getYInTrench(turretY);
-        double trenchDistance = Math.abs(turretX - (FieldConstants.k_fieldLength + 
+    public double getMinAllowedAngle(double robotX, double robotY, double robotVX, double robotVY) {
+        boolean yInTrench = getYInTrench(robotY);
+
+        double trenchDistance = Math.abs(robotX - (FieldConstants.k_fieldLength + 
             (FieldConstants.k_neutralZoneDepth + FieldConstants.k_hubZoneDepth) * 
-                ((turretX > FieldConstants.k_fieldLength / 2.0)? 1.0 : -1.0)) / 2.0)
+                ((robotX > FieldConstants.k_fieldLength / 2.0)? 1.0 : -1.0)) / 2.0)
              - FieldConstants.k_hubZoneDepth / 2.0;
         if (!yInTrench) {
             trenchDistance = Math.hypot(trenchDistance, 
                 FieldConstants.k_fieldWidth / 2.0 - FieldConstants.k_trenchWidth - 
-                    Math.abs(turretY - FieldConstants.k_fieldWidth / 2.0));
+                    Math.abs(robotY - FieldConstants.k_hubY));
         } else if (trenchDistance < 0.0) {return TurretConstants.k_minAngleUnderTrench;}
-        double trenchDistanceGradientX = yInTrench? // :)  :D  :P  we love gradients  :>  C:  'v'  yaaaay  :]  :3  'u'
-            ((turretX > FieldConstants.k_blueHubX || (turretX > FieldConstants.fieldLength / 2.0 && turretX < FieldConstants.k_redHubX))? 1.0 : -1.0) : 
-            ();
-        double trenchDistanceGradientY = yInTrench? 0.0 : 
-            ();
+        trenchDistance -= TurretConstants.turretDistToRobotCenter;
+
+        double trenchDistanceGradientX; // :)  :D  :P  we love gradients  :>  C:  'v'  yaaaay  :]  :3  'u'
+        double trenchDistanceGradientY;
+        if (yInTrench) {
+            trenchDistanceGradientX = (robotX < FieldConstants.k_blueHubX || (robotX > FieldConstants.k_fieldLength / 2.0 && robotX < FieldConstants.k_redHubX))? 1.0 : -1.0;
+            trenchDistanceGradientY = 0.0;
+        } else {
+            double nearestY = robotY > FieldConstants.k_hubY? FieldConstants.k_fieldWidth - FieldConstants.k_trenchWidth : FieldConstants.k_trenchWidth;
+            double nearestX = FieldConstants.k_allianceZoneDepth + 
+                ((robotX < FieldConstants.k_blueHubX || robotX > FieldConstants.k_redHubX)? 0.0 : FieldConstants.k_hubZoneDepth);
+            if (robotX > FieldConstants.k_fieldLength / 2.0) {
+                nearestX = FieldConstants.k_fieldLength - nearestX;
+            }
+            double trenchDistanceAngle = Math.atan2(nearestY - robotY, nearestX - robotX);
+            trenchDistanceGradientX = Math.cos(trenchDistanceAngle);
+            trenchDistanceGradientY = Math.sin(trenchDistanceAngle);
+        }
+        double robotVelocityTowardsTrench = robotVX * trenchDistanceGradientX + robotVY * trenchDistanceGradientY; // dot product
+        // x = dx - v * t - a/2 * t^2
+        // t = (v + sqrt(v^2 + 2 * a * (dx - x))) / a
         double availableTime = 0.0;
         return 70.0; // bruh
     }
