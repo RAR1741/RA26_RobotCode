@@ -11,7 +11,7 @@ import frc.robot.controls.DriverController;
 import frc.robot.subsystems.SwerveSystem;
 
 public class RobotContainer {
-  private final SwerveSystem m_swerve = new SwerveSystem();;
+  private final SwerveSystem m_swerve = new SwerveSystem();
 
   public RobotContainer() {
     configureBindings();

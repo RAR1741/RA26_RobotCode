@@ -21,6 +21,7 @@ import swervelib.math.SwerveMath;
 import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import frc.robot.Telemetry;
+import frc.robot.controls.DriverController;
 import swervelib.SwerveInputStream;
 
 public class SwerveSystem extends SubsystemBase {
@@ -38,7 +39,7 @@ public class SwerveSystem extends SubsystemBase {
         this.m_kinematics = Constants.SwerveDriveConstants.k_kinematics;
         this.m_limelight = new LimelightSystem(swerveDrive);
 
-        File swerveDir = new File(Filesystem.getDeployDirectory(), "swerve"); 
+        File swerveDir = new File(Filesystem.getDeployDirectory(), "swerve/modules"); 
         
         try {
             this.parser = new SwerveParser(swerveDir);
@@ -74,7 +75,7 @@ public class SwerveSystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        m_limelight.periodic();
+        DriverController.testGetControllerButtonA();
     }
 
     @Override
