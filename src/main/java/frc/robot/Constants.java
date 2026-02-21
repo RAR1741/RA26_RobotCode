@@ -21,7 +21,7 @@ public class Constants {
     }
 
     public static class TurretConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
-        public static final double k_gravitationalAcceleration = 32.174;
+        public static final double k_gravity = 32.174;
         public static final double k_turretRelativeX = 9999999999.0;
         public static final double k_turretRelativeY = 9999999999.0;
         public static final double k_turretDistToRobotCenter = Math.hypot(k_turretRelativeX, k_turretRelativeY);
@@ -35,6 +35,7 @@ public class Constants {
         public static final double k_maxLaunchAngle = 80.0;
         public static final double k_maxHubLaunchDistance = Math.hypot(FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
         public static final double k_maxZoneLaunchDistance = Math.hypot(FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
+        public static final double k_minZoneLaunchVelocity = 5.0;
         public static final double k_minAngleUnderTrench = 70.0; // GET DOUBLE TRIPLE QUADRUPLE CHECKED BY ENGINEERING
         public static final double k_maxTrenchPitchMotorPos = TurretSystem.launchPitchToMotorPos(k_minAngleUnderTrench);
         public static final double k_RPMTolerance = 2000000000000000.0;
@@ -46,11 +47,14 @@ public class Constants {
         public static final int k_pitchMotorId = 9999;
         public static final int k_flywheelMotorIdA = 9999;
         public static final int k_flywheelMotorIdB = 9999;
+        public static final int k_timeSolvingIterations = 5;
     }
 
     public static class FieldConstants { // feet (NOT INCHES)
         public static final double k_fieldWidth = 26.0 + 5.7 / 12.0;
         public static final double k_fieldLength = 57.0 + (6.0 + (7.0 / 8.0)) / 12.0;
+        public static final double k_fieldCenterX = k_fieldLength / 2.0;
+        public static final double k_fieldCenterY = k_fieldWidth / 2.0;
         public static final double k_trenchWidth = 50.34 / 12.0;
         public static final double k_trenchBumpBarrierWidth = (65.65 - 50.34) / 12.0;
         public static final double k_bumpWidth = 73.0 / 12.0;
@@ -65,7 +69,7 @@ public class Constants {
         public static final double k_hubHeight = 6.0;
         public static final double k_blueHubX = k_allianceZoneDepth + k_hubZoneDepth / 2.0;
         public static final double k_redHubX = k_fieldLength - (k_allianceZoneDepth + k_hubZoneDepth / 2.0);
-        public static final double k_hubY = k_fieldWidth / 2.0; // adjust to field coordinate convention
+        public static final double k_hubY = k_fieldCenterY;
         public static final double k_fuelRadius = 5.91 / 2.0 / 12.0;
         public static final double k_fuelMass = 0.474; // average
         public static final double k_ceilingHeight = 15.0; // estimated

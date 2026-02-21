@@ -290,6 +290,43 @@ public class TurretSystem extends SubsystemBase {
         return testInstruction;
     }
 
+    // 70 degree launch to hub
+    public TurretInstruction generateInstructionJordanMode(Supplier<Pose2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier) {
+        Pose2d turretPosition = turretPositionSupplier.get();
+        double turretX = turretPosition.getX();
+        double turretY = turretPosition.getY();
+        Translation2d turretVelocity = turretVelocitySupplier.get();
+        double turretVX = turretVelocity.getX();
+        double turretVY = turretVelocity.getY();
+
+        ParabolicTrajectory testTrajectory;
+        int zone = getZone(turretX);
+        boolean aimingToHub = isBlueTeam && zone <= 2 || isRedTeam && zone >= 4;
+        boolean underTrenchBar = isBlueTeam && zone == 2 || isRedTeam && zone == 4;
+        if (aimingToHub) {
+            testTrajectory = ParabolicTrajectory.toHubFromAXYWhileDriving(70.0, turretX, turretY, turretVX, turretVY);
+        } else {
+            testTrajectory = ParabolicTrajectory.toZoneFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
+        }
+        if (testTrajectory == null) {
+            return TurretInstruction.HoldStateDontShoot();
+        }
+        TurretInstruction testInstruction = new TurretInstruction(!underTrenchBar, 
+            Degrees.of(testTrajectory.launchDirection), 
+            Degrees.of(testTrajectory.launchAngle), 
+            launchVelocityToAngular(testTrajectory.launchVelocity));
+
+        double minAllowedAngle = getMinAllowedAngle(turretX, turretY, turretVX, turretVY); // min allowed angle is always at or below 70 degrees
+        if (testTrajectory.launchAngle < minAllowedAngle) {
+            testInstruction.targetPitch = Degrees.of(minAllowedAngle); // just assumes zone shot behavior
+        }
+
+        if (!testTrajectory.testValid()) {
+            testInstruction.doShoot = false;
+        }
+        return testInstruction;
+    }
+
     // aimToTrajectoryFunction(() -> turretPos, () -> turretVel, () -> robotDir, ParabolicTrajectory.toHubFromXYWhileDriving)
     public Command aimToHub(Supplier<Pose2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier, Supplier<Angle> robotOrientationSupplier) {
         return aimToInstruction(() -> generateInstruction(turretPositionSupplier, turretVelocitySupplier), robotOrientationSupplier);
