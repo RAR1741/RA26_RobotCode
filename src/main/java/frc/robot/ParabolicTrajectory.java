@@ -79,14 +79,14 @@ public class ParabolicTrajectory {
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, launchHeight);
     }
 
-    public static ParabolicTrajectory toHubFromAXY(double launchAngle, double launchX, double launchY) {
+    public static ParabolicTrajectory toHubFromAXY(double launchAngle, double launchX, double launchY, double launchVX, double launchVY) { // tOdO skew input angle
         double xDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
         double yDistance = k_hubHeight - k_turretHeight;
         double launchVelocity = solveLaunchVelocity(launchAngle, xDistance, yDistance);
         double launchDirection = Math.atan2(k_hubY - launchY, k_hubX - launchX);
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
-    public static ParabolicTrajectory toHubFromVXY(double launchVelocity, double launchX, double launchY) {
+    public static ParabolicTrajectory toHubFromVXY(double launchVelocity, double launchX, double launchY) { // maybe don't need, but nonetheless skew angles
         double xDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
         double yDistance = k_hubHeight - k_turretHeight;
         double launchAngle = solveUpperLaunchAngle(launchVelocity, xDistance, yDistance);
@@ -95,7 +95,7 @@ public class ParabolicTrajectory {
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
     }
 
-    public static double timeToHubFromXY(double launchX, double launchY) {
+    public static double timeToHubFromXY(double launchX, double launchY, double launchVX, double launchVY) { // tOdO skew limit angles
         double horizontalDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
         double launchHorizontalVelocity = targetVXCoefficient * horizontalDistance;
         if (launchHorizontalVelocity < minLaunchVX) {
@@ -108,7 +108,7 @@ public class ParabolicTrajectory {
 
     public static ParabolicTrajectory toHubFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
         // double launchX = launch[0]; double launchY = launch[1]; double turretVX = launch[2]; double turretVY = launch[3];
-        double time = timeToHubFromXY(launchX, launchY);
+        double time = timeToHubFromXY(launchX, launchY, turretVX, turretVY);
         if (time == Double.NaN) {return null;}
         double xDisplacement = k_hubX - launchX - time * turretVX;
         double yDisplacement = k_hubY - launchY - time * turretVY;
@@ -130,6 +130,10 @@ public class ParabolicTrajectory {
         double launchVelocity = Math.hypot(launchHorizontalVelocity, launchVerticalVelocity);
         double launchDirection = atan2(yDisplacement, xDisplacement);
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
+    }
+
+    public static ParabolicTrajectory toHubFromAXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
+        
     }
 
     public static ParabolicTrajectory toZoneFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
@@ -225,11 +229,12 @@ public class ParabolicTrajectory {
         return yVelocity / xVelocity;
     }
     public boolean testValid() {
-        return launchVelocity > 0 && launchVelocity <= k_maxLaunchVelocity && 
+        return launchVelocity > 0.0 && launchVelocity <= k_maxLaunchVelocity && 
                launchAngle >= TurretConstants.k_minLaunchAngle && launchAngle <= TurretConstants.k_maxLaunchAngle && 
                launchX >= 0.0 && launchX <= k_fieldLength && 
                launchY >= 0.0 && launchY <= k_fieldWidth && 
-               launchHeight >= 0.0 && launchHeight <= FieldConstants.k_ceilingHeight;
+               launchHeight >= 0.0 && launchHeight <= FieldConstants.k_ceilingHeight && 
+               maxLaunchHeight() <= FieldConstants.k_ceilingHeight;
     }
     public double timeToHubScoring() {
         return TurretConstants.k_extraTimeToPassSensor + secondTimeToAbsHeight(k_hubHeight);
@@ -266,4 +271,8 @@ public class ParabolicTrajectory {
     public static double arcsin(double ratio) {return Math.toDegrees(Math.asin(ratio));}
     public static double arccos(double ratio) {return Math.toDegrees(Math.acos(ratio));}
     public static double atan2(double y, double x) {return Math.toDegrees(Math.atan2(y, x));}
+    public static double qFormulaPlus(double a, double b, double c) {return (-b + Math.sqrt(b * b - 4.0 * a * c)) / (2.0 * a);}
+    public static double qFormulaMinus(double a, double b, double c) {return (-b - Math.sqrt(b * b - 4.0 * a * c)) / (2.0 * a);}
+    public static double qFormulaGreater(double a, double b, double c) {return (-b + (a > 0? 1.0 : -1.0) * Math.sqrt(b * b - 4.0 * a * c)) / (2.0 * a);}
+    public static double qFormulaLesser(double a, double b, double c) {return (-b + (a > 0? -1.0 : 1.0) * Math.sqrt(b * b - 4.0 * a * c)) / (2.0 * a);}
 }

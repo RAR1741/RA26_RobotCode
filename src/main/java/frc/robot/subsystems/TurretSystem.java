@@ -42,11 +42,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.ParabolicTrajectory;
 // import frc.robot.Telemetry;
 // import frc.robot.subsystems.SwerveSystem;
+
+// bro we are not using yams bruh
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 
@@ -177,10 +180,10 @@ public class TurretSystem extends SubsystemBase {
 
     public static int getZone(double turretX) {
         return (turretX < 0.0 || turretX > FieldConstants.k_fieldLength)? -1 : 
-            (turretX < FieldConstants.k_allianceZoneDepth)? 1 : 
-            (turretX < FieldConstants.k_allianceZoneDepth + FieldConstants.k_hubZoneDepth)? 2 : 
-            (turretX < FieldConstants.k_allianceZoneDepth + FieldConstants.k_hubZoneDepth + FieldConstants.k_neutralZoneDepth)? 3 : 
-            (turretX < FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth)? 4 : 5;
+            (turretX < FieldConstants.k_blueHubX - FieldConstants.k_trenchBarDepth / 2.0 - TurretConstants.k_turretMaxHorizontalRadius)? 1 : 
+            (turretX <= FieldConstants.k_blueHubX + FieldConstants.k_trenchBarDepth / 2.0 + TurretConstants.k_turretMaxHorizontalRadius)? 2 : 
+            (turretX < FieldConstants.k_redHubX - FieldConstants.k_trenchBarDepth / 2.0 - TurretConstants.k_turretMaxHorizontalRadius)? 3 : 
+            (turretX <= FieldConstants.k_redHubX + FieldConstants.k_trenchBarDepth / 2.0 + TurretConstants.k_turretMaxHorizontalRadius)? 4 : 5;
     }
 
     public static boolean getYInTrench(double turretY) {
@@ -190,16 +193,16 @@ public class TurretSystem extends SubsystemBase {
     public double getMinAllowedAngle(double robotX, double robotY, double robotVX, double robotVY) {
         boolean yInTrench = getYInTrench(robotY);
 
+        // add desmos graph link
         double trenchDistance = Math.abs(robotX - (FieldConstants.k_fieldLength + 
             (FieldConstants.k_neutralZoneDepth + FieldConstants.k_hubZoneDepth) * 
                 ((robotX > FieldConstants.k_fieldLength / 2.0)? 1.0 : -1.0)) / 2.0)
-             - FieldConstants.k_hubZoneDepth / 2.0;
+             - FieldConstants.k_hubZoneDepth / 2.0 - TurretConstants.k_turretDistToRobotCenter;
         if (!yInTrench) {
             trenchDistance = Math.hypot(trenchDistance, 
                 FieldConstants.k_fieldWidth / 2.0 - FieldConstants.k_trenchWidth - 
                     Math.abs(robotY - FieldConstants.k_hubY));
         } else if (trenchDistance < 0.0) {return TurretConstants.k_minAngleUnderTrench;}
-        trenchDistance -= TurretConstants.turretDistToRobotCenter;
 
         double trenchDistanceGradientX; // :)  :D  :P  we love gradients  :>  C:  'v'  yaaaay  :]  :3  'u'
         double trenchDistanceGradientY;
@@ -217,11 +220,12 @@ public class TurretSystem extends SubsystemBase {
             trenchDistanceGradientX = Math.cos(trenchDistanceAngle);
             trenchDistanceGradientY = Math.sin(trenchDistanceAngle);
         }
-        double robotVelocityTowardsTrench = robotVX * trenchDistanceGradientX + robotVY * trenchDistanceGradientY; // dot product
-        // x = dx - v * t - a/2 * t^2
-        // t = (v + sqrt(v^2 + 2 * a * (dx - x))) / a
-        double availableTime = 0.0;
-        return 70.0; // bruh
+        double vIntoTrench = robotVX * trenchDistanceGradientX + robotVY * trenchDistanceGradientY; // dot product
+        double maxAcceleration = Constants.SwerveDriveConstants.k_maxAcceleration;
+        // x = dx - v * t - a/2 * t^2 = 0
+        // double availableTime = (Math.sqrt(vIntoTrench * vIntoTrench + 2.0 * maxAcceleration * trenchDistance) - vIntoTrench) / maxAcceleration;
+        double availableTime = ParabolicTrajectory.qFormulaGreater(-maxAcceleration / 2.0, -vIntoTrench, trenchDistance);
+        return pitchMotorToLaunchPitch(TurretConstants.k_maxTrenchPitchMotorPos + availableTime * TurretConstants.k_pitchMotorMaxSpeed);
     }
 
     public Pose3d getTurretPose() {
@@ -231,6 +235,7 @@ public class TurretSystem extends SubsystemBase {
         return new Translation2d(0, 0);
     }
 
+    // see if these parameters need to be listed as suppliers
     public TurretInstruction generateInstruction(Supplier<Pose2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier) {
         Pose2d turretPosition = turretPositionSupplier.get();
         double turretX = turretPosition.getX();
@@ -239,42 +244,50 @@ public class TurretSystem extends SubsystemBase {
         double turretVX = turretVelocity.getX();
         double turretVY = turretVelocity.getY();
 
-        if (isBlueTeam && getZone(turretX) == 2 || isRedTeam && getZone(turretX) == 4) {
-            ParabolicTrajectory testTrajectoryHub = ParabolicTrajectory.toHubFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
-            ParabolicTrajectory testTrajectoryZone = ParabolicTrajectory.toZoneFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
-            if (testTrajectoryHub == null || testTrajectoryZone == null) {return TurretInstruction.HoldStateDontShoot();}
-            double hubWeight = isBlueTeam? (turretX - FieldConstants.k_allianceZoneDepth) / FieldConstants.k_hubZoneDepth : 
-                                           (FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth - turretX) / FieldConstants.k_hubZoneDepth;
-            ParabolicTrajectory testTrajectory = new ParabolicTrajectory(
-                testTrajectoryHub.launchDirection * hubWeight + testTrajectoryZone.launchDirection * (1.0 - hubWeight), 
-                TurretConstants.k_minAngleUnderTrench, 
-                testTrajectoryHub.launchVelocity * hubWeight + testTrajectoryZone.launchVelocity * (1.0 - hubWeight), 
-                turretX, turretY, TurretConstants.k_turretHeight);
-            return new TurretInstruction(false, Degrees.of(testTrajectory.launchDirection), 
-                                                Degrees.of(testTrajectory.launchAngle), 
-                                                launchVelocityToAngular(testTrajectory.launchVelocity));
+        // if (isBlueTeam && getZone(turretX) == 2 || isRedTeam && getZone(turretX) == 4) {
+        //     ParabolicTrajectory testTrajectory = ParabolicTrajectory.toHubFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
+        //     return new TurretInstruction(false, 
+        //         Degrees.of(testTrajectory.launchDirection), 
+        //         Degrees.of(Math.max(testTrajectory.launchAngle, TurretConstants.k_minAngleUnderTrench)), 
+        //         launchVelocityToAngular(testTrajectory.launchVelocity));
+        // } else {
+        ParabolicTrajectory testTrajectory;
+        int zone = getZone(turretX);
+        boolean aimingToHub = isBlueTeam && zone <= 2 || isRedTeam && zone >= 4;
+        boolean underTrenchBar = isBlueTeam && zone == 2 || isRedTeam && zone == 4;
+        if (aimingToHub) {
+            testTrajectory = ParabolicTrajectory.toHubFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
         } else {
-            ParabolicTrajectory testTrajectory;
+            testTrajectory = ParabolicTrajectory.toZoneFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
+        }
+        if (testTrajectory == null) {
+            return TurretInstruction.HoldStateDontShoot();
+        }
+        TurretInstruction testInstruction = new TurretInstruction(true, 
+            Degrees.of(testTrajectory.launchDirection), 
+            Degrees.of(testTrajectory.launchAngle), 
+            launchVelocityToAngular(testTrajectory.launchVelocity));
 
-            if (isBlueTeam && getZone(turretX) == 1 || isRedTeam && getZone(turretX) == 5) {
-                testTrajectory = ParabolicTrajectory.toHubFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
+        double minAllowedAngle = getMinAllowedAngle(turretX, turretY, turretVX, turretVY);
+        if (testTrajectory.launchAngle < minAllowedAngle) {
+            if (aimingToHub) {
+                testTrajectory = ParabolicTrajectory.toHubFromAXYWhileDriving(minAllowedAngle, turretX, turretY, turretVX, turretVY);
+                if (testTrajectory == null) {
+                    return TurretInstruction.HoldStateDontShoot();
+                }
+                testInstruction = new TurretInstruction(!underTrenchBar, 
+                    Degrees.of(testTrajectory.launchDirection), 
+                    Degrees.of(minAllowedAngle), 
+                    launchVelocityToAngular(testTrajectory.launchVelocity));
             } else {
-                testTrajectory = ParabolicTrajectory.toZoneFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
-            }
-
-            if (testTrajectory == null) {
-                return TurretInstruction.HoldStateDontShoot();
-            }
-            TurretInstruction testInstruction = new TurretInstruction(true, Degrees.of(testTrajectory.launchDirection), 
-                                                                            Degrees.of(testTrajectory.launchAngle), 
-                                                                            launchVelocityToAngular(testTrajectory.launchVelocity));
-            double minAllowedAngle = getMinAllowedAngle(turretX, turretY, turretVX, turretVY);
-            if (testTrajectory.launchAngle < minAllowedAngle) {
-                testInstruction.doShoot = false;
                 testInstruction.targetPitch = Degrees.of(minAllowedAngle);
             }
-            return testInstruction;
         }
+
+        if (!testTrajectory.testValid()) {
+            testInstruction.doShoot = false;
+        }
+        return testInstruction;
     }
 
     // aimToTrajectoryFunction(() -> turretPos, () -> turretVel, () -> robotDir, ParabolicTrajectory.toHubFromXYWhileDriving)
@@ -378,8 +391,16 @@ public class TurretSystem extends SubsystemBase {
     }
 
     
-    public Command setKickerActivity(boolean active) {
-        return KickerSubsystem.getInstance().setSpeed(RPM.of(active? TurretConstants.k_kickerSpeed : 0.0)); // create kicker system and understand controls
+    public Command setKickerActivity(Supplier<Boolean> activeSupplier) {
+        return KickerSystem.getInstance().setSpeed(RPM.of(activeSupplier.get()? TurretConstants.k_kickerSpeed : 0.0)); // create kicker system and understand controls
+    }
+
+
+    public static double launchPitchToMotorPos(double launchPitch) {
+        return 0.0; // BRUUUUHHHH
+    }
+    public static double pitchMotorToLaunchPitch(double motorPos) {
+        return 0.0; // tragic
     }
 
 
@@ -397,7 +418,8 @@ public class TurretSystem extends SubsystemBase {
         }
 
         static TurretInstruction HoldStateDontShoot() {
-            return null; // DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+            return null; // TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+            // and be sure that the angle goes above the minimum trench angle by default here
         }
     }
 }

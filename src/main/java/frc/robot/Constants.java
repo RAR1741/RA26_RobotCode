@@ -1,12 +1,14 @@
 package frc.robot;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import frc.robot.subsystems.TurretSystem;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
     public static class SwerveDriveConstants {
         public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics();
         public static final double k_maxSpeed = Units.feetToMeters(14.5); 
+        public static final double k_maxAcceleration = 999999999999999.0;
     }
 
     public static class ControllerConstants{
@@ -22,8 +24,10 @@ public class Constants {
         public static final double k_gravitationalAcceleration = 32.174;
         public static final double k_turretRelativeX = 9999999999.0;
         public static final double k_turretRelativeY = 9999999999.0;
+        public static final double k_turretDistToRobotCenter = Math.hypot(k_turretRelativeX, k_turretRelativeY);
         public static final double k_turretHeight = 21.0 / 12.0;
-        public static final double k_extraTimeToPassSensor = 1.0; // test this
+        public static final double k_turretMaxHorizontalRadius = 9999999.0;
+        public static final double k_extraTimeToPassSensor = 0.5; // test this
         public static final double k_targetLaunchVY = 20.0;
         public static final double k_maxRPM = 99999999999999.0;
         public static final double k_maxLaunchVelocity = 5000000000000000.0;
@@ -32,6 +36,7 @@ public class Constants {
         public static final double k_maxHubLaunchDistance = Math.hypot(FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
         public static final double k_maxZoneLaunchDistance = Math.hypot(FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
         public static final double k_minAngleUnderTrench = 70.0; // GET DOUBLE TRIPLE QUADRUPLE CHECKED BY ENGINEERING
+        public static final double k_maxTrenchPitchMotorPos = TurretSystem.launchPitchToMotorPos(k_minAngleUnderTrench);
         public static final double k_RPMTolerance = 2000000000000000.0;
         public static final double k_launchVelocityTolerance = 20000000000.0;
         public static final double k_launchDirectionTolerance = 2000000000000.0;
