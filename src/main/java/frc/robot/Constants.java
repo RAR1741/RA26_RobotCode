@@ -1,12 +1,32 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
     public static class SwerveDriveConstants {
-        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(); //get this in when we know bot dims
+        private final static Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
+        private final static Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
+        private final static Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
+        private final static Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+
+        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(
+            m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
+        ); //get this in when we know bot dims
+        
         public static final double k_maxSpeed = Units.feetToMeters(14.5); 
+
+        public static final double k_maxDriverSpeed = 1.0; // Meters per second
+        public static final double k_maxDriverBoostSpeed = 4.5;
+
+        public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
     }
 
     public static class ControllerConstants{
@@ -58,5 +78,17 @@ public class Constants {
 
         /** Target logging period in seconds for periodic recording (0 disables periodic flush). */
         public static final double k_logPeriodSeconds = 0.02; // 20 ms
+    }
+    
+    public static class SimulationConstants{
+        public final static boolean k_isInSimulation = true;
+        public final static DriveTrainSimulationConfig k_config = DriveTrainSimulationConfig.Default()
+            .withGyro(COTS.ofPigeon2())
+            .withSwerveModule(COTS.ofMark4(
+                DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
+                DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
+                COTS.WHEELS.COLSONS.cof, // Use the COF for Colson Wheels
+                3))
+            .withBumperSize(Inches.of(28.5), Inches.of(33.5));
     }
 }

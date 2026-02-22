@@ -113,4 +113,8 @@ public class LimelightSystem extends SubsystemBase {
         return true;
 
     }
+
+    public Optional<PoseEstimate> getMeasurements(){
+        return limelight.createPoseEstimator(EstimationMode.MEGATAG2).getPoseEstimate();
+    }
 }
