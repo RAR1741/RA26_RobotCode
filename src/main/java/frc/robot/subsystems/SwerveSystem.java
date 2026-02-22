@@ -87,7 +87,10 @@ public class SwerveSystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        m_limelight.periodic();
+        if (m_limelight != null) {
+            m_limelight.periodic();
+        }
+
         // Publish useful telemetry for debugging and logging
         try {
             // Robot chassis velocities
