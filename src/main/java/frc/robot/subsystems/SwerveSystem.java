@@ -27,6 +27,7 @@ import swervelib.SwerveDrive;
 import swervelib.SwerveModule;
 import frc.robot.Telemetry;
 import swervelib.SwerveInputStream;
+import org.littletonrobotics.junction.Logger;
 
 public class SwerveSystem extends SubsystemBase {
     SwerveDriveKinematics m_kinematics;
@@ -64,6 +65,8 @@ public class SwerveSystem extends SubsystemBase {
 
         Command onEnable = Commands.runOnce(() -> {
             Telemetry.log("running...");
+            // Record that swerve was enabled
+            Logger.recordOutput("Swerve/onEnabled", 1.0);
             if (Constants.SimulationConstants.k_isInSimulation){}
             else{
                 m_limelight.onEnabled();
@@ -84,10 +87,33 @@ public class SwerveSystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        if (Constants.SimulationConstants.k_isInSimulation){}
-        else{
+        if (m_limelight != null) {
             m_limelight.periodic();
         }
+
+        // Publish useful telemetry for debugging and logging
+        try {
+            // Robot chassis velocities
+            Telemetry.logNumber("Robot/vx_mps", swerveDrive.getRobotVelocity().vxMetersPerSecond);
+            Telemetry.logNumber("Robot/vy_mps", swerveDrive.getRobotVelocity().vyMetersPerSecond);
+
+            Logger.recordOutput("Robot/vx_mps", swerveDrive.getRobotVelocity().vxMetersPerSecond);
+            Logger.recordOutput("Robot/vy_mps", swerveDrive.getRobotVelocity().vyMetersPerSecond);
+
+            // Odometry pose
+            Pose2d pose = this.odometry.getPoseMeters();
+            Telemetry.logNumber("Robot/poseX_m", pose.getX());
+            Telemetry.logNumber("Robot/poseY_m", pose.getY());
+            Telemetry.logNumber("Robot/poseHeading_deg", pose.getRotation().getDegrees());
+
+            Logger.recordOutput("Robot/poseX_m", pose.getX());
+            Logger.recordOutput("Robot/poseY_m", pose.getY());
+            Logger.recordOutput("Robot/poseHeading_deg", pose.getRotation().getDegrees());
+        } catch (Exception ex) {
+            // Avoid throwing from periodic if telemetry fails; still print for visibility
+            Telemetry.logString("Swerve/telemetryError", ex.getMessage() == null ? "unknown" : ex.getMessage());
+        }
+        
     }
 
     @Override
@@ -104,6 +130,7 @@ public class SwerveSystem extends SubsystemBase {
             true,
             false);
         });
+    
     }
 
     public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {

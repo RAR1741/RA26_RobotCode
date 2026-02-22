@@ -56,6 +56,30 @@ public class Constants {
         public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
     }
 
+    /**
+     * Logging-related global constants. Toggle features here so the rest of the code
+     * can read a single source of truth for telemetry / autolog / recorder configuration.
+     */
+    public static class LoggingConstants {
+        /** Enable simple Telemetry (Telemetry.log / SmartDashboard) */
+        public static final boolean k_enableTelemetry = true;
+
+        /** Enable AutoLog / recording (if you add an AutoLog/recorder integration elsewhere) */
+        public static final boolean k_enableAutolog = false;
+
+        /** Enable junction Logger recordings (org.littletonrobotics.junction.Logger) */
+        public static final boolean k_enableJunctionLogger = true;
+
+        /** Directory on the robot (or host) where logs should be written if recording is enabled. */
+        public static final String k_logDirectory = "/home/lvuser/logs";
+
+        /** Base filename to use for recordings (timestamp/extension may be added by recorder). */
+        public static final String k_logFileBaseName = "robotLog";
+
+        /** Target logging period in seconds for periodic recording (0 disables periodic flush). */
+        public static final double k_logPeriodSeconds = 0.02; // 20 ms
+    }
+    
     public static class SimulationConstants{
         public final static boolean k_isInSimulation = true;
         public final static DriveTrainSimulationConfig k_config = DriveTrainSimulationConfig.Default()
