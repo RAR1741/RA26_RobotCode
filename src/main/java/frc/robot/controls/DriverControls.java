@@ -36,8 +36,8 @@ public class DriverControls {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-controller.getLeftY() * MaxSpeed)
-            .withVelocityY(-controller.getLeftX() * MaxSpeed)
+        drivetrain.applyRequest(() -> drive.withVelocityX(controller.getLeftY() * MaxSpeed)
+            .withVelocityY(controller.getLeftX() * MaxSpeed)
             .withRotationalRate(-controller.getRightX() * MaxAngularRate)));
 
     // Idle while the robot is disabled. This ensures the configured
