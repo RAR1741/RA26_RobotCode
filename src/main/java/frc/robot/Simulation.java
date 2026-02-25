@@ -1,15 +1,15 @@
 package frc.robot;
 
-import swervelib.simulation.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.SimulatedArena;
 import org.littletonrobotics.junction.Logger;
 
-import frc.robot.subsystems.SwerveSystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class Simulation {
     private SimulatedArena m_arena;
-    private SwerveSystem m_swerve;
+    private CommandSwerveDrivetrain m_swerve;
 
-    public Simulation(SwerveSystem swerveDrive) {
+    public Simulation(CommandSwerveDrivetrain swerveDrive) {
         m_swerve = swerveDrive;
         m_arena = SimulatedArena.getInstance();
         m_arena.resetFieldForAuto();
@@ -22,6 +22,8 @@ public class Simulation {
         m_arena.simulationPeriodic();
         Logger.recordOutput("FieldSimulation/Fuel",
                 m_arena.getGamePiecesArrayByType("Fuel"));
-        Logger.recordOutput("Sim/RobotPose", m_swerve.getSwerveDrive().getPose());
+
+        // TODO: Add this back
+        // Logger.recordOutput("Sim/RobotPose", m_swerve.getSwerveDrive().getPose());
     }
 }

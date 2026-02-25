@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -14,22 +16,27 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import frc.robot.generated.TunerConstants;
 
 public class Telemetry {
-  private final double MaxSpeed;
+  private static boolean enabled = true;
+
+  public static void setEnabled(boolean value) {
+    enabled = value;
+  }
 
   /**
    * Construct a telemetry object, with the specified max speed of the robot
    *
    * @param maxSpeed Maximum speed in meters per second
    */
-  public Telemetry(double maxSpeed) {
-    MaxSpeed = maxSpeed;
+  public Telemetry() {
     SignalLogger.start();
 
     /* Set up the module state Mechanism2d telemetry */
@@ -89,6 +96,34 @@ public class Telemetry {
 
   private final double[] m_poseArray = new double[3];
 
+  public static void log(String message) {
+    if (!enabled)
+      return;
+
+    System.out.println("[LOG " + timestamp() + "] " + message);
+  }
+
+  /** Log a number to SmartDashboard. */
+  public static void logNumber(String key, double value) {
+    if (!enabled)
+      return;
+
+    SmartDashboard.putNumber(key, value);
+  }
+
+  /** Log a string to SmartDashboard. */
+  public static void logString(String key, String value) {
+    if (!enabled)
+      return;
+
+    SmartDashboard.putString(key, value);
+  }
+
+  /** Timestamp helper. */
+  private static String timestamp() {
+    return String.format("%.3f", Timer.getFPGATimestamp());
+  }
+
   /**
    * Accept the swerve drive state and telemeterize it to SmartDashboard and
    * SignalLogger.
@@ -123,7 +158,8 @@ public class Telemetry {
     for (int i = 0; i < 4; ++i) {
       m_moduleSpeeds[i].setAngle(state.ModuleStates[i].angle);
       m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
-      m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
+      m_moduleSpeeds[i].setLength(
+          state.ModuleStates[i].speedMetersPerSecond / (2 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)));
     }
   }
 }
