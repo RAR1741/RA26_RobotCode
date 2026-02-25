@@ -54,8 +54,8 @@ public class LimelightSystem extends SubsystemBase {
     public void periodic() {
         // if the pose is there
         visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-            this.allowed = this.rejectUpdate(poseEstimate);
-            if (!this.allowed) {
+            this.allowed = this.doRejectUpdate(poseEstimate);
+            if (this.allowed) {
                 swerveDrive.addVisionMeasurement(
                     poseEstimate.pose.toPose2d(),
                     poseEstimate.timestampSeconds);
@@ -72,18 +72,18 @@ public class LimelightSystem extends SubsystemBase {
     /*
     
     */
-    public boolean rejectUpdate(PoseEstimate poseEstimate) {
+    public boolean doRejectUpdate(PoseEstimate poseEstimate) {
         /*
         returns true if Pose didn't pass tests
         returns false if Pose passed tests
         */
        
-        if (poseEstimate.getAvgTagAmbiguity() > 0.7 ) { return true; }
-        if (poseEstimate.pose.getX() <= 0 || poseEstimate.pose.getX() > Constants.FieldConstants.k_length) { return true; }
-        if (poseEstimate.pose.getY() <= 0 || poseEstimate.pose.getY() > Constants.FieldConstants.k_width) { return true; } 
-        if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Math.PI * 2) { return true; }
-        if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Math.PI * 2) { return true; }
+        if (poseEstimate.getAvgTagAmbiguity() > 0.7 ) { return false; }
+        if (poseEstimate.pose.getX() <= 0 || poseEstimate.pose.getX() > Constants.FieldConstants.k_length) { return false; }
+        if (poseEstimate.pose.getY() <= 0 || poseEstimate.pose.getY() > Constants.FieldConstants.k_width) { return false; } 
+        if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Math.PI * 2) { return false; }
+        if (Math.abs(swerveDrive.getRobotVelocity().omegaRadiansPerSecond) > Math.PI * 2) { return false; }
 
-        return false;
+        return true;
     }
 }
