@@ -1,7 +1,12 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RPM;
+
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 
 public class Constants {
     public static class SwerveDriveConstants {
@@ -31,13 +36,23 @@ public class Constants {
     } // TODO check and adjust constants
 
     public static class IntakeConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
-        public static final int k_pivotMotorId = 99999;
-        public static final int k_rollerMotorId = 99999;
+        public static final int k_pivotMotorId = 99999; //placeholder, get this when we know the actual motor
+        public static final int k_rollerMotorId = 99999; //placeholder, get this when we know the actual motor
     }
 
     
     public static class FieldConstants {
         public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
         public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
+    }
+
+    public static class ShooterConstants {
+        public static final int k_shooterMotorId = 99999; //placeholder, get this when we know the actual motor
+        public static final int k_followerMotorId = 99999; //placeholder, get this when we know the actual motor
+    }
+
+    public static class SuperstructureConstants {
+        private final static AngularVelocity targetShooterSpeed = RPM.of(0);
+        private final static Angle targetTurretAngle = Degrees.of(0);
     }
 }
