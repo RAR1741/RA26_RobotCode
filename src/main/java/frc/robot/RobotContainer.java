@@ -4,8 +4,14 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkFlexExternalEncoder;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.controls.DriverControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -15,12 +21,30 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain m_swerve = TunerConstants.createDrivetrain();
 
+  public final SparkFlex hopperFloor; // ID 40
+  public final SparkFlex kicker; // ID 41
+
   public RobotContainer() {
+    hopperFloor = new SparkFlex(40, MotorType.kBrushless);
+    // hopperFloor.configure(new SparkBaseConfig().inverted(true), null, null);
+    hopperFloor.setInverted(true);
+    kicker = new SparkFlex(41, MotorType.kBrushless);
+
     configureBindings();
   }
 
   private void configureBindings() {
     DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, m_swerve, logger);
+
+    CommandXboxController oppController = new CommandXboxController(1);
+
+    oppController.a().onTrue(Commands.runOnce(() -> {
+      hopperFloor.set(0.5);
+      kicker.set(0.5);
+    })).onFalse(Commands.runOnce(() -> {
+      hopperFloor.set(0);
+      kicker.set(0);
+    }));
   }
 
   public Command getAutonomousCommand() {
