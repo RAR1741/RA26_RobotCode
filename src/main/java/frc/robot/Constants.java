@@ -38,6 +38,7 @@ public class Constants {
         public static final double k_minZoneLaunchVelocity = 5.0;
         public static final double k_minAngleUnderTrench = 70.0; // GET DOUBLE TRIPLE QUADRUPLE CHECKED BY ENGINEERING
         public static final double k_maxTrenchPitchMotorPos = TurretSystem.launchPitchToMotorPos(k_minAngleUnderTrench);
+        public static final double k_maxPitchMotorSpeed = 9999999999.0;
         public static final double k_RPMTolerance = 2000000000000000.0;
         public static final double k_launchVelocityTolerance = 20000000000.0;
         public static final double k_launchDirectionTolerance = 2000000000000.0;

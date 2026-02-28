@@ -1,29 +1,28 @@
 package frc.robot.subsystems;
 
 import java.util.function.Supplier;
-import java.util.function.Function;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+//import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+//import edu.wpi.first.math.Pair;
+//import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
+//import edu.wpi.first.math.system.plant.DCMotor;
 // import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 // import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Inches;
+//import static edu.wpi.first.units.Units.Amps;
+//import static edu.wpi.first.units.Units.Inches;
 // import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Pounds;
+//import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Second;
@@ -31,13 +30,14 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+//import static edu.wpi.first.units.Units.DegreesPerSecond;
+//import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 // import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,116 +49,28 @@ import frc.robot.ParabolicTrajectory;
 // import frc.robot.Telemetry;
 // import frc.robot.subsystems.SwerveSystem;
 
-// bro we are not using yams bruh
-import yams.gearing.GearBox;
-import yams.gearing.MechanismGearing;
-
-import yams.mechanisms.config.FlyWheelConfig;
 import yams.mechanisms.velocity.FlyWheel;
-
-import yams.mechanisms.config.MechanismPositionConfig;
-import yams.mechanisms.config.MechanismPositionConfig.Plane;
-import yams.mechanisms.config.PivotConfig;
 import yams.mechanisms.positional.Pivot;
-
-import yams.motorcontrollers.SmartMotorController;
-import yams.motorcontrollers.SmartMotorControllerConfig;
-import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
-import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
-import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.local.SparkWrapper;
 
 public class TurretSystem extends SubsystemBase {
 
     public static String k_alliance = DriverStation.getAlliance().toString();
     public static Boolean isBlueTeam = k_alliance == "Blue";
     public static Boolean isRedTeam = k_alliance == "Red";
+    public static Boolean wonAuto = false; // must be updated
+
+    public static SparkMax flywheelSparkA = null;
+    public static SparkMax flywheelSparkB = null;
+    public static Pivot turretPitch = null;
+    public static Pivot turretYaw = null;
+    public static FlyWheel shooter = null;
+    public static SparkMax yawMotorSpark = null;
+    public class KickerSystem {KickerSystem() {} static KickerSystem getInstance() {return null;} void setSpeed(double a) {}}
 
     public final Translation3d turretTranslation = new Translation3d(
         TurretConstants.k_turretRelativeX, 
         TurretConstants.k_turretRelativeY, 
         TurretConstants.k_turretHeight);
-
-    private final SparkMax yawMotorSpark = new SparkMax(TurretConstants.k_yawMotorId, MotorType.kBrushless);
-
-    private final SparkMax pitchMotorSpark = new SparkMax(TurretConstants.k_pitchMotorId, MotorType.kBrushless);
-
-    private SparkMax flywheelSparkA = new SparkMax(TurretConstants.k_flywheelMotorIdA, MotorType.kBrushless);
-    private SparkMax flywheelSparkB = new SparkMax(TurretConstants.k_flywheelMotorIdB, MotorType.kBrushless);
-
-    private final SmartMotorControllerConfig smcConfigShooter = new SmartMotorControllerConfig(this)
-        .withFollowers(Pair.of(flywheelSparkB, true))
-        .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(0.00936, 0, 0)
-        .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
-        .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
-        .withMotorInverted(false)
-        .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40));
-
-    private final SmartMotorController smcShooter = new SparkWrapper(flywheelSparkA, DCMotor.getKrakenX60(2), smcConfigShooter);
-
-    private final FlyWheelConfig shooterConfig = new FlyWheelConfig(smcShooter)
-        .withDiameter(Inches.of(4))
-        .withMass(Pounds.of(1))
-        .withUpperSoftLimit(RPM.of(6000))
-        .withLowerSoftLimit(RPM.of(0))
-        .withTelemetry("Shooter", TelemetryVerbosity.HIGH);
-
-    private final FlyWheel shooter = new FlyWheel(shooterConfig);
-
-
-    private SmartMotorControllerConfig smcConfigTurretYaw = new SmartMotorControllerConfig(this)
-        .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(15.0, 0, 0, DegreesPerSecond.of(2440), DegreesPerSecondPerSecond.of(2440))
-        .withFeedforward(new SimpleMotorFeedforward(0, 7.5, 0))
-        .withTelemetry("TurretYawMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 3)))
-        .withMotorInverted(true)
-        .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(10))
-        .withClosedLoopRampRate(Seconds.of(0.1))
-        .withOpenLoopRampRate(Seconds.of(0.1));
-
-    private SmartMotorController smcTurretYaw = new SparkWrapper(yawMotorSpark, DCMotor.getNEO(1), smcConfigTurretYaw);
-
-    private final PivotConfig turretYawConfig = new PivotConfig(smcTurretYaw)
-        .withStartingPosition(Degrees.of(0))
-        // .withMOI(0.05)   tOdO check this with engineering
-        .withTelemetry("TurretYaw", TelemetryVerbosity.HIGH)
-        .withMechanismPositionConfig(new MechanismPositionConfig()
-            .withMovementPlane(Plane.XY)
-            .withRelativePosition(turretTranslation));
-
-    private Pivot turretYaw = new Pivot(turretYawConfig);
-
-
-    private SmartMotorControllerConfig smcConfigTurretPitch = new SmartMotorControllerConfig(this)
-        .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(15.0, 0, 0, DegreesPerSecond.of(2440), DegreesPerSecondPerSecond.of(2440))
-        .withFeedforward(new SimpleMotorFeedforward(0, 7.5, 0))
-        .withTelemetry("TurretPitchMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
-        .withMotorInverted(true)
-        .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(10))
-        .withClosedLoopRampRate(Seconds.of(0.1))
-        .withOpenLoopRampRate(Seconds.of(0.1));
-
-    private SmartMotorController smcTurretPitch = new SparkWrapper(pitchMotorSpark, DCMotor.getNEO(1), smcConfigTurretPitch);
-
-    private final PivotConfig turretPitchConfig = new PivotConfig(smcTurretPitch)
-        .withStartingPosition(Degrees.of(80))
-        .withHardLimit(Degrees.of(TurretConstants.k_minLaunchAngle), Degrees.of(TurretConstants.k_maxLaunchAngle))
-        // .withMOI(0.05)   tOdO check this with engineering
-        .withTelemetry("TurretPitch", TelemetryVerbosity.HIGH)
-        .withMechanismPositionConfig(new MechanismPositionConfig()
-            .withMovementPlane(Plane.XZ)
-            .withRelativePosition(turretTranslation));
-
-    private Pivot turretPitch = new Pivot(turretPitchConfig);
-
 
     public TurretSystem() {
 
@@ -176,6 +88,14 @@ public class TurretSystem extends SubsystemBase {
                 turretTranslation,
                 new Rotation3d(0, turretPitch.getAngle().in(Radians), turretYaw.getAngle().in(Radians)))
         });
+    }
+
+    public static boolean hubIsActive(double time) {
+        return time < 30.0 || time >= 130.0 || wonAuto && (time >= 55.0 && time < 80.0 || time >= 105.0) || !wonAuto && (time < 55.0 || time >= 80.0 && time < 105.0);
+    }
+
+    public static double gameTime() {
+        return (DriverStation.isAutonomous()? 20.0 : 140.0) - DriverStation.getMatchTime();
     }
 
     public static int getZone(double turretX) {
@@ -225,7 +145,7 @@ public class TurretSystem extends SubsystemBase {
         // x = dx - v * t - a/2 * t^2 = 0
         // double availableTime = (Math.sqrt(vIntoTrench * vIntoTrench + 2.0 * maxAcceleration * trenchDistance) - vIntoTrench) / maxAcceleration;
         double availableTime = ParabolicTrajectory.qFormulaGreater(-maxAcceleration / 2.0, -vIntoTrench, trenchDistance);
-        return pitchMotorToLaunchPitch(TurretConstants.k_maxTrenchPitchMotorPos + availableTime * TurretConstants.k_pitchMotorMaxSpeed);
+        return pitchMotorToLaunchPitch(TurretConstants.k_maxTrenchPitchMotorPos + availableTime * TurretConstants.k_maxPitchMotorSpeed);
     }
 
     public Pose3d getTurretPose() {
@@ -275,7 +195,7 @@ public class TurretSystem extends SubsystemBase {
                 if (testTrajectory == null) {
                     return TurretInstruction.HoldStateDontShoot();
                 }
-                testInstruction = new TurretInstruction(!underTrenchBar, 
+                testInstruction = new TurretInstruction(!underTrenchBar && hubIsActive(gameTime() + testTrajectory.timeToHubScoring()), 
                     Degrees.of(testTrajectory.launchDirection), 
                     Degrees.of(minAllowedAngle), 
                     launchVelocityToAngular(testTrajectory.launchVelocity));
@@ -427,11 +347,7 @@ public class TurretSystem extends SubsystemBase {
         return Commands.runOnce(() -> yawMotorSpark.getEncoder().setPosition(0), this).withName("TurretYaw.Rezero");
     }
 
-    
-    public Command setKickerActivity(Supplier<Boolean> activeSupplier) {
-        return KickerSystem.getInstance().setSpeed(RPM.of(activeSupplier.get()? TurretConstants.k_kickerSpeed : 0.0)); // create kicker system and understand controls
-    }
-
+    public static Command setKickerActivity(Supplier<Boolean> on) {return null;}
 
     public static double launchPitchToMotorPos(double launchPitch) {
         return 0.0; // BRUUUUHHHH
