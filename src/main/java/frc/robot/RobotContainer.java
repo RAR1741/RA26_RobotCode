@@ -4,6 +4,13 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkFlexExternalEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -24,11 +31,28 @@ public class RobotContainer {
   public final SparkFlex hopperFloor; // ID 40
   public final SparkFlex kicker; // ID 41
 
+  private static final CANBus kCANBus = new CANBus("Drivetrain");
+
+  public final TalonFX shooterPrimary; // ID 50
+  public final TalonFX shooterSecondary; // ID 51
+
   public RobotContainer() {
     hopperFloor = new SparkFlex(40, MotorType.kBrushless);
     // hopperFloor.configure(new SparkBaseConfig().inverted(true), null, null);
     hopperFloor.setInverted(true);
     kicker = new SparkFlex(41, MotorType.kBrushless);
+
+    shooterPrimary = new TalonFX(52, kCANBus);
+    shooterSecondary = new TalonFX(53, kCANBus);
+
+    // Shooter configs
+    TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
+    shooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+    shooterPrimary.getConfigurator().apply(shooterConfig);
+    shooterSecondary.getConfigurator().apply(shooterConfig);
+
+    shooterSecondary.setControl(new Follower(shooterPrimary.getDeviceID(), MotorAlignmentValue.Opposed));
 
     configureBindings();
   }
@@ -44,6 +68,12 @@ public class RobotContainer {
     })).onFalse(Commands.runOnce(() -> {
       hopperFloor.set(0);
       kicker.set(0);
+    }));
+
+    oppController.b().onTrue(Commands.runOnce(() -> {
+      shooterPrimary.setControl(new DutyCycleOut(0.67));
+    })).onFalse(Commands.runOnce(() -> {
+      shooterPrimary.setControl(new DutyCycleOut(0));
     }));
   }
 
