@@ -117,7 +117,7 @@ public class IntakeSystem extends SubsystemBase {
       rollerMax.set(INTAKE_SPEED_STOP);
       pivotMax.set(INTAKE_SPEED_STOP);
       setIntakeHold();
-    }).withName("Intake.DeployAndRoll");
+    }).withName("Intake.ForwardRollCommand");
   }
 
   public Command BackwardRollCommand() {
@@ -129,7 +129,7 @@ public class IntakeSystem extends SubsystemBase {
       rollerMax.set(INTAKE_SPEED_STOP);
       pivotMax.set(INTAKE_SPEED_STOP);
       setIntakeHold();
-    }).withName("Intake.BackFeedAndRoll");
+    }).withName("Intake.BackwardRollCommand");
   }
 
   private void setIntakeStow() {
