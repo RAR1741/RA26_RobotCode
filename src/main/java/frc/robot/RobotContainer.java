@@ -33,8 +33,9 @@ public class RobotContainer {
 
   private static final CANBus kCANBus = new CANBus("Drivetrain");
 
-  public final TalonFX shooterPrimary; // ID 50
-  public final TalonFX shooterSecondary; // ID 51
+  public final TalonFX hood; // ID 51
+  public final TalonFX shooterPrimary; // ID 52
+  public final TalonFX shooterSecondary; // ID 53
 
   public RobotContainer() {
     hopperFloor = new SparkFlex(40, MotorType.kBrushless);
@@ -54,6 +55,11 @@ public class RobotContainer {
 
     shooterSecondary.setControl(new Follower(shooterPrimary.getDeviceID(), MotorAlignmentValue.Opposed));
 
+    hood = new TalonFX(51, kCANBus);
+    TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
+    hoodConfig.CurrentLimits.SupplyCurrentLimit = 2.0;
+    hood.getConfigurator().apply(hoodConfig);
+
     configureBindings();
   }
 
@@ -71,9 +77,24 @@ public class RobotContainer {
     }));
 
     oppController.b().onTrue(Commands.runOnce(() -> {
-      shooterPrimary.setControl(new DutyCycleOut(0.67));
+      shooterPrimary.setControl(new DutyCycleOut(0.45));
+      // shooterPrimary.setControl(new DutyCycleOut(0.67));
     })).onFalse(Commands.runOnce(() -> {
       shooterPrimary.setControl(new DutyCycleOut(0));
+    }));
+
+    double hoodSpeed = 0.5;
+
+    oppController.x().onTrue(Commands.runOnce(() -> {
+      hood.setControl(new DutyCycleOut(hoodSpeed));
+    })).onFalse(Commands.runOnce(() -> {
+      hood.setControl(new DutyCycleOut(0));
+    }));
+
+    oppController.y().onTrue(Commands.runOnce(() -> {
+      hood.setControl(new DutyCycleOut(-hoodSpeed));
+    })).onFalse(Commands.runOnce(() -> {
+      hood.setControl(new DutyCycleOut(0));
     }));
   }
 
