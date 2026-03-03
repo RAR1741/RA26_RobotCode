@@ -27,28 +27,29 @@ public class Constants {
         public static final double k_turretDistToRobotCenter = Math.hypot(k_turretRelativeX, k_turretRelativeY);
         public static final double k_turretHeight = 21.0 / 12.0;
         public static final double k_turretMaxHorizontalRadius = 9999999.0;
-        public static final double k_extraTimeToPassSensor = 0.5; // test this
+        public static final double k_extraTimeToPassSensor = 1.5; // first gave a shot distribution for this but it has a wide spread, so we should decide either more or less
         public static final double k_targetLaunchVY = 20.0;
         public static final double k_maxRPM = 99999999999999.0;
-        public static final double k_maxLaunchVelocity = 5000000000000000.0;
-        public static final double k_minLaunchAngle = 45.0;
+        public static final double k_maxLaunchVelocity = 5000000000000000.0; // whatever is 67% motor power   --_(ツ)_/¯
+        public static final double k_minLaunchAngle = 45.0;                  //                               ¯\_(ツ)_--
         public static final double k_maxLaunchAngle = 80.0;
         public static final double k_maxHubLaunchDistance = Math.hypot(FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
         public static final double k_maxZoneLaunchDistance = Math.hypot(FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
         public static final double k_minZoneLaunchVelocity = 5.0;
-        public static final double k_minAngleUnderTrench = 70.0; // GET DOUBLE TRIPLE QUADRUPLE CHECKED BY ENGINEERING
+        public static final double k_minAngleUnderTrench = 70.0;
         public static final double k_maxTrenchPitchMotorPos = TurretSystem.launchPitchToMotorPos(k_minAngleUnderTrench);
         public static final double k_maxPitchMotorSpeed = 9999999999.0;
         public static final double k_RPMTolerance = 2000000000000000.0;
         public static final double k_launchVelocityTolerance = 20000000000.0;
         public static final double k_launchDirectionTolerance = 2000000000000.0;
         public static final double k_launchAngleTolerance = 200000000000.0;
-        public static final double k_wheelRadius = 34567893456789.0;
+        public static final double k_wheelRadius = 2.0 / 12.0;
+        public static final double k_shootingVelocityTransferEfficiency = 0.99999999999999999999;
         public static final int k_yawMotorId = 9999;
         public static final int k_pitchMotorId = 9999;
         public static final int k_flywheelMotorIdA = 9999;
         public static final int k_flywheelMotorIdB = 9999;
-        public static final int k_timeSolvingIterations = 5;
+        public static final int k_timeSolvingIterations = 10;
     }
 
     public static class FieldConstants { // feet (NOT INCHES)

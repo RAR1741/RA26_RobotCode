@@ -38,7 +38,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 // import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -113,7 +112,7 @@ public class TurretSystem extends SubsystemBase {
     public double getMinAllowedAngle(double robotX, double robotY, double robotVX, double robotVY) {
         boolean yInTrench = getYInTrench(robotY);
 
-        // add desmos graph link
+        // graph link: https://www.desmos.com/3d/k1wjvps1p3
         double trenchDistance = Math.abs(robotX - (FieldConstants.k_fieldLength + 
             (FieldConstants.k_neutralZoneDepth + FieldConstants.k_hubZoneDepth) * 
                 ((robotX > FieldConstants.k_fieldLength / 2.0)? 1.0 : -1.0)) / 2.0)
@@ -295,7 +294,7 @@ public class TurretSystem extends SubsystemBase {
     }
 
     public static AngularVelocity launchVelocityToAngular(double launchVelocity) {
-        return RadiansPerSecond.of(launchVelocity / TurretConstants.k_wheelRadius);
+        return RadiansPerSecond.of(launchVelocity / (TurretConstants.k_wheelRadius * TurretConstants.k_shootingVelocityTransferEfficiency));
     }
 
     public LinearVelocity getTangentialVelocity() {

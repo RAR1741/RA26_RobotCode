@@ -87,7 +87,7 @@ public class ParabolicTrajectory {
         double turretVelocityToHub = turretVX * cos(launchDirection) + turretVY * sin(launchDirection);
         double launchVelocity = solveLaunchVelocity(launchAngle, xDistance, yDistance);
         for (int i = 0; i < TurretConstants.k_timeSolvingIterations; i++) { // 5 trig ops + 1 sqrt ops + 1 div operation per iteration
-            launchAngle = skewLaunchAngleByVelocity(launchAngle, launchDirection, launchVelocity, turretVelocityToHub);
+            launchAngle = skewLaunchToHubAngleByVelocity(launchAngle, launchDirection, launchVelocity, turretVelocityToHub);
             launchVelocity = solveLaunchVelocity(launchAngle, xDistance, yDistance);
         }
         return xDistance / (launchVelocity * cos(launchAngle));
@@ -193,20 +193,24 @@ public class ParabolicTrajectory {
         }
         double targetDistance = Math.hypot(targetX - launchX, targetY - launchY);
         double idealLaunchVelocity = (TurretConstants.k_minZoneLaunchVelocity + targetDistance * (TurretConstants.k_maxLaunchVelocity)) / TurretConstants.k_maxZoneLaunchDistance;
-        // dot product
-        double turretVelocityToHub = turretVX * cos(targetDirection) + turretVY * sin(targetDirection);
-        double skewedLaunchVelocity = skewVelocityByTurretVelocity(idealLaunchVelocity);
-        ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, k_turretHeight, launchX, launchY, k_turretHeight, skewedLaunchVelocity);
-        if (trajectory == null) {return null;}
+        ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
+        if (trajectory == null) {return null;} // need to sort this out another time bc idk but ts pmo irl ykwim
+        double skewedLaunchVelocity = skewVelocityByTurretVelocity(trajectory.launchAngle, trajectory.launchDirection, idealLaunchVelocity, turretVX, turretVY);
         double time = targetDistance / trajectory.getHorizontalLaunchVelocity();
         trajectory = toXYHFromVXYHMinimizeAngle(targetX - turretVX * time, targetY - turretVY * time, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
         return (trajectory != null && trajectory.testValid())? trajectory : null;
     }
 
-    public static double skewLaunchAngleByVelocity(double launchAngle, double launchDirection, double launchVelocity, double turretVelocityToHub) {
+    public static double skewVelocityByTurretVelocity(double launchAngle, double launchDirection, double launchVelocity, double turretVX, double turretVY) {
+        double vX = launchVelocity * cos(launchAngle) * cos(launchDirection) - turretVX; // minus or plus?? i forget
+        double vY = launchVelocity * cos(launchAngle) * sin(launchDirection) - turretVY;
+        double vZ = launchVelocity * sin(launchAngle);
+        return Math.sqrt(vX * vX + vY * vY + vZ * vZ);
+    }
+    public static double skewLaunchToHubAngleByVelocity(double launchAngle, double launchDirection, double launchVelocity, double turretVelocityToHub) {
         return atan2(launchVelocity * sin(launchAngle), turretVelocityToHub + launchVelocity * cos(launchAngle));
     }
-    
+
     public static double solveLaunchVelocity(double launchAngle, double xDistance, double yDistance) {
         // return xDistance * Math.sqrt(k_gravity / (2.0 * cos * (xDistance * sin - yDistance * cos)));
         return xDistance * Math.sqrt(k_gravity / (xDistance * sin(2.0 * launchAngle) - yDistance * (1.0 + cos(2.0 * launchAngle))));
@@ -249,6 +253,9 @@ public class ParabolicTrajectory {
     public double timeToDistance(double testDistance) {
         return testDistance / getHorizontalLaunchVelocity();
     }
+    public double launchToHubDistance() {
+        return Math.hypot(k_hubX - launchX, k_hubY - launchY);
+    }
     public double farDistanceToAbsHeight(double launchAngle, double launchVelocity, double testHeight) {
         return getHorizontalLaunchVelocity() * secondTimeToAbsHeight(testHeight);
     }
@@ -267,7 +274,7 @@ public class ParabolicTrajectory {
                maxLaunchHeight() <= FieldConstants.k_ceilingHeight;
     }
     public double timeToHubScoring() {
-        return TurretConstants.k_extraTimeToPassSensor + secondTimeToAbsHeight(k_hubHeight);
+        return TurretConstants.k_extraTimeToPassSensor + timeToDistance(launchToHubDistance());
     }
 
     
