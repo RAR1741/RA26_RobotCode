@@ -38,6 +38,10 @@ public class Constants {
     public static class IntakeConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
         public static final int k_pivotMotorId = 99999; //placeholder, get this when we know the actual motor
         public static final int k_rollerMotorId = 99999; //placeholder, get this when we know the actual motor
+        public static final Angle k_IntakeStow = Degrees.of(0);
+        public static final Angle k_IntakeFeed = Degrees.of(59);
+        public static final Angle k_IntakeHold = Degrees.of(115);
+        public static final Angle k_IntakeDeployed = Degrees.of(148);
     }
 
     

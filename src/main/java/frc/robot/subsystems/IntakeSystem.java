@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.ControlType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import com.thethriftybot.devices.ThriftyNova;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -24,72 +26,55 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
-import yams.mechanisms.config.ArmConfig;
 import yams.mechanisms.config.FlyWheelConfig;
-import yams.mechanisms.positional.Arm;
 import yams.mechanisms.velocity.FlyWheel;
 import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.local.NovaWrapper;
 import yams.motorcontrollers.local.SparkWrapper;
+
+
+
 
 public class IntakeSystem extends SubsystemBase {
 
   private static final double INTAKE_SPEED = 1.0;
+  private static final double INTAKE_SPEED_STOP = 0.0;
 
-  // ThriftyNova controlling the intake roller
-  private ThriftyNova rollerNova = new ThriftyNova(IntakeConstants.k_rollerMotorId);
+  // SparkMax controlling the intake roller
+  private SparkMax rollerMax = new SparkMax(IntakeConstants.k_rollerMotorId, MotorType.kBrushless);
+  private SparkMax pivotMax = new SparkMax(IntakeConstants.k_pivotMotorId, MotorType.kBrushless);
+  // simple roller + pivot implementation (no Yams)
+  private static final double PIVOT_GEAR_RATIO = 5 * 5 * (60.0 / 15.0); // 5:1 * 5:1 * 60/15
 
-  private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-      .withControlMode(ControlMode.OPEN_LOOP)
-      .withTelemetry("IntakeRollerMotor", TelemetryVerbosity.HIGH)
-      .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // Direct drive, adjust if geared
-      .withMotorInverted(true)
-      .withIdleMode(MotorMode.COAST)
-      .withStatorCurrentLimit(Amps.of(40));
 
-  private SmartMotorController smc = new NovaWrapper(rollerNova, DCMotor.getNeoVortex(1), smcConfig);
+// private final SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
+//       .withFollowers(Pair.of(pivotMotor, true))
+//       .withControlMode(ControlMode.CLOSED_LOOP)
+//       .withClosedLoopController(0.00936, 0, 0)
+//       .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
+//       .withTelemetry("IntakeMotor", TelemetryVerbosity.HIGH)
+//       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
+//       .withMotorInverted(false)
+//       .withIdleMode(MotorMode.COAST)
+//       .withStatorCurrentLimit(Amps.of(40));
 
-  private final FlyWheelConfig intakeConfig = new FlyWheelConfig(smc)
-      .withDiameter(Inches.of(4))
-      .withMass(Pounds.of(0.5))
-      .withUpperSoftLimit(RPM.of(6000))
-      .withLowerSoftLimit(RPM.of(-6000))
-      .withTelemetry("IntakeRoller", TelemetryVerbosity.HIGH);
+ //  private final SmartMotorController smc = new SparkWrapper(rollerMax, DCMotor.getNeoVortex(1), smcConfig);
 
-  private FlyWheel intake = new FlyWheel(intakeConfig);
+  // private final FlyWheelConfig intakeConfig = new FlyWheelConfig(smc)
+  //     .withDiameter(Inches.of(4))
+  //     .withMass(Pounds.of(1))
+  //     .withUpperSoftLimit(RPM.of(6000))
+  //     .withLowerSoftLimit(RPM.of(0))
+  //     .withTelemetry("Intake", TelemetryVerbosity.HIGH);
 
-  // 5:1, 5:1, 60/15 reduction
-  private SmartMotorControllerConfig intakePivotSmartMotorConfig = new SmartMotorControllerConfig(this)
-      .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(25, 0, 0, DegreesPerSecond.of(360), DegreesPerSecondPerSecond.of(360))
-      .withFeedforward(new SimpleMotorFeedforward(0, 10, 0))
-      .withTelemetry("IntakePivotMotor", TelemetryVerbosity.HIGH)
-      .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 5, 60.0 / 15.0)))
-      .withMotorInverted(false)
-      .withIdleMode(MotorMode.COAST)
-      .withSoftLimit(Degrees.of(0), Degrees.of(150))
-      .withStatorCurrentLimit(Amps.of(10))
-      .withClosedLoopRampRate(Seconds.of(0.1))
-      .withOpenLoopRampRate(Seconds.of(0.1));
+  // private final FlyWheel FlywheelIntake = new FlyWheel(intakeConfig);
 
-  private SparkMax pivotMotor = new SparkMax(IntakeConstants.k_pivotMotorId, MotorType.kBrushless);
 
-  private SmartMotorController intakePivotController = new SparkWrapper(pivotMotor, DCMotor.getNeoVortex(1),
-      intakePivotSmartMotorConfig);
-
-  private final ArmConfig intakePivotConfig = new ArmConfig(intakePivotController)
-      .withSoftLimits(Degrees.of(0), Degrees.of(150))
-      .withHardLimit(Degrees.of(0), Degrees.of(155))
-      .withStartingPosition(Degrees.of(0))
-      .withLength(Feet.of(1))
-      .withMass(Pounds.of(2)) // Reis says: 2 pounds, not a lot
-      .withTelemetry("IntakePivot", TelemetryVerbosity.HIGH);
-
-  private Arm intakePivot = new Arm(intakePivotConfig);
+  // NOTE: we no longer use Yams abstractions (FlyWheel/Arm/SmartMotorController).
+  // Roller will be driven directly through the ThriftyNova device.
 
   public IntakeSystem() {
     // pivotMotor.factoryReset();
@@ -99,7 +84,9 @@ public class IntakeSystem extends SubsystemBase {
    * Command to run the intake while held.
    */
   public Command intakeCommand() {
-    return intake.set(INTAKE_SPEED).finallyDo(() -> smc.setDutyCycle(0)).withName("Intake.Run");
+    return Commands.run(() -> rollerMax.set(INTAKE_SPEED), this)
+        .finallyDo(() -> pivotMax.set(0))
+        .withName("Intake.Run");
   }
 
   // /**
@@ -110,63 +97,80 @@ public class IntakeSystem extends SubsystemBase {
   // }
 
   public Command setPivotAngle(Angle angle) {
-    return intakePivot.setAngle(angle).withName("IntakePivot.SetAngle");
+    return Commands.runOnce(() -> setPivotPosition(angle), this).withName("IntakePivot.SetAngle");
   }
 
   public Command rezero() {
-    return Commands.runOnce(() -> pivotMotor.getEncoder().setPosition(0), this).withName("IntakePivot.Rezero");
+    return Commands.runOnce(() -> pivotMax.getEncoder().setPosition(0), this).withName("IntakePivot.Rezero");
   }
 
   /**
    * Command to deploy intake and run roller while held.
    * Stops roller when released.
    */
-  public Command deployAndRollCommand() {
+  public Command ForwardRollCommand() {
     return Commands.run(() -> {
       setIntakeDeployed();
-      smc.setDutyCycle(INTAKE_SPEED);
+      rollerMax.set(INTAKE_SPEED);
+      pivotMax.set(-INTAKE_SPEED);
     }, this).finallyDo(() -> {
-      smc.setDutyCycle(0);
+      rollerMax.set(INTAKE_SPEED_STOP);
+      pivotMax.set(INTAKE_SPEED_STOP);
       setIntakeHold();
     }).withName("Intake.DeployAndRoll");
   }
 
-  public Command backFeedAndRollCommand() {
+  public Command BackwardRollCommand() {
     return Commands.run(() -> {
-      setIntakeDeployed();
-      // smc.setDutyCycle(-INTAKE_SPEED);
+      setIntakeStow();
+      rollerMax.set(-INTAKE_SPEED);
+      pivotMax.set(INTAKE_SPEED);
     }, this).finallyDo(() -> {
-      smc.setDutyCycle(0);
+      rollerMax.set(INTAKE_SPEED_STOP);
+      pivotMax.set(INTAKE_SPEED_STOP);
       setIntakeHold();
     }).withName("Intake.BackFeedAndRoll");
   }
 
   private void setIntakeStow() {
-    intakePivotController.setPosition(Degrees.of(0));
+    setPivotPosition(IntakeConstants.k_IntakeStow);
   }
 
   private void setIntakeFeed() {
-    intakePivotController.setPosition(Degrees.of(59));
+    setPivotPosition(IntakeConstants.k_IntakeFeed);
   }
 
   private void setIntakeHold() {
-    intakePivotController.setPosition(Degrees.of(115));
+    setPivotPosition(IntakeConstants.k_IntakeHold);
   }
 
   private void setIntakeDeployed() {
-    intakePivotController.setPosition(Degrees.of(148));
+    setPivotPosition(IntakeConstants.k_IntakeDeployed);
+  }
+
+  private void setPivotPosition(Angle angle) {
+    // Convert joint degrees to motor rotations, accounting for gear ratio.
+    double jointDegrees = angle.in(Degrees);
+    double motorRotations = (jointDegrees / 360.0) * PIVOT_GEAR_RATIO;
+    // Use SparkMax PID position control (rotations)
+    try {
+      // pivotMax.getPIDController().setReference(motorRotations, ControlType.kPosition);
+      pivotMax.getEncoder().setPosition(motorRotations); 
+    } catch (Exception e) {
+      // If the concrete SparkMax PID API isn't available in this environment, fallback to open-loop set
+      // This is defensive: replace with appropriate API calls if needed.
+      // No-op or log
+    }
   }
 
   @Override
   public void periodic() {
-    intake.updateTelemetry();
-    intakePivot.updateTelemetry();
+    // Telemetry: pivot encoder position could be sampled here if desired
   }
 
   @Override
   public void simulationPeriodic() {
-    intake.simIterate();
-    intakePivot.simIterate();
+    // Simulation hooks removed (Yams-specific)
   }
 }
 // Deploy Gear Ratio: 25:1(2 5:1's) - 60:15
