@@ -157,11 +157,21 @@ public class ParabolicTrajectory {
     }
 
     public static ParabolicTrajectory toZoneFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
-        double targetX = isBlueTeam? k_allianceZoneDepth + k_hubBodyWidth / 2.0 : k_fieldLength - k_allianceZoneDepth - k_hubBodyWidth / 2.0;
+        double targetX;
         double targetY = k_hubY;
         double targetDirection;
         boolean topHalf = launchY > k_hubY;
-        if (isBlueTeam && launchX < k_allianceZoneDepth + k_hubZoneDepth) {
+        
+        if (isBlueTeam) {
+            targetX = 0.0;
+            if (launchX > k_allianceZoneDepth && Math.abs((launchY - k_hubY) / launchX) < (k_hubBodyWidth / 2.0) / k_allianceZoneDepth) {
+                
+            }
+        } else {
+            targetX = k_fieldLength;
+        }
+        /*
+        if (isBlueTeam && launchX < k_hubX) {
             targetX = 0.0;
         } else if (isRedTeam && launchX > k_fieldLength - k_allianceZoneDepth - k_hubZoneDepth) {
             targetX = k_fieldLength;
@@ -191,6 +201,7 @@ public class ParabolicTrajectory {
         } else {
             return null;
         }
+        */
         double targetDistance = Math.hypot(targetX - launchX, targetY - launchY);
         double idealLaunchVelocity = (TurretConstants.k_minZoneLaunchVelocity + targetDistance * (TurretConstants.k_maxLaunchVelocity)) / TurretConstants.k_maxZoneLaunchDistance;
         ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
