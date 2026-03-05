@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.controls.DriverControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.TurretSubsystem;
 
 public class RobotContainer {
   private final Telemetry logger = new Telemetry();
@@ -36,6 +37,8 @@ public class RobotContainer {
   public final TalonFX hood; // ID 51
   public final TalonFX shooterPrimary; // ID 52
   public final TalonFX shooterSecondary; // ID 53
+
+  public final TurretSubsystem turret = new TurretSubsystem();
 
   public RobotContainer() {
     hopperFloor = new SparkFlex(40, MotorType.kBrushless);
