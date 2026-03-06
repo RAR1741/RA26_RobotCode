@@ -36,6 +36,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -45,8 +46,8 @@ public class TurretSubsystem extends SubsystemBase {
 
   private final double MAX_ONE_DIR_FOV = 180; // degrees
 
-  private static final double M12_OFFSET = 0.939717;
-  private static final double M13_OFFSET = 0.31208;
+  private static final double M12_OFFSET = 0.951269;
+  private static final double M13_OFFSET = 0.306114;
   // reading
 
   // TODO: check these for the real bot; these are just estimates
@@ -103,12 +104,24 @@ public class TurretSubsystem extends SubsystemBase {
         .withName("Turret.Rezero");
   }
 
+  @AutoLogOutput(key = "Turret/m12TAbsAngleWithOffset")
   private double getM12TAbsAngleWithOffset() {
-    return (m12TAbsEncoder.get() - M12_OFFSET + 1.0) % 1.0;
+    return (getM12TAbsAngle() - M12_OFFSET + 1.0) % 1.0;
   }
 
+  @AutoLogOutput(key = "Turret/m13TAbsAngleWithOffset")
   private double getM13TAbsAngleWithOffset() {
-    return (m13TAbsEncoder.get() - M13_OFFSET + 1.0) % 1.0;
+    return (getM13TAbsAngle() - M13_OFFSET + 1.0) % 1.0;
+  }
+
+  @AutoLogOutput(key = "Turret/m12TAbsAngle")
+  private double getM12TAbsAngle() {
+    return m12TAbsEncoder.get();
+  }
+
+  @AutoLogOutput(key = "Turret/m13TAbsAngle")
+  private double getM13TAbsAngle() {
+    return m13TAbsEncoder.get();
   }
 
   private double computeTurretAngleFromAbs() {
@@ -145,7 +158,7 @@ public class TurretSubsystem extends SubsystemBase {
     return turret.getAngle().plus(Degrees.of(180));
   }
 
-  public Angle getRawAngle() {
+  public Angle getAngle() {
     return turret.getAngle();
   }
 
@@ -161,11 +174,8 @@ public class TurretSubsystem extends SubsystemBase {
   public void periodic() {
     turret.updateTelemetry();
 
-    Logger.recordOutput("Turret/RawYamsAngle", getRawAngle().in(Degrees));
-    Logger.recordOutput("Turret/m12TAbsEncoder", getM12TAbsAngleWithOffset());
-    Logger.recordOutput("Turret/m13TAbsEncoder", getM13TAbsAngleWithOffset());
-    Logger.recordOutput("Turret/computeTurretAngleFromAbs",
-        computeTurretAngleFromAbs());
+    Logger.recordOutput("Turret/RelYamsAngle", getAngle());
+    Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs());
 
     // Logger.recordOutput("ASCalibration/FinalComponentPoses", new Pose3d[] {
     // new Pose3d(
