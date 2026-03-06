@@ -45,19 +45,9 @@ public class TurretSubsystem extends SubsystemBase {
 
   private final double MAX_ONE_DIR_FOV = 180; // degrees
 
-  // CRT (Chinese Remainder Theorem) absolute encoder constants
-  // The two encoders are geared with coprime tooth counts (12 and 13) to the
-  // turret,
-  // so they wrap a different number of times over the turret's full 360° range.
-  // gcd(12, 13) = 1, so CRT uniquely resolves position within lcm(12,13) = 156
-  // sectors.
-  private static final int RING_GEAR_TEETH = 60; // teeth on the turret's ring gear
-  private static final int CRT_WRAPS_M12 = RING_GEAR_TEETH / 12; // m12 encoder full rotations per turret rotation
-  private static final int CRT_WRAPS_M13 = RING_GEAR_TEETH / 13; // m13 encoder full rotations per turret rotation
-  private static final double M12_OFFSET = 0.939717; // TODO: calibrate — encoder reading (0-1) when turret is at 0°
-  private static final double M13_OFFSET = 0.31208; // TODO: calibrate — encoder reading (0-1) when turret is at 0°
-  private static final double CRT_ERROR_THRESHOLD = 0.1; // max allowable error between expected and actual encoder
-                                                         // reading
+  private static final double M12_OFFSET = 0.939717;
+  private static final double M13_OFFSET = 0.31208;
+  // reading
 
   // TODO: check these for the real bot; these are just estimates
   public final Translation3d turretTranslation = new Translation3d(-0.205, 0.0, 0.375);
@@ -65,11 +55,12 @@ public class TurretSubsystem extends SubsystemBase {
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
   // Total reduction: 5 * 5 = 25:1
 
-  private SparkMax spark = new SparkMax(50, MotorType.kBrushless);
+  private SparkMax turretSpark = new SparkMax(50, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(15.0, 0, 0, DegreesPerSecond.of(2440),
+      .withClosedLoopController(15.0, 0, 0,
+          DegreesPerSecond.of(2440),
           DegreesPerSecondPerSecond.of(2440))
       // TODO: make this work, and not error
       // .withFeedforward(new SimpleMotorFeedforward(0.0, 7.5, 0.0))
@@ -82,7 +73,7 @@ public class TurretSubsystem extends SubsystemBase {
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
-  private SmartMotorController smc = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+  private SmartMotorController smc = new SparkWrapper(turretSpark, DCMotor.getNEO(1), smcConfig);
 
   private final PivotConfig turretConfig = new PivotConfig(smc)
       .withHardLimit(Degrees.of(-MAX_ONE_DIR_FOV - 5), Degrees.of(MAX_ONE_DIR_FOV +
@@ -104,76 +95,34 @@ public class TurretSubsystem extends SubsystemBase {
     m13TAbsEncoder = new REVThroughBoreEncoder(0);
 
     new Trigger(() -> m12TAbsEncoder.isConnected() &&
-        m13TAbsEncoder.isConnected()).onTrue(Commands.runOnce(() -> {
-          System.out.println("Turret absolute encoders connected, zeroing turret via CRT");
-          double turretAngle = computeTurretAngleCRT(m12TAbsEncoder.get(),
-              m13TAbsEncoder.get());
-          System.out.println("CRT turret angle: " + turretAngle + " deg");
-          turret.setAngle(Degrees.of(turretAngle));
-        }).ignoringDisable(true));
-
+        m13TAbsEncoder.isConnected()).onTrue(rezero().ignoringDisable(true));
   }
 
-  /**
-   * Uses the Chinese Remainder Theorem to compute the absolute turret angle
-   * from two absolute encoders geared at coprime ratios (12 and 13).
-   *
-   * <p>
-   * Each encoder reads a fractional rotation (0 to 1). Because the encoder gears
-   * have coprime tooth counts, each encoder wraps a different number of times
-   * over
-   * the turret's full 360° range. CRT lets us determine which "sector" (wrap
-   * number)
-   * each encoder is in, and thus recover the unique turret position.
-   *
-   * <p>
-   * Algorithm: for each candidate wrap number k1 of the m12 encoder (0..11),
-   * compute the implied turret angle θ = (k1 + r1) × 360 / n1, then check if the
-   * m13 encoder's fractional reading is consistent. The candidate with the
-   * smallest
-   * error is the correct one.
-   *
-   * @param r1Raw raw m12 encoder reading (0 to 1)
-   * @param r2Raw raw m13 encoder reading (0 to 1)
-   * @return turret angle in degrees, in the range [0, 360)
-   */
-  private double computeTurretAngleCRT(double r1Raw, double r2Raw) {
-    // Apply calibration offsets and normalize to [0, 1)
-    double r1 = ((r1Raw - M12_OFFSET) % 1.0 + 1.0) % 1.0;
-    double r2 = ((r2Raw - M13_OFFSET) % 1.0 + 1.0) % 1.0;
+  public Command rezero() {
+    return Commands.runOnce(() -> turretSpark.getEncoder().setPosition(computeTurretAngleFromAbs()), this)
+        .withName("Turret.Rezero");
+  }
 
-    double sectorSize1 = 360.0 / CRT_WRAPS_M12; // degrees per m12 encoder wrap
+  private double getM12TAbsAngleWithOffset() {
+    return (m12TAbsEncoder.get() - M12_OFFSET + 1.0) % 1.0;
+  }
 
-    double bestError = Double.MAX_VALUE;
-    int bestK1 = 0;
+  private double getM13TAbsAngleWithOffset() {
+    return (m13TAbsEncoder.get() - M13_OFFSET + 1.0) % 1.0;
+  }
 
-    for (int k1 = 0; k1 < CRT_WRAPS_M12; k1++) {
-      double theta = (k1 + r1) * sectorSize1;
-      // Predict what r2 should be at this theta
-      double expectedR2 = (CRT_WRAPS_M13 * theta / 360.0) % 1.0;
-      if (expectedR2 < 0)
-        expectedR2 += 1.0;
+  private double computeTurretAngleFromAbs() {
+    double e1 = getM12TAbsAngleWithOffset();
+    double e2 = getM13TAbsAngleWithOffset();
 
-      // Circular distance between expected and actual r2 (handles wrap-around)
-      double error = Math.abs(expectedR2 - r2);
-      error = Math.min(error, 1.0 - error);
+    double colE = e1 - e2;
+    double colF = ((colE + 1.5) % 1.0) - 0.5;
+    double colG = ((colF * 2.6) + 2.0) % 1.0; // 2.6 = CRT_WRAPS_M12 * CRT_WRAPS_M13 / (CRT_WRAPS_M12 - CRT_WRAPS_M13)
+    double turretAngleDeg = colG * 360.0;
 
-      if (error < bestError) {
-        bestError = error;
-        bestK1 = k1;
-      }
-    }
-
-    if (bestError > CRT_ERROR_THRESHOLD) {
-      System.err.println("[Turret CRT] WARNING: encoder disagreement! Best error = " + bestError
-          + " (threshold " + CRT_ERROR_THRESHOLD + "). Check encoder wiring/calibration.");
-    }
-
-    double turretAngleDeg = (bestK1 + r1) * sectorSize1;
-
-    Logger.recordOutput("Turret/CRT/SelectedSector", bestK1);
-    Logger.recordOutput("Turret/CRT/Error", bestError);
-    Logger.recordOutput("Turret/CRT/ComputedAngle", turretAngleDeg);
+    Logger.recordOutput("Turret/CRT/colF", colF);
+    Logger.recordOutput("Turret/CRT/colG", colG);
+    Logger.recordOutput("Turret/CRT/turretAngleDeg", turretAngleDeg);
 
     return turretAngleDeg;
   }
@@ -204,11 +153,6 @@ public class TurretSubsystem extends SubsystemBase {
     return turret.set(dutyCycle);
   }
 
-  public Command rezero() {
-    return Commands.runOnce(() -> spark.getEncoder().setPosition(0),
-        this).withName("Turret.Rezero");
-  }
-
   public Command sysId() {
     return turret.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(10));
   }
@@ -218,9 +162,10 @@ public class TurretSubsystem extends SubsystemBase {
     turret.updateTelemetry();
 
     Logger.recordOutput("Turret/RawYamsAngle", getRawAngle().in(Degrees));
-    Logger.recordOutput("Turret/m12TAbsEncoder", m12TAbsEncoder.get() - M12_OFFSET);
-    Logger.recordOutput("Turret/m13TAbsEncoder", m13TAbsEncoder.get() - M13_OFFSET);
-    Logger.recordOutput("Turret/crtAngle", computeTurretAngleCRT(m12TAbsEncoder.get(), m13TAbsEncoder.get()));
+    Logger.recordOutput("Turret/m12TAbsEncoder", getM12TAbsAngleWithOffset());
+    Logger.recordOutput("Turret/m13TAbsEncoder", getM13TAbsAngleWithOffset());
+    Logger.recordOutput("Turret/computeTurretAngleFromAbs",
+        computeTurretAngleFromAbs());
 
     // Logger.recordOutput("ASCalibration/FinalComponentPoses", new Pose3d[] {
     // new Pose3d(
