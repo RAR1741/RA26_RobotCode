@@ -11,78 +11,87 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Superstructure extends SubsystemBase {
-    private final IntakeSubsystem intakeSubsystem;
-    private final ShooterSubsystem shooterSubsystem;
-    private final TurretSubsystem turretSubsystem;
-    private final KickerSubsystem kickerSubsystem;
-    private final HopperSubsystem hopperSubsystem;
+  private final IntakeSubsystem intake;
+  private final ShooterSubsystem shooter;
+  private final TurretSubsystem turret;
+  private final KickerSubsystem kicker;
+  private final HopperSubsystem hopper;
 
-    private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
-                                     // firing, can be used in an auto command to wait until the shooter is ready
-                                     // before firing
+  private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
+                                   // firing, can be used in an auto command to wait until the shooter is ready
+                                   // before firing
 
-    private AngularVelocity targetShooterSpeed;
-    private Angle targetTurretAngle;
+  private AngularVelocity targetShooterSpeed;
+  private Angle targetTurretAngle;
 
-    public Superstructure() {
-        // Initialize subsystems here if needed
+  public Superstructure() {
+    // Initialize subsystems here if needed
+    this.intake = new IntakeSubsystem();
+    this.hopper = new HopperSubsystem();
+    this.kicker = new KickerSubsystem();
+    this.turret = new TurretSubsystem();
+    this.shooter = new ShooterSubsystem();
 
-        this.intakeSubsystem = new IntakeSubsystem();
-        this.shooterSubsystem = new ShooterSubsystem();
-        this.turretSubsystem = new TurretSubsystem();
-        this.kickerSubsystem = new KickerSubsystem();
-        this.hopperSubsystem = new HopperSubsystem();
-        this.isShooter = false;
-    }
+    this.isShooter = false;
+  }
 
-    public IntakeSubsystem getIntakeSubsystem() {
-        return intakeSubsystem;
-    }
+  public IntakeSubsystem getIntakeSubsystem() {
+    return intake;
+  }
 
-    public ShooterSubsystem getShooterSubsystem() {
-        return shooterSubsystem;
-    }
+  public ShooterSubsystem getShooterSubsystem() {
+    return shooter;
+  }
 
-    public TurretSubsystem getTurretSubsystem() {
-        return turretSubsystem;
-    }
+  public TurretSubsystem getTurretSubsystem() {
+    return turret;
+  }
 
-    public KickerSubsystem getKickerSubsystem() {
-        return kickerSubsystem;
-    }
+  public KickerSubsystem getKickerSubsystem() {
+    return kicker;
+  }
 
-    public HopperSubsystem getHopperSubsystem() {
-        return hopperSubsystem;
-    }
+  public HopperSubsystem getHopperSubsystem() {
+    return hopper;
+  }
 
-    // Aim at shooter for auto
-    public Command aimCommand(AngularVelocity shooterSpeed, Angle turretAngle) {
-        return Commands.runOnce(() -> {
-            targetShooterSpeed = shooterSpeed;
-            targetTurretAngle = turretAngle;
-        }).andThen(
-                Commands.parallel(
-                        shooterSubsystem.setSpeed(shooterSpeed).asProxy(),
-                        turretSubsystem.setAngle(turretAngle).asProxy())
-                        .withName("Superstructure.aimCommand"));
-    }
+  public Command feedAllCommand() {
+    return Commands.parallel(
+        hopper.feedCommand().asProxy(),
+        kicker.feedCommand().asProxy()).withName("Superstructure.feedAll");
+  }
 
-    public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle) {
-        targetShooterSpeed = shooterSpeed;
-        targetTurretAngle = turretAngle;
-    }
+  public Command shootCommand() {
+    return shooter.shoot().asProxy().withName("Superstructure.shoot");
+  }
 
-    public Command stopAllCommand() {
-        return Commands.parallel(
-                shooterSubsystem.stopCommand().asProxy(),
-                turretSubsystem.setAngle(Degrees.of(0)).asProxy()).withName("Superstructure.stopAll");
-    }
+  // Aim at shooter for auto
+  public Command aimCommand(AngularVelocity shooterSpeed, Angle turretAngle) {
+    return Commands.runOnce(() -> {
+      targetShooterSpeed = shooterSpeed;
+      targetTurretAngle = turretAngle;
+    }).andThen(
+        Commands.parallel(
+            shooter.setSpeed(shooterSpeed).asProxy(),
+            turret.setAngle(turretAngle).asProxy())
+            .withName("Superstructure.aimCommand"));
+  }
 
-    public Command aimDynamic(Supplier<AngularVelocity> shooterSpeedSupplier, Supplier<Angle> turretAngleSupplier) {
-        return Commands.parallel(
-                shooterSubsystem.setSpeedDynamic(shooterSpeedSupplier).asProxy(),
-                turretSubsystem.setAngleDynamic(turretAngleSupplier).asProxy())
-                .withName("Superstructure.aimDynamic");
-    }
+  public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle) {
+    targetShooterSpeed = shooterSpeed;
+    targetTurretAngle = turretAngle;
+  }
 
+  public Command stopAllCommand() {
+    return Commands.parallel(
+        shooter.stopCommand().asProxy(),
+        turret.setAngle(Degrees.of(0)).asProxy()).withName("Superstructure.stopAll");
+  }
+
+  public Command aimDynamic(Supplier<AngularVelocity> shooterSpeedSupplier, Supplier<Angle> turretAngleSupplier) {
+    return Commands.parallel(
+        shooter.setSpeedDynamic(shooterSpeedSupplier).asProxy(),
+        turret.setAngleDynamic(turretAngleSupplier).asProxy())
+        .withName("Superstructure.aimDynamic");
+  }
 }
