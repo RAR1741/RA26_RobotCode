@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.Inches;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
+import com.ctre.phoenix6.CANBus;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -16,6 +18,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 public class Constants {
+  public static final CANBus ctreCANBus = new CANBus("Drivetrain");
+
   public static class SwerveDriveConstants {
     private final static Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
     private final static Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
@@ -59,7 +63,10 @@ public class Constants {
     public static final int kKickerMotorId = 41;
   }
 
-  public static class TurretConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
+  public static class TurretConstants {
+    public static final int k_turretMotorId = 50;
+
+    // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
     public static final double k_gravitationalAcceleration = 32.174;
     public static final double k_turretHeight = 2.0;
     public static final double k_hubHeight = 6.0;

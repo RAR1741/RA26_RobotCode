@@ -56,7 +56,7 @@ public class TurretSubsystem extends SubsystemBase {
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
   // Total reduction: 5 * 5 = 25:1
 
-  private SparkMax turretSpark = new SparkMax(50, MotorType.kBrushless);
+  private SparkMax turretSpark = new SparkMax(Constants.TurretConstants.k_turretMotorId, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)

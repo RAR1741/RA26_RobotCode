@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -11,7 +11,7 @@ import frc.robot.Constants;
 public class KickerSubsystem extends SubsystemBase {
   private static final double KICKER_SPEED = 1.0;
   private static final double KICKER_SPEED_STOP = 0;
-  private SparkMax SparkyKicker = new SparkMax(Constants.KickerConstants.kKickerMotorId, MotorType.kBrushless);
+  private SparkFlex SparkyKicker = new SparkFlex(Constants.KickerConstants.kKickerMotorId, MotorType.kBrushless);
 
   public Command kickerCommand() {
     return Commands.run(() -> SparkyKicker.set(KICKER_SPEED), this)

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.Pair;
@@ -39,69 +40,75 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.NovaWrapper;
 import yams.motorcontrollers.local.SparkWrapper;
+import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-   private final SparkMax leaderSpark = new SparkMax(Constants.ShooterConstants.k_leaderMotorId,
-         MotorType.kBrushless);
-   private final SparkMax followerSpark = new SparkMax(Constants.ShooterConstants.k_followerMotorId,
-         MotorType.kBrushless);
+  private final TalonFX leaderTalon = new TalonFX(
+      Constants.ShooterConstants.k_leaderMotorId,
+      Constants.ctreCANBus);
 
-   private final SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-         .withFollowers(Pair.of(followerSpark, true))
-         .withControlMode(ControlMode.CLOSED_LOOP)
-         .withClosedLoopController(0.00936, 0, 0)
-         // .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
-         .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
-         .withMotorInverted(false)
-         .withIdleMode(MotorMode.COAST)
-         .withStatorCurrentLimit(Amps.of(40));
+  private final TalonFX followerTalon = new TalonFX(
+      Constants.ShooterConstants.k_followerMotorId,
+      Constants.ctreCANBus);
 
-   private final SmartMotorController smc = new SparkWrapper(leaderSpark, DCMotor.getNeoVortex(1), smcConfig);
+  private final SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
+      .withFollowers(Pair.of(followerTalon, true))
+      .withControlMode(ControlMode.CLOSED_LOOP)
+      .withClosedLoopController(0.00936, 0, 0)
+      // .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
+      .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
+      .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
+      .withMotorInverted(false)
+      .withIdleMode(MotorMode.COAST)
+      .withStatorCurrentLimit(Amps.of(40));
 
-   private final FlyWheelConfig shooterConfig = new FlyWheelConfig(smc)
-         .withDiameter(Inches.of(4))
-         .withMass(Pounds.of(1))
-         .withUpperSoftLimit(RPM.of(6000))
-         .withLowerSoftLimit(RPM.of(0))
-         .withTelemetry("Shooter", TelemetryVerbosity.HIGH);
+  private final SmartMotorController smc = new TalonFXWrapper(leaderTalon, DCMotor.getKrakenX60(2), smcConfig);
 
-   private final FlyWheel shooter = new FlyWheel(shooterConfig);
+  private final FlyWheelConfig shooterConfig = new FlyWheelConfig(smc)
+      .withDiameter(Inches.of(4))
+      .withMass(Pounds.of(1))
+      .withUpperSoftLimit(RPM.of(6000))
+      .withLowerSoftLimit(RPM.of(0))
+      .withTelemetry("Shooter", TelemetryVerbosity.HIGH);
 
-   public ShooterSubsystem() {
-   }
+  private final FlyWheel shooter = new FlyWheel(shooterConfig);
 
-   public Command setSpeed(AngularVelocity speed) {
-      return shooter.setSpeed(speed);
-   }
+  public ShooterSubsystem() {
+  }
 
-   public Command setSpeedDynamic(Supplier<AngularVelocity> speedSupplier) {
-      return shooter.setSpeed(speedSupplier);
-   }
+  public Command setSpeed(AngularVelocity speed) {
+    return shooter.setSpeed(speed);
+  }
 
-   public Command stopCommand() {
-      return Commands.run(() -> setSpeed(RPM.of(0)));
-   }
+  public Command setSpeedDynamic(Supplier<AngularVelocity> speedSupplier) {
+    return shooter.setSpeed(speedSupplier);
+  }
 
-   public boolean isAtSpeed(AngularVelocity targetSpeed) {
-      return Math.abs(leaderSpark.getEncoder().getVelocity() - targetSpeed.in(RPM)) < 100; // Tolerance of 100 RPM,
-      // adjust as
-      // needed
-   }
+  public Command stopCommand() {
+    return Commands.run(() -> setSpeed(RPM.of(0)));
+  }
 
-   public AngularVelocity getCurrentSpeed() {
-      return RPM.of(leaderSpark.getEncoder().getVelocity());
-   }
+  public boolean isAtSpeed(AngularVelocity targetSpeed) {
+    return Math.abs(leaderTalon.getVelocity().getValueAsDouble() - targetSpeed.in(RPM)) < 100; // Tolerance of 100
+                                                                                               // RPM,
+    // adjust as
+    // needed
+  }
 
-   public boolean isAtSpeedWithTolerance(AngularVelocity targetSpeed, double tolerance) {
-      return Math
-            .abs((leaderSpark.getEncoder().getVelocity() - targetSpeed.in(RPM)) / (targetSpeed.in(RPM))) < tolerance;
-   }
+  public AngularVelocity getCurrentSpeed() {
+    return RPM.of(leaderTalon.getVelocity().getValueAsDouble());
+  }
 
-   public Command setSpeedWithToleranceCommand(AngularVelocity targetSpeed, double tolerance) {
-      return Commands.run(() -> setSpeed(targetSpeed))
-            .until(() -> isAtSpeedWithTolerance(targetSpeed, tolerance))
-            .withName("ShooterSystem.setSpeedWithToleranceCommand");
-   }
+  public boolean isAtSpeedWithTolerance(AngularVelocity targetSpeed, double tolerance) {
+    return Math
+        .abs((leaderTalon.getVelocity().getValueAsDouble() - targetSpeed.in(RPM))
+            / (targetSpeed.in(RPM))) < tolerance;
+  }
+
+  public Command setSpeedWithToleranceCommand(AngularVelocity targetSpeed, double tolerance) {
+    return Commands.run(() -> setSpeed(targetSpeed))
+        .until(() -> isAtSpeedWithTolerance(targetSpeed, tolerance))
+        .withName("ShooterSystem.setSpeedWithToleranceCommand");
+  }
 }
