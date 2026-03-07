@@ -40,11 +40,11 @@ import yams.motorcontrollers.local.NovaWrapper;
 import yams.motorcontrollers.local.SparkWrapper;
 
 
-public class ShooterSystem extends SubsystemBase {
-    
+public class ShooterSubsystem extends SubsystemBase {
+
     private final SparkMax shooterSparky = new SparkMax(Constants.ShooterConstants.k_shooterMotorId, MotorType.kBrushless);
     private final SparkMax followerSparky = new SparkMax(Constants.ShooterConstants.k_followerMotorId, MotorType.kBrushless);
-    
+
   private final SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withFollowers(Pair.of(followerSparky, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
@@ -67,8 +67,8 @@ public class ShooterSystem extends SubsystemBase {
 
       private final FlyWheel FlywheelSparky = new FlyWheel(shooterConfig);
 
-    public ShooterSystem() {
-        
+    public ShooterSubsystem() {
+
     }
 
 
@@ -94,8 +94,7 @@ public class ShooterSystem extends SubsystemBase {
                 .withName("ShooterSystem.setShooterSpeedWithToleranceCommand");
      }
 
-     
-     
-    
-}
 
+
+
+}

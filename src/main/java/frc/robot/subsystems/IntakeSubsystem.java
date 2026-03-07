@@ -38,7 +38,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 
 
-public class IntakeSystem extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
 
   private static final double INTAKE_SPEED = 1.0;
   private static final double INTAKE_SPEED_STOP = 0.0;
@@ -76,7 +76,7 @@ public class IntakeSystem extends SubsystemBase {
   // NOTE: we no longer use Yams abstractions (FlyWheel/Arm/SmartMotorController).
   // Roller will be driven directly through the ThriftyNova device.
 
-  public IntakeSystem() {
+  public IntakeSubsystem() {
     // pivotMotor.factoryReset();
   }
 
@@ -155,7 +155,7 @@ public class IntakeSystem extends SubsystemBase {
     // Use SparkMax PID position control (rotations)
     try {
       // pivotMax.getPIDController().setReference(motorRotations, ControlType.kPosition);
-      pivotMax.getEncoder().setPosition(motorRotations); 
+      pivotMax.getEncoder().setPosition(motorRotations);
     } catch (Exception e) {
       // If the concrete SparkMax PID API isn't available in this environment, fallback to open-loop set
       // This is defensive: replace with appropriate API calls if needed.

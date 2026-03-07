@@ -11,47 +11,47 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Superstructure extends SubsystemBase {
-        private final IntakeSystem intakeSystem; 
-        private final ShooterSystem shooterSystem; 
+        private final IntakeSubsystem intakeSystem;
+        private final ShooterSubsystem shooterSystem;
         private final TurretSystem turretSystem;
         private final KickerSystem kickerSystem;
-        private final HopperSystem hopperSystem;
+        private final HopperSubsystem hopperSystem;
         private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for firing, can be used in an auto command to wait until the shooter is ready before firing
-        
+
         private AngularVelocity targetShooterSpeed;
         private Angle targetTurretAngle;
-    
+
         public Superstructure() {
             // Initialize subsystems here if needed
 
-            this.intakeSystem = new IntakeSystem();
-            this.shooterSystem = new ShooterSystem();
+            this.intakeSystem = new IntakeSubsystem();
+            this.shooterSystem = new ShooterSubsystem();
             this.turretSystem = new TurretSystem();
             this.kickerSystem = new KickerSystem();
-            this.hopperSystem = new HopperSystem();
+            this.hopperSystem = new HopperSubsystem();
             this.isShooter = false;
         }
-    
-        public IntakeSystem getIntakeSystem() {
+
+        public IntakeSubsystem getIntakeSystem() {
             return intakeSystem;
         }
-        
-        public ShooterSystem getShooterSystem() {
+
+        public ShooterSubsystem getShooterSystem() {
             return shooterSystem;
         }
-        
+
         public TurretSystem getTurretSystem() {
             return turretSystem;
         }
-        
+
         public KickerSystem getKickerSystem() {
             return kickerSystem;
         }
-        
-        public HopperSystem getHopperSystem() {
+
+        public HopperSubsystem getHopperSystem() {
             return hopperSystem;
         }
-    
+
         //Aim at shooter for auto
         public Command aimCommand(AngularVelocity shooterSpeed, Angle turretAngle) {
             return Commands.runOnce(() -> {
@@ -63,7 +63,7 @@ public class Superstructure extends SubsystemBase {
                         turretSystem.setAngle(turretAngle).asProxy())
                     .withName("Superstructure.aimCommand"));
         }
-  
+
         public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle){
             targetShooterSpeed = shooterSpeed;
             targetTurretAngle = turretAngle;
