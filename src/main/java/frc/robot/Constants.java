@@ -1,7 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import frc.robot.subsystems.TurretSystem;
+import frc.robot.subsystems.turret.AngleChangerSystem;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
@@ -35,9 +35,9 @@ public class Constants {
         public static final double k_maxLaunchAngle = 80.0;
         public static final double k_maxHubLaunchDistance = Math.hypot(FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
         public static final double k_maxZoneLaunchDistance = Math.hypot(FieldConstants.k_fieldLength - FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
-        public static final double k_minZoneLaunchVelocity = 5.0;
+        public static final double k_minZoneLaunchVelocity = 5.0; // idk if this even matters but it could be checked
         public static final double k_minAngleUnderTrench = 70.0;
-        public static final double k_maxTrenchPitchMotorPos = TurretSystem.launchPitchToMotorPos(k_minAngleUnderTrench);
+        public static final double k_maxTrenchPitchMotorPos = AngleChangerSystem.launchPitchToMotorPos(k_minAngleUnderTrench);
         public static final double k_maxPitchMotorSpeed = 9999999999.0;
         public static final double k_RPMTolerance = 2000000000000000.0;
         public static final double k_launchVelocityTolerance = 20000000000.0;

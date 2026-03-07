@@ -1,8 +1,8 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.turret;
 
 import java.util.function.Supplier;
 
-import org.littletonrobotics.junction.Logger;
+// import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -12,33 +12,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 // import edu.wpi.first.math.system.plant.DCMotor;
 // import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
-// import edu.wpi.first.math.util.Units;
-// import static edu.wpi.first.units.Units.Amps;
-// import static edu.wpi.first.units.Units.Inches;
-// import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.FeetPerSecond;
-// import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Degrees;
-// import static edu.wpi.first.units.Units.DegreesPerSecond;
-// import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-// import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.ParabolicTrajectory;
+// import frc.robot.subsystems.turret.ParabolicTrajectory;
 // import frc.robot.Telemetry;
 // import frc.robot.subsystems.SwerveSystem;
 
@@ -91,7 +73,7 @@ public class ShooterInstruction {
         return turretY <= FieldConstants.k_trenchWidth || turretY >= FieldConstants.k_fieldWidth - FieldConstants.k_trenchWidth;
     }
 
-    public double getMinAllowedAngle(double robotX, double robotY, double robotVX, double robotVY) {
+    public static double getMinAllowedAngleToHub(double robotX, double robotY, double robotVX, double robotVY) {
         boolean yInTrench = getYInTrench(robotY);
 
         // graph link: https://www.desmos.com/3d/k1wjvps1p3
@@ -126,14 +108,18 @@ public class ShooterInstruction {
         // x = dx - v * t - a/2 * t^2 = 0
         // double availableTime = (Math.sqrt(vIntoTrench * vIntoTrench + 2.0 * maxAcceleration * trenchDistance) - vIntoTrench) / maxAcceleration;
         double availableTime = ParabolicTrajectory.qFormulaGreater(-maxAcceleration / 2.0, -vIntoTrench, trenchDistance);
-        return pitchMotorToLaunchPitch(TurretConstants.k_maxTrenchPitchMotorPos + availableTime * TurretConstants.k_maxPitchMotorSpeed);
+        return AngleChangerSystem.pitchMotorToLaunchPitch(TurretConstants.k_maxTrenchPitchMotorPos + availableTime * TurretConstants.k_maxPitchMotorSpeed);
     }
 
-    public Pose3d getTurretPose() {
+    public static Pose3d getTurretPose() {
         return new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)); // tOdO gibb dis
     }
-    public Translation2d getTurretVelocity() { // tOdO gib mehr
+    public static Translation2d getTurretVelocity() { // tOdO gib mehr
         return new Translation2d(0, 0);
+    }
+
+    public static boolean activeHubOnShot(ParabolicTrajectory testTrajectory) {
+        return hubIsActive(gameTime() + testTrajectory.timeToHubScoring());
     }
 
     // see if these parameters need to be listed as suppliers
@@ -156,6 +142,7 @@ public class ShooterInstruction {
         int zone = getZone(turretX);
         boolean aimingToHub = isBlueTeam && zone <= 2 || isRedTeam && zone >= 4;
         boolean underTrenchBar = isBlueTeam && zone == 2 || isRedTeam && zone == 4;
+        
         if (aimingToHub) {
             testTrajectory = ParabolicTrajectory.toHubFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
         } else {
@@ -164,22 +151,23 @@ public class ShooterInstruction {
         if (testTrajectory == null) {
             return ShooterInstruction.HoldStateDontShoot();
         }
-        ShooterInstruction testInstruction = new ShooterInstruction(true, 
+        ShooterInstruction testInstruction = new ShooterInstruction(!underTrenchBar && (!aimingToHub || activeHubOnShot(testTrajectory)), 
             Degrees.of(testTrajectory.launchDirection), 
             Degrees.of(testTrajectory.launchAngle), 
-            launchVelocityToAngular(testTrajectory.launchVelocity));
+            ShooterSystem.launchVelocityToAngular(testTrajectory.launchVelocity));
 
         double minAllowedAngle = getMinAllowedAngleToHub(turretX, turretY, turretVX, turretVY);
+        double maxAllowedAngle = 80.0; // getMaxAllowedAngleToHub(turretX, turretY, turretVX, turretVY);
         if (aimingToHub) {
             if (testTrajectory.launchAngle < minAllowedAngle) {
                 testTrajectory = ParabolicTrajectory.toHubFromAXYWhileDriving(minAllowedAngle, turretX, turretY, turretVX, turretVY);
                 if (testTrajectory == null) {
                     return ShooterInstruction.HoldStateDontShoot();
                 }
-                testInstruction = new ShooterInstruction(!underTrenchBar && hubIsActive(gameTime() + testTrajectory.timeToHubScoring()), 
+                testInstruction = new ShooterInstruction(!underTrenchBar && activeHubOnShot(testTrajectory), 
                     Degrees.of(testTrajectory.launchDirection), 
                     Degrees.of(minAllowedAngle), 
-                    launchVelocityToAngular(testTrajectory.launchVelocity));
+                    ShooterSystem.launchVelocityToAngular(testTrajectory.launchVelocity));
             } else if (testTrajectory.launchAngle > maxAllowedAngle) {
                 testInstruction.targetPitch = Degrees.of(maxAllowedAngle);
                 testInstruction.doShoot = false;
@@ -200,7 +188,7 @@ public class ShooterInstruction {
 
     // 70 degree launch to hub
     public static ShooterInstruction generateInstructionJordanMode() {
-        Translation2d turretPosition = getTurretPose().getTranslation();
+        Translation3d turretPosition = getTurretPose().getTranslation();
         double turretX = turretPosition.getX();
         double turretY = turretPosition.getY();
         Translation2d turretVelocity = getTurretVelocity();
@@ -219,12 +207,12 @@ public class ShooterInstruction {
         if (testTrajectory == null) {
             return ShooterInstruction.HoldStateDontShoot();
         }
-        ShooterInstruction testInstruction = new ShooterInstruction(!underTrenchBar, 
+        ShooterInstruction testInstruction = new ShooterInstruction(!underTrenchBar && (!aimingToHub || activeHubOnShot(testTrajectory)), 
             Degrees.of(testTrajectory.launchDirection), 
             Degrees.of(testTrajectory.launchAngle), 
-            launchVelocityToAngular(testTrajectory.launchVelocity));
+            ShooterSystem.launchVelocityToAngular(testTrajectory.launchVelocity));
 
-        double minAllowedAngle = getMinAllowedAngle(turretX, turretY, turretVX, turretVY); // min allowed angle is always at or below 70 degrees
+        double minAllowedAngle = getMinAllowedAngleToHub(turretX, turretY, turretVX, turretVY); // min allowed angle is always at or below 70 degrees
         if (testTrajectory.launchAngle < minAllowedAngle) {
             testInstruction.targetPitch = Degrees.of(minAllowedAngle); // just assumes zone shot behavior
         }
@@ -242,7 +230,7 @@ public class ShooterInstruction {
 //     this.superstructure = superstructure;
 //     this.aimPointSupplier = aimPointSupplier;
 
-//     // TODO: figure out if the above is actually required. Right now, when you start
+//     // t0d0: figure out if the above is actually required. Right now, when you start
 //     // some other command, the auto aim can't start back up again
 //   }
 
@@ -254,7 +242,7 @@ public class ShooterInstruction {
 //     latestTurretAngle = superstructure.getTurretAngle();
 //     latestShootSpeed = superstructure.getShooterSpeed();
 
-//     // TODO: when this current command ends, we should probably cancel the dynamic
+//     // t0d0: when this current command ends, we should probably cancel the dynamic
 //     // aim command
 //     superstructure.aimDynamicCommand(() -> this.latestShootSpeed, () -> this.latestTurretAngle, () -> this.latestHoodAngle).schedule();
 //   }

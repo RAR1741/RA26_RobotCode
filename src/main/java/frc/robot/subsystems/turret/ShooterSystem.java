@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.turret;
 
 import java.util.function.Supplier;
 
@@ -9,22 +9,22 @@ import com.revrobotics.spark.SparkMax;
 
 // import edu.wpi.first.math.Pair;
 // import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.RPM;
+// import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+// import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+// import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
 // import frc.robot.Telemetry;
 
@@ -50,14 +50,13 @@ public class ShooterSystem extends SubsystemBase {
         Logger.recordOutput("Shooter/FlywheelVelocityA", flywheelSparkA.getEncoder().getVelocity());
         Logger.recordOutput("Shooter/FlywheelVelocityB", flywheelSparkB.getEncoder().getVelocity());
 
-        Logger.recordOutput("ASCalibration/FinalComponentPoses", new Pose3d[] {
-            new Pose3d(
-                turretTranslation,
-                new Rotation3d(0, turretPitch.getAngle().in(Radians), turretYaw.getAngle().in(Radians)))
-        });
+        // Logger.recordOutput("ASCalibration/FinalComponentPoses", new Pose3d[] {
+        //     new Pose3d(
+        //         turretTranslation,
+        //         new Rotation3d(0, turretPitch.getAngle().in(Radians), turretYaw.getAngle().in(Radians)))
+        // });
     }
 
-    @Override
     public Command sysId() {
         return shooter.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(10)); // check these numbers??
     }

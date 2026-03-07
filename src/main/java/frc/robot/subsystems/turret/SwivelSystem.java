@@ -1,31 +1,29 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.turret;
 
 import java.util.function.Supplier;
 
-import org.littletonrobotics.junction.Logger;
+// import org.littletonrobotics.junction.Logger;
 
 // import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 // import edu.wpi.first.math.Pair;
 // import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.geometry.Translation2d;
+
+import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+// import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
 // import frc.robot.Telemetry;
 
 import yams.mechanisms.positional.Pivot;
 
-public class ShooterSystem extends SubsystemBase {
+public class SwivelSystem extends SubsystemBase {
 
     public static Pivot turretYaw = null;
     public static SparkMax yawMotorSpark = null;
@@ -50,7 +48,6 @@ public class ShooterSystem extends SubsystemBase {
         // });
     }
 
-    @Override
     public Command sysId() {
         return null;
     }
