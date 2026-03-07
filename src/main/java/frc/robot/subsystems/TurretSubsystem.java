@@ -130,7 +130,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     double colE = e1 - e2;
     double colF = ((colE + 1.5) % 1.0) - 0.5;
-    double colG = ((colF * 2.6) + 2.0) % 1.0; // 2.6 = CRT_WRAPS_M12 * CRT_WRAPS_M13 / (CRT_WRAPS_M12 - CRT_WRAPS_M13)
+    double colG = ((colF * 2.6) + 2.0) % 1.0; // 2.6 = (12/60) * (13/60) / ((12/60) - (13/60))
     double turretAngleDeg = colG * 360.0;
 
     Logger.recordOutput("Turret/CRT/colF", colF);
