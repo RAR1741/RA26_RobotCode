@@ -18,41 +18,7 @@ public class RobotContainer {
   private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
   private final Superstructure superstructure = new Superstructure();
 
-  // public final SparkFlex hopperFloor; // ID 40
-  // public final SparkFlex kicker; // ID 41
-
-  // private static final CANBus kCANBus = new CANBus("Drivetrain");
-
-  // public final TalonFX hood; // ID 51
-  // public final TalonFX shooterPrimary; // ID 52
-  // public final TalonFX shooterSecondary; // ID 53
-
-  // public final TurretSubsystem turret = new TurretSubsystem();
-
   public RobotContainer() {
-    // hopperFloor = new SparkFlex(40, MotorType.kBrushless);
-    // // hopperFloor.configure(new SparkBaseConfig().inverted(true), null, null);
-    // hopperFloor.setInverted(true);
-    // kicker = new SparkFlex(41, MotorType.kBrushless);
-
-    // shooterPrimary = new TalonFX(52, kCANBus);
-    // shooterSecondary = new TalonFX(53, kCANBus);
-
-    // // Shooter configs
-    // TalonFXConfiguration shooterConfig = new TalonFXConfiguration();
-    // shooterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-    // shooterPrimary.getConfigurator().apply(shooterConfig);
-    // shooterSecondary.getConfigurator().apply(shooterConfig);
-
-    // shooterSecondary.setControl(new Follower(shooterPrimary.getDeviceID(),
-    // MotorAlignmentValue.Opposed));
-
-    // hood = new TalonFX(51, kCANBus);
-    // TalonFXConfiguration hoodConfig = new TalonFXConfiguration();
-    // hoodConfig.CurrentLimits.SupplyCurrentLimit = 2.0;
-    // hood.getConfigurator().apply(hoodConfig);
-
     configureBindings();
     buildNamedAutoCommands();
   }
