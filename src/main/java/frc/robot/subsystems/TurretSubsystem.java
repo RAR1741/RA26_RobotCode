@@ -85,7 +85,7 @@ public class TurretSubsystem extends SubsystemBase {
       .withMechanismPositionConfig(
           new MechanismPositionConfig().withMovementPlane(Plane.XY).withRelativePosition(turretTranslation));
 
-  private Pivot turret = new Pivot(turretConfig);
+  private Pivot turret = new Pivot(turretConfig.withMOI(1));
 
   // Absolute encoders
   private final REVThroughBoreEncoder m12TAbsEncoder;
