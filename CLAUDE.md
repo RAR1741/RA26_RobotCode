@@ -29,10 +29,10 @@ This is an FRC 2026 competition robot (Team RAR1741) using WPILib's command-base
 
 - **`CommandSwerveDrivetrain`** — CTRE Phoenix 6 swerve drive (4 TalonFX modules + CANcoders), field-centric control, SysId routines, vision integration
 - **`Superstructure`** — Orchestrator for all non-drivetrain subsystems (shooter, turret, intake, hopper, kicker). Coordinates aim sequences and stop-all commands.
-- **`ShooterSystem`** — Dual SparkMax flywheel via YAMS `FlyWheel` abstraction, closed-loop RPM control
-- **`IntakeSystem`** — Roller (ThriftyNova open-loop) + pivot arm (SparkMax with 125:1 gear reduction via YAMS `Arm`)
-- **`TurretSystem`** — Ballistics calculator only (no motor control yet)
-- **`KickerSystem` / `HopperSystem`** — Stubs, not yet implemented
+- **`ShooterSubsystem`** — Dual SparkMax flywheel via YAMS `FlyWheel` abstraction, closed-loop RPM control
+- **`IntakeSubsystem`** — Roller (ThriftyNova open-loop) + pivot arm (SparkMax with 125:1 gear reduction via YAMS `Arm`)
+- **`TurretSubsystem`** — Ballistics calculator only (no motor control yet)
+- **`KickerSubsystem` / `HopperSubsystem`** — Stubs, not yet implemented
 
 ### Vendor Libraries
 

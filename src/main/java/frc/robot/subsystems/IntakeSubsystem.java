@@ -1,10 +1,7 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.ControlType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-
-import com.thethriftybot.devices.ThriftyNova;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -35,9 +32,6 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-
-
-
 public class IntakeSubsystem extends SubsystemBase {
 
   private static final double INTAKE_SPEED = 1.0;
@@ -49,29 +43,29 @@ public class IntakeSubsystem extends SubsystemBase {
   // simple roller + pivot implementation (no Yams)
   private static final double PIVOT_GEAR_RATIO = 5 * 5 * (60.0 / 15.0); // 5:1 * 5:1 * 60/15
 
+  // private final SmartMotorControllerConfig smcConfig = new
+  // SmartMotorControllerConfig(this)
+  // .withFollowers(Pair.of(pivotMotor, true))
+  // .withControlMode(ControlMode.CLOSED_LOOP)
+  // .withClosedLoopController(0.00936, 0, 0)
+  // .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
+  // .withTelemetry("IntakeMotor", TelemetryVerbosity.HIGH)
+  // .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
+  // .withMotorInverted(false)
+  // .withIdleMode(MotorMode.COAST)
+  // .withStatorCurrentLimit(Amps.of(40));
 
-// private final SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-//       .withFollowers(Pair.of(pivotMotor, true))
-//       .withControlMode(ControlMode.CLOSED_LOOP)
-//       .withClosedLoopController(0.00936, 0, 0)
-//       .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
-//       .withTelemetry("IntakeMotor", TelemetryVerbosity.HIGH)
-//       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
-//       .withMotorInverted(false)
-//       .withIdleMode(MotorMode.COAST)
-//       .withStatorCurrentLimit(Amps.of(40));
-
- //  private final SmartMotorController smc = new SparkWrapper(rollerMax, DCMotor.getNeoVortex(1), smcConfig);
+  // private final SmartMotorController smc = new SparkWrapper(rollerMax,
+  // DCMotor.getNeoVortex(1), smcConfig);
 
   // private final FlyWheelConfig intakeConfig = new FlyWheelConfig(smc)
-  //     .withDiameter(Inches.of(4))
-  //     .withMass(Pounds.of(1))
-  //     .withUpperSoftLimit(RPM.of(6000))
-  //     .withLowerSoftLimit(RPM.of(0))
-  //     .withTelemetry("Intake", TelemetryVerbosity.HIGH);
+  // .withDiameter(Inches.of(4))
+  // .withMass(Pounds.of(1))
+  // .withUpperSoftLimit(RPM.of(6000))
+  // .withLowerSoftLimit(RPM.of(0))
+  // .withTelemetry("Intake", TelemetryVerbosity.HIGH);
 
   // private final FlyWheel FlywheelIntake = new FlyWheel(intakeConfig);
-
 
   // NOTE: we no longer use Yams abstractions (FlyWheel/Arm/SmartMotorController).
   // Roller will be driven directly through the ThriftyNova device.
@@ -90,10 +84,11 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   // /**
-  //  * Command to eject while held.
-  //  */
+  // * Command to eject while held.
+  // */
   // public Command ejectCommand() {
-  //   return intake.set(-INTAKE_SPEED).finallyDo(() -> smc.setDutyCycle(0)).withName("Intake.Eject");
+  // return intake.set(-INTAKE_SPEED).finallyDo(() ->
+  // smc.setDutyCycle(0)).withName("Intake.Eject");
   // }
 
   public Command setPivotAngle(Angle angle) {
@@ -154,10 +149,12 @@ public class IntakeSubsystem extends SubsystemBase {
     double motorRotations = (jointDegrees / 360.0) * PIVOT_GEAR_RATIO;
     // Use SparkMax PID position control (rotations)
     try {
-      // pivotMax.getPIDController().setReference(motorRotations, ControlType.kPosition);
+      // pivotMax.getPIDController().setReference(motorRotations,
+      // ControlType.kPosition);
       pivotMax.getEncoder().setPosition(motorRotations);
     } catch (Exception e) {
-      // If the concrete SparkMax PID API isn't available in this environment, fallback to open-loop set
+      // If the concrete SparkMax PID API isn't available in this environment,
+      // fallback to open-loop set
       // This is defensive: replace with appropriate API calls if needed.
       // No-op or log
     }
@@ -175,4 +172,4 @@ public class IntakeSubsystem extends SubsystemBase {
 }
 // Deploy Gear Ratio: 25:1(2 5:1's) - 60:15
 // Spin Gear Ratio: 9:1
-//make it toggaleable
+// make it toggaleable
