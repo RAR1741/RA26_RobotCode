@@ -20,14 +20,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.controls.DriverControls;
+import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.TurretSubsystem;
 
 public class RobotContainer {
   private final Telemetry logger = new Telemetry();
 
-  public final CommandSwerveDrivetrain m_swerve = TunerConstants.createDrivetrain();
+  private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
+  private final Superstructure superstructure = new Superstructure();
 
   public final SparkFlex hopperFloor; // ID 40
   public final SparkFlex kicker; // ID 41
@@ -64,41 +67,19 @@ public class RobotContainer {
     hood.getConfigurator().apply(hoodConfig);
 
     configureBindings();
+    buildNamedAutoCommands();
   }
 
   private void configureBindings() {
-    DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, m_swerve, logger);
+    DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, swerve, superstructure, logger);
+    OperatorControls.configure(Constants.ControllerConstants.kOperatorControllerPort, swerve, superstructure);
+  }
 
-    CommandXboxController oppController = new CommandXboxController(1);
-
-    oppController.a().onTrue(Commands.runOnce(() -> {
-      hopperFloor.set(0.5);
-      kicker.set(0.5);
-    })).onFalse(Commands.runOnce(() -> {
-      hopperFloor.set(0);
-      kicker.set(0);
-    }));
-
-    oppController.b().onTrue(Commands.runOnce(() -> {
-      shooterPrimary.setControl(new DutyCycleOut(0.45));
-      // shooterPrimary.setControl(new DutyCycleOut(0.67));
-    })).onFalse(Commands.runOnce(() -> {
-      shooterPrimary.setControl(new DutyCycleOut(0));
-    }));
-
-    double hoodSpeed = 0.5;
-
-    oppController.x().onTrue(Commands.runOnce(() -> {
-      hood.setControl(new DutyCycleOut(hoodSpeed));
-    })).onFalse(Commands.runOnce(() -> {
-      hood.setControl(new DutyCycleOut(0));
-    }));
-
-    oppController.y().onTrue(Commands.runOnce(() -> {
-      hood.setControl(new DutyCycleOut(-hoodSpeed));
-    })).onFalse(Commands.runOnce(() -> {
-      hood.setControl(new DutyCycleOut(0));
-    }));
+  private void buildNamedAutoCommands() {
+    // Add any auto commands to the NamedCommands here
+    // NamedCommands.registerCommand("driveForwards",
+    // drivebase.driveForward().withTimeout(2)
+    // .withName("Auto.driveForwards"));
   }
 
   public Command getAutonomousCommand() {
@@ -109,17 +90,17 @@ public class RobotContainer {
     // return Commands.sequence(
     // // Reset our field centric heading to match the robot
     // // facing away from our alliance station wall (0 deg).
-    // m_swerve.runOnce(() -> m_swerve.seedFieldCentric(Rotation2d.kZero)),
+    // swerve.runOnce(() -> swerve.seedFieldCentric(Rotation2d.kZero)),
     // // Then slowly drive forward (away from us) for 5 seconds.
-    // m_swerve.applyRequest(() -> drive.withVelocityX(0.5)
+    // swerve.applyRequest(() -> drive.withVelocityX(0.5)
     // .withVelocityY(0)
     // .withRotationalRate(0))
     // .withTimeout(5.0),
     // // Finally idle for the rest of auton
-    // m_swerve.applyRequest(() -> idle));
+    // swerve.applyRequest(() -> idle));
   }
 
   public CommandSwerveDrivetrain getSwerveSystem() {
-    return m_swerve;
+    return swerve;
   }
 }

@@ -16,115 +16,122 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 public class Constants {
-    public static class SwerveDriveConstants {
-        private final static Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-        private final static Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-        private final static Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-        private final static Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+  public static class SwerveDriveConstants {
+    private final static Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
+    private final static Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
+    private final static Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
+    private final static Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
 
-        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(
-                m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation); // get this in when
-                                                                                                     // we know bot dims
+    public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(
+        m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation); // get this in when
+                                                                                             // we know bot dims
 
-        public static final double k_maxSpeed = Units.feetToMeters(14.5);
+    public static final double k_maxSpeed = Units.feetToMeters(14.5);
 
-        public static final double k_maxDriverSpeed = 1.0; // Meters per second
-        public static final double k_maxDriverBoostSpeed = 4.5;
+    public static final double k_maxDriverSpeed = 1.0; // Meters per second
+    public static final double k_maxDriverBoostSpeed = 4.5;
 
-        public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
-    }
+    public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
+  }
 
-    public static class ControllerConstants {
-        public static final int kDriverControllerPort = 0;
-        public static final int kOperatorControllerPort = 1;
-        public static final int kPoseControllerPort = 2;
+  public static class ControllerConstants {
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
 
-        // Joystick Deadband
-        public static final double k_DEADBAND = 0.1;
-    }
+    // Joystick Deadband
+    public static final double k_DEADBAND = 0.1;
+  }
 
-    public static class TurretConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
-        public static final double k_gravitationalAcceleration = 32.174;
-        public static final double k_turretHeight = 2.0;
-        public static final double k_hubHeight = 6.0;
-        public static final double k_ceilingHeight = 15.0;
-        public static final double k_fuelRadius = 0.246063;
-        public static final double k_fuelMass = 0.474; // estimate
-        public static final double k_minYHeightToHub = 0.5 + k_fuelRadius + k_hubHeight - k_turretHeight;
-        public static final double k_minYVelocityToHub = Math
-                .sqrt(2.0 * k_gravitationalAcceleration * k_minYHeightToHub);
+  public static class IntakeConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
+    public static final int k_pivotMotorId = 30;
+    public static final int k_rollerMotorId = 31;
+    public static final Angle k_IntakeStow = Degrees.of(0);
+    public static final Angle k_IntakeFeed = Degrees.of(59);
+    public static final Angle k_IntakeHold = Degrees.of(115);
+    public static final Angle k_IntakeDeployed = Degrees.of(148);
+  }
 
-    } // TODO check and adjust constants
+  public static class HopperConstants {
+    public static final int kHopperMotorId = 40;
+  }
 
-    public static class IntakeConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
-        public static final int k_pivotMotorId = 99999; // placeholder, get this when we know the actual motor
-        public static final int k_rollerMotorId = 99999; // placeholder, get this when we know the actual motor
-        public static final Angle k_IntakeStow = Degrees.of(0);
-        public static final Angle k_IntakeFeed = Degrees.of(59);
-        public static final Angle k_IntakeHold = Degrees.of(115);
-        public static final Angle k_IntakeDeployed = Degrees.of(148);
-    }
+  public static class KickerConstants {
+    public static final int kKickerMotorId = 41;
+  }
 
-    public static class FieldConstants {
-        public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
-        public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
-    }
+  public static class TurretConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
+    public static final double k_gravitationalAcceleration = 32.174;
+    public static final double k_turretHeight = 2.0;
+    public static final double k_hubHeight = 6.0;
+    public static final double k_ceilingHeight = 15.0;
+    public static final double k_fuelRadius = 0.246063;
+    public static final double k_fuelMass = 0.474; // estimate
+    public static final double k_minYHeightToHub = 0.5 + k_fuelRadius + k_hubHeight - k_turretHeight;
+    public static final double k_minYVelocityToHub = Math
+        .sqrt(2.0 * k_gravitationalAcceleration * k_minYHeightToHub);
 
-    public static class ShooterConstants {
-        public static final int k_leaderMotorId = 52;
-        public static final int k_followerMotorId = 53;
-    }
+  } // TODO check and adjust constants
 
-    public static class SuperstructureConstants {
-        private final static AngularVelocity targetShooterSpeed = RPM.of(0);
-        private final static Angle targetTurretAngle = Degrees.of(0);
-    }
+  public static class ShooterConstants {
+    public static final int k_leaderMotorId = 52;
+    public static final int k_followerMotorId = 53;
+  }
+
+  public static class SuperstructureConstants {
+    private final static AngularVelocity targetShooterSpeed = RPM.of(0);
+    private final static Angle targetTurretAngle = Degrees.of(0);
+  }
+
+  public static class FieldConstants {
+    public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+    public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
+  }
+
+  /**
+   * Logging-related global constants. Toggle features here so the rest of the
+   * code
+   */
+  public static class LoggingConstants {
+    /** Enable simple Telemetry (Telemetry.log / SmartDashboard) */
+    public static final boolean k_enableTelemetry = true;
 
     /**
-     * Logging-related global constants. Toggle features here so the rest of the
-     * code
+     * Enable AutoLog / recording (if you add an AutoLog/recorder integration
+     * elsewhere)
      */
-    public static class LoggingConstants {
-        /** Enable simple Telemetry (Telemetry.log / SmartDashboard) */
-        public static final boolean k_enableTelemetry = true;
+    public static final boolean k_enableAutolog = false;
 
-        /**
-         * Enable AutoLog / recording (if you add an AutoLog/recorder integration
-         * elsewhere)
-         */
-        public static final boolean k_enableAutolog = false;
+    /** Enable junction Logger recordings (org.littletonrobotics.junction.Logger) */
+    public static final boolean k_enableJunctionLogger = true;
 
-        /** Enable junction Logger recordings (org.littletonrobotics.junction.Logger) */
-        public static final boolean k_enableJunctionLogger = true;
+    /**
+     * Directory on the robot (or host) where logs should be written if recording is
+     * enabled.
+     */
+    public static final String k_logDirectory = "/home/lvuser/logs";
 
-        /**
-         * Directory on the robot (or host) where logs should be written if recording is
-         * enabled.
-         */
-        public static final String k_logDirectory = "/home/lvuser/logs";
+    /**
+     * Base filename to use for recordings (timestamp/extension may be added by
+     * recorder).
+     */
+    public static final String k_logFileBaseName = "robotLog";
 
-        /**
-         * Base filename to use for recordings (timestamp/extension may be added by
-         * recorder).
-         */
-        public static final String k_logFileBaseName = "robotLog";
+    /**
+     * Target logging period in seconds for periodic recording (0 disables periodic
+     * flush).
+     */
+    public static final double k_logPeriodSeconds = 0.02; // 20 ms
+  }
 
-        /**
-         * Target logging period in seconds for periodic recording (0 disables periodic
-         * flush).
-         */
-        public static final double k_logPeriodSeconds = 0.02; // 20 ms
-    }
-
-    public static class SimulationConstants {
-        public final static boolean k_isInSimulation = true;
-        public final static DriveTrainSimulationConfig k_config = DriveTrainSimulationConfig.Default()
-                .withGyro(COTS.ofPigeon2())
-                .withSwerveModule(COTS.ofMark4(
-                        DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
-                        DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
-                        COTS.WHEELS.COLSONS.cof, // Use the COF for Colson Wheels
-                        3))
-                .withBumperSize(Inches.of(28.5), Inches.of(33.5));
-    }
+  public static class SimulationConstants {
+    public final static boolean k_isInSimulation = true;
+    public final static DriveTrainSimulationConfig k_config = DriveTrainSimulationConfig.Default()
+        .withGyro(COTS.ofPigeon2())
+        .withSwerveModule(COTS.ofMark4(
+            DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
+            DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
+            COTS.WHEELS.COLSONS.cof, // Use the COF for Colson Wheels
+            3))
+        .withBumperSize(Inches.of(28.5), Inches.of(33.5));
+  }
 }

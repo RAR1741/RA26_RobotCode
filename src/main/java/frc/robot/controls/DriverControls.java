@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Superstructure;
 
 public class DriverControls {
   // kSpeedAt12Volts desired top speed
@@ -29,7 +30,8 @@ public class DriverControls {
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private static final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  public static void configure(int port, CommandSwerveDrivetrain drivetrain, Telemetry logger) {
+  public static void configure(int port, CommandSwerveDrivetrain drivetrain, Superstructure superstructure,
+      Telemetry logger) {
     CommandXboxController controller = new CommandXboxController(port);
 
     // Note that X is defined as forward according to WPILib convention,
