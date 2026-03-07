@@ -61,6 +61,10 @@ public class Superstructure extends SubsystemBase {
         kicker.feedCommand().asProxy()).withName("Superstructure.feedAll");
   }
 
+  public Command shootCommand() {
+    return shooter.shoot().asProxy().withName("Superstructure.shoot");
+  }
+
   // Aim at shooter for auto
   public Command aimCommand(AngularVelocity shooterSpeed, Angle turretAngle) {
     return Commands.runOnce(() -> {
