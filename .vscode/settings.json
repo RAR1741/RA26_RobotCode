@@ -57,5 +57,57 @@
     "edu.wpi.first.math.**.proto.*",
     "edu.wpi.first.math.**.struct.*",
   ],
-  "java.dependency.enableDependencyCheckup": false
+  "java.dependency.enableDependencyCheckup": false,
+  "javaSwitcher.java.home": "/usr/local/sdkman/candidates/java/current",
+  "java.jdt.ls.java.home": "/usr/local/sdkman/candidates/java/current",
+  "java.import.gradle.java.home": "/usr/local/sdkman/candidates/java/current",
+  "maven.terminal.customEnv": [
+    {
+      "environmentVariable": "JAVA_HOME",
+      "value": "/usr/local/sdkman/candidates/java/current"
+    }
+  ],
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-11",
+      "path": "/usr/local/sdkman/candidates/java/current",
+      "default": true
+    }
+  ],
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "bash",
+      "icon": "terminal-bash"
+    },
+    "zsh": {
+      "path": "zsh"
+    },
+    "fish": {
+      "path": "fish"
+    },
+    "tmux": {
+      "path": "tmux",
+      "icon": "terminal-tmux"
+    },
+    "pwsh": {
+      "path": "pwsh",
+      "icon": "terminal-powershell"
+    },
+    "Java Switcher": {
+      "path": "bash",
+      "args": [
+        "--rcfile",
+        "/home/codespace/.vscode-remote/extensions/juniversecoder.java-switcher-0.0.2/bin/.bashrc"
+      ],
+      "env": {
+        "JAVA_HOME": "/usr/local/sdkman/candidates/java/current",
+        "PATH": "/usr/local/sdkman/candidates/java/current/bin:${env:PATH}"
+      },
+      "overrideName": true,
+      "icon": "terminal-bash"
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "Java Switcher",
+  "terminal.integrated.enablePersistentSessions": false,
+  "terminal.integrated.tabs.hideCondition": "never"
 }
