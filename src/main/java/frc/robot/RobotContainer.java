@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.controls.DriverControls;
@@ -12,32 +14,50 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
 
+import frc.robot.auto.CustomAutoFactory;
+import frc.robot.auto.CustomAutoChooser;
+import frc.robot.auto.Binder;
+
 public class RobotContainer {
-  private final Telemetry logger = new Telemetry();
+    private final Telemetry logger = new Telemetry();
 
-  private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
-  private final Superstructure superstructure = new Superstructure();
+    private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
+    private final Superstructure superstructure = new Superstructure();
 
-  public RobotContainer() {
-    configureBindings();
-    buildNamedAutoCommands();
-  }
+    private AutoFactory m_factory;
+    private AutoChooser m_chooser;
+    private Binder m_binder;
+  
+    public RobotContainer() {
+      configureBindings();
+      buildNamedAutoCommands();
+    }
+  
+    private void configureBindings() {
+      DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, swerve, superstructure, logger);
+      OperatorControls.configure(Constants.ControllerConstants.kOperatorControllerPort, swerve, superstructure);
+    }
+  
+    private void buildNamedAutoCommands() {
+      // Add any auto commands to the NamedCommands here
+      // NamedCommands.registerCommand("driveForwards",
+      // drivebase.driveForward().withTimeout(2)
+      // .withName("Auto.driveForwards"));
+    }
+  
+    public Command getAutonomousCommand() {
+      m_factory = new CustomAutoFactory(this.getSwerveSystem()).getFactory();
+      m_chooser = new CustomAutoChooser().getAutoChooser();
+      m_binder = new Binder(m_factory);
 
-  private void configureBindings() {
-    DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, swerve, superstructure, logger);
-    OperatorControls.configure(Constants.ControllerConstants.kOperatorControllerPort, swerve, superstructure);
-  }
+      Command command = Commands.print("printed");
 
-  private void buildNamedAutoCommands() {
-    // Add any auto commands to the NamedCommands here
-    // NamedCommands.registerCommand("driveForwards",
-    // drivebase.driveForward().withTimeout(2)
-    // .withName("Auto.driveForwards"));
-  }
+      m_binder.bind("Print", command);
+      m_chooser.addCmd("Print", () -> command);
 
-  public Command getAutonomousCommand() {
-    return Commands.none();
-
+      return m_factory.trajectoryCmd("Print");
+    
+    //return Commands.none();
     // Simple drive forward auton
     // final var idle = new SwerveRequest.Idle();
     // return Commands.sequence(

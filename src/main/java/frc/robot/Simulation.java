@@ -22,8 +22,7 @@ public class Simulation {
         m_arena.simulationPeriodic();
         Logger.recordOutput("FieldSimulation/Fuel",
                 m_arena.getGamePiecesArrayByType("Fuel"));
-
-        // TODO: Add this back
-        // Logger.recordOutput("Sim/RobotPose", m_swerve.getSwerveDrive().getPose());
+        
+        Logger.recordOutput("Sim/RobotPose", m_swerve.getState().Pose);
     }
 }
