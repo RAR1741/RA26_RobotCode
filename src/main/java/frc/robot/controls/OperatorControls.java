@@ -10,7 +10,9 @@ public class OperatorControls {
 
     controller.a().whileTrue(superstructure.feedAllCommand());
 
-    controller.b().whileTrue(superstructure.shootCommand());
+    controller.rightTrigger().whileTrue(superstructure.shootCommand());
+
+    controller.x().whileTrue(superstructure.intakeCommand());
 
     // double hoodSpeed = 0.5;
 

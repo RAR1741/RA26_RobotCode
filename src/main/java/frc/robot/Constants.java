@@ -46,9 +46,11 @@ public class Constants {
     public static final double k_DEADBAND = 0.1;
   }
 
-  public static class IntakeConstants { // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
-    public static final int k_pivotMotorId = 30;
-    public static final int k_rollerMotorId = 31;
+  public static class IntakeConstants {
+    public static final int k_pivotPrimaryMotorId = 30;
+    public static final int k_pivotSecondaryMotorId = 31;
+    public static final int k_rollerMotorId = 32;
+
     public static final Angle k_IntakeStow = Degrees.of(0);
     public static final Angle k_IntakeFeed = Degrees.of(59);
     public static final Angle k_IntakeHold = Degrees.of(115);
@@ -77,7 +79,11 @@ public class Constants {
     public static final double k_minYVelocityToHub = Math
         .sqrt(2.0 * k_gravitationalAcceleration * k_minYHeightToHub);
 
-  } // TODO check and adjust constants
+  }
+
+  public static class HoodConstants {
+    public static final int k_hoodMotorId = 51;
+  }
 
   public static class ShooterConstants {
     public static final int k_leaderMotorId = 52;

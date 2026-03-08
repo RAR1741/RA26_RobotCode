@@ -26,7 +26,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class HopperSubsystem extends SubsystemBase {
 
-  private static final double HOPPER_SPEED = 0.3;
+  private static final double HOPPER_SPEED = 0.4;
 
   // Nova motor controller with NEO motor
   private SparkFlex hopperSpark = new SparkFlex(Constants.HopperConstants.kHopperMotorId, MotorType.kBrushless);

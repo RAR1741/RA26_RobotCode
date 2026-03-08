@@ -12,10 +12,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Superstructure extends SubsystemBase {
   private final IntakeSubsystem intake;
-  private final ShooterSubsystem shooter;
-  private final TurretSubsystem turret;
-  private final KickerSubsystem kicker;
   private final HopperSubsystem hopper;
+  private final KickerSubsystem kicker;
+  private final TurretSubsystem turret;
+  // private final HoodSubsystem hood;
+  private final ShooterSubsystem shooter;
 
   private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
                                    // firing, can be used in an auto command to wait until the shooter is ready
@@ -63,6 +64,10 @@ public class Superstructure extends SubsystemBase {
 
   public Command shootCommand() {
     return shooter.shoot().asProxy().withName("Superstructure.shoot");
+  }
+
+  public Command intakeCommand() {
+    return intake.intakeCommand().asProxy().withName("Superstructure.intake");
   }
 
   // Aim at shooter for auto

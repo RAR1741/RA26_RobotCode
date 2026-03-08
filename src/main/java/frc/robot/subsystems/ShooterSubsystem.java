@@ -65,7 +65,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command shoot() {
-    return setSpeed(RPM.of(10000));
+    return setSpeed(RPM.of(3000));
   }
 
   public Command setSpeed(AngularVelocity speed) {
