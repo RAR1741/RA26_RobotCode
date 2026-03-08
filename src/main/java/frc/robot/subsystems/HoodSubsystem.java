@@ -36,7 +36,7 @@ public class HoodSubsystem extends SubsystemBase {
   private Angle MIN_ANGLE = Degrees.of(45); // degrees
   private Angle MAX_ANGLE = Degrees.of(80); // degrees
 
-  private TalonFX hoodKraken = new TalonFX(Constants.HoodConstants.k_hoodMotorId);
+  private TalonFX hoodKraken = new TalonFX(Constants.HoodConstants.k_hoodMotorId, Constants.ctreCANBus);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
