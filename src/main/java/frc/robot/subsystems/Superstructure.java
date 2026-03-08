@@ -79,6 +79,10 @@ public class Superstructure extends SubsystemBase {
     return hood.setAngle(Degrees.of(80)).asProxy().withName("Superstructure.hoodDown");
   }
 
+  public Command hoodHomeSequence() {
+    return hood.homeSequence().asProxy().withName("Superstructure.hoodHome");
+  }
+
   // Aim at shooter for auto
   public Command aimCommand(AngularVelocity shooterSpeed, Angle turretAngle) {
     return Commands.runOnce(() -> {

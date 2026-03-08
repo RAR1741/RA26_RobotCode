@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -12,6 +13,7 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -50,7 +52,7 @@ public class HoodSubsystem extends SubsystemBase {
       .withMotorInverted(true)
       .withIdleMode(MotorMode.BRAKE)
       .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
-      .withStatorCurrentLimit(Amps.of(2.0)) // TODO: make this not 0 to actually run
+      .withStatorCurrentLimit(Amps.of(10.0)) // TODO: make this not 0 to actually run
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
@@ -68,11 +70,46 @@ public class HoodSubsystem extends SubsystemBase {
     this.setDefaultCommand(Commands.runOnce(() -> smc.setDutyCycle(0), this));
   }
 
-  // public Command rezero() {
-  // return Commands.runOnce(() ->
-  // hoodKraken.getEncoder().setPosition(computeTurretAngleFromAbs()), this)
-  // .withName("Hood.Rezero");
-  // }
+  /**
+   * Homes the hood by slowly driving it downward until it bottoms out
+   * against the hard stop, then resets the encoder position to 80 degrees.
+   * Soft limits are temporarily disabled during homing.
+   */
+  public Command homeSequence() {
+    final double homingDutyCycle = -0.20;
+    final double stallVelocityThreshold = 0.01; // motor rot/s
+    final double gearRatio = 1.0 / 0.891;
+
+    return Commands.sequence(
+        // Disable soft limits so we can move freely during homing
+        Commands.runOnce(() -> {
+          hoodKraken.getConfigurator().apply(
+              new SoftwareLimitSwitchConfigs()
+                  .withForwardSoftLimitEnable(false)
+                  .withReverseSoftLimitEnable(false));
+        }),
+        // Move slowly downward; give the motor time to start spinning
+        Commands.run(() -> smc.setDutyCycle(homingDutyCycle), this)
+            .withTimeout(0.5),
+        // Continue moving until stall detected (velocity drops to ~0)
+        Commands.run(() -> smc.setDutyCycle(homingDutyCycle), this)
+            .until(() -> Math.abs(hoodKraken.getVelocity().getValueAsDouble()) < stallVelocityThreshold)
+            .withTimeout(5.0),
+        // Stop the motor and reset encoder to 80 degrees
+        Commands.runOnce(() -> {
+          smc.setDutyCycle(0);
+          hoodKraken.setPosition(MAX_ANGLE.in(Rotations) * gearRatio);
+        }, this),
+        // Re-enable soft limits at the correct positions
+        Commands.runOnce(() -> {
+          hoodKraken.getConfigurator().apply(
+              new SoftwareLimitSwitchConfigs()
+                  .withForwardSoftLimitEnable(true)
+                  .withForwardSoftLimitThreshold(MAX_ANGLE.in(Rotations) * gearRatio)
+                  .withReverseSoftLimitEnable(true)
+                  .withReverseSoftLimitThreshold(MIN_ANGLE.in(Rotations) * gearRatio));
+        })).withName("Hood.Home");
+  }
 
   public Command setAngle(Angle angle) {
     return hood.setAngle(angle);
