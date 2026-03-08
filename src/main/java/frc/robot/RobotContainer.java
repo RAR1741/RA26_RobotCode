@@ -53,6 +53,10 @@ public class RobotContainer {
     // swerve.applyRequest(() -> idle));
   }
 
+  public Command getHoodHomeCommand() {
+    return superstructure.hoodHomeSequence();
+  }
+
   public CommandSwerveDrivetrain getSwerveSystem() {
     return swerve;
   }

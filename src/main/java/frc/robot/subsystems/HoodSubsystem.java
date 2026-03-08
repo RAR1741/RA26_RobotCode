@@ -38,17 +38,19 @@ public class HoodSubsystem extends SubsystemBase {
   private Angle MIN_ANGLE = Degrees.of(45); // degrees
   private Angle MAX_ANGLE = Degrees.of(80); // degrees
 
+  private double GEAR_RATIO = 1.0 / 0.891; // output/input
+
   private TalonFX hoodKraken = new TalonFX(Constants.HoodConstants.k_hoodMotorId, Constants.ctreCANBus);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(15.0, 0, 0,
+      .withClosedLoopController(60.0, 0, 0,
           DegreesPerSecond.of(2440),
           DegreesPerSecondPerSecond.of(2440))
       // TODO: make this work, and not error
-      .withFeedforward(new SimpleMotorFeedforward(0.0, 7.5, 0.0))
+      .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
       .withTelemetry("HoodMotor", TelemetryVerbosity.HIGH)
-      .withGearing(new MechanismGearing(GearBox.fromReductionStages(1.0 / 0.891)))
+      .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(true)
       .withIdleMode(MotorMode.BRAKE)
       .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
@@ -56,7 +58,7 @@ public class HoodSubsystem extends SubsystemBase {
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
-  private SmartMotorController smc = new TalonFXWrapper(hoodKraken, DCMotor.getNEO(1), smcConfig);
+  private SmartMotorController smc = new TalonFXWrapper(hoodKraken, DCMotor.getKrakenX44(1), smcConfig);
 
   private final PivotConfig hoodConfig = new PivotConfig(smc)
       .withHardLimit(MIN_ANGLE, MAX_ANGLE)
@@ -78,7 +80,6 @@ public class HoodSubsystem extends SubsystemBase {
   public Command homeSequence() {
     final double homingDutyCycle = -0.20;
     final double stallVelocityThreshold = 0.01; // motor rot/s
-    final double gearRatio = 1.0 / 0.891;
 
     return Commands.sequence(
         // Disable soft limits so we can move freely during homing
@@ -95,19 +96,22 @@ public class HoodSubsystem extends SubsystemBase {
         Commands.run(() -> smc.setDutyCycle(homingDutyCycle), this)
             .until(() -> Math.abs(hoodKraken.getVelocity().getValueAsDouble()) < stallVelocityThreshold)
             .withTimeout(5.0),
-        // Stop the motor and reset encoder to 80 degrees
+        // Stop the motor and reset encoder to 80 degrees (mechanism rotations —
+        // SensorToMechanismRatio is already configured by YAMS, so no extra gear ratio
+        // needed)
         Commands.runOnce(() -> {
           smc.setDutyCycle(0);
-          hoodKraken.setPosition(MAX_ANGLE.in(Rotations) * gearRatio);
+          hoodKraken.setPosition(MAX_ANGLE.in(Rotations));
         }, this),
-        // Re-enable soft limits at the correct positions
+        // Re-enable soft limits at the correct positions (mechanism rotations, no gear
+        // ratio needed)
         Commands.runOnce(() -> {
           hoodKraken.getConfigurator().apply(
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(true)
-                  .withForwardSoftLimitThreshold(MAX_ANGLE.in(Rotations) * gearRatio)
+                  .withForwardSoftLimitThreshold(MAX_ANGLE)
                   .withReverseSoftLimitEnable(true)
-                  .withReverseSoftLimitThreshold(MIN_ANGLE.in(Rotations) * gearRatio));
+                  .withReverseSoftLimitThreshold(MIN_ANGLE));
         })).withName("Hood.Home");
   }
 
