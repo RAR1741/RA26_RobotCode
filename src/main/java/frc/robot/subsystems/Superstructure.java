@@ -72,11 +72,11 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command hoodUpCommand() {
-    return hood.setAngle(Degrees.of(45)).asProxy().withName("Superstructure.hoodUp");
+    return hood.setAngle(Degrees.of(30)).asProxy().withName("Superstructure.hoodUp");
   }
 
   public Command hoodDownCommand() {
-    return hood.setAngle(Degrees.of(80)).asProxy().withName("Superstructure.hoodDown");
+    return hood.setAngle(Degrees.of(0)).asProxy().withName("Superstructure.hoodDown");
   }
 
   public Command hoodHomeSequence() {

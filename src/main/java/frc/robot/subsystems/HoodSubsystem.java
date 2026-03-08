@@ -35,16 +35,16 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class HoodSubsystem extends SubsystemBase {
-  private Angle MIN_ANGLE = Degrees.of(45); // degrees
-  private Angle MAX_ANGLE = Degrees.of(80); // degrees
+  private Angle MIN_ANGLE = Degrees.of(0); // degrees
+  private Angle MAX_ANGLE = Degrees.of(45); // degrees
 
-  private double GEAR_RATIO = 1.0 / 0.891; // output/input
+  private double GEAR_RATIO = 0.891 * 360.0; // output/input
 
   private TalonFX hoodKraken = new TalonFX(Constants.HoodConstants.k_hoodMotorId, Constants.ctreCANBus);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(60.0, 0, 0,
+      .withClosedLoopController(120.0, 0, 0,
           DegreesPerSecond.of(2440),
           DegreesPerSecondPerSecond.of(2440))
       // TODO: make this work, and not error
@@ -53,7 +53,7 @@ public class HoodSubsystem extends SubsystemBase {
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(true)
       .withIdleMode(MotorMode.BRAKE)
-      .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
+      // .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
       .withStatorCurrentLimit(Amps.of(10.0)) // TODO: make this not 0 to actually run
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
@@ -61,7 +61,7 @@ public class HoodSubsystem extends SubsystemBase {
   private SmartMotorController smc = new TalonFXWrapper(hoodKraken, DCMotor.getKrakenX44(1), smcConfig);
 
   private final PivotConfig hoodConfig = new PivotConfig(smc)
-      .withHardLimit(MIN_ANGLE, MAX_ANGLE)
+      // .withHardLimit(MIN_ANGLE, MAX_ANGLE)
       // .withStartingPosition(Degrees.of(0)) // TODO: this breaks everything
       // .withMOI(0.05)
       .withTelemetry("Hood", TelemetryVerbosity.HIGH);
@@ -101,7 +101,8 @@ public class HoodSubsystem extends SubsystemBase {
         // needed)
         Commands.runOnce(() -> {
           smc.setDutyCycle(0);
-          hoodKraken.setPosition(MAX_ANGLE.in(Rotations));
+          hoodKraken.setPosition(0);
+          // hoodKraken.setPosition(MAX_ANGLE.in(Rotations));
         }, this),
         // Re-enable soft limits at the correct positions (mechanism rotations, no gear
         // ratio needed)
