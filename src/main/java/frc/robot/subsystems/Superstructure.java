@@ -15,7 +15,7 @@ public class Superstructure extends SubsystemBase {
   private final HopperSubsystem hopper;
   private final KickerSubsystem kicker;
   private final TurretSubsystem turret;
-  // private final HoodSubsystem hood;
+  private final HoodSubsystem hood;
   private final ShooterSubsystem shooter;
 
   private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
@@ -31,6 +31,7 @@ public class Superstructure extends SubsystemBase {
     this.hopper = new HopperSubsystem();
     this.kicker = new KickerSubsystem();
     this.turret = new TurretSubsystem();
+    this.hood = new HoodSubsystem();
     this.shooter = new ShooterSubsystem();
 
     this.isShooter = false;
@@ -68,6 +69,14 @@ public class Superstructure extends SubsystemBase {
 
   public Command intakeCommand() {
     return intake.intakeCommand().asProxy().withName("Superstructure.intake");
+  }
+
+  public Command hoodUpCommand() {
+    return hood.setAngle(Degrees.of(45)).asProxy().withName("Superstructure.hoodUp");
+  }
+
+  public Command hoodDownCommand() {
+    return hood.setAngle(Degrees.of(80)).asProxy().withName("Superstructure.hoodDown");
   }
 
   // Aim at shooter for auto

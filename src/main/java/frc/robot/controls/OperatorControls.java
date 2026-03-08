@@ -14,18 +14,8 @@ public class OperatorControls {
 
     controller.x().whileTrue(superstructure.intakeCommand());
 
-    // double hoodSpeed = 0.5;
+    controller.y().whileTrue(superstructure.hoodUpCommand());
 
-    // controller.x().onTrue(Commands.runOnce(() -> {
-    // hood.setControl(new DutyCycleOut(hoodSpeed));
-    // })).onFalse(Commands.runOnce(() -> {
-    // hood.setControl(new DutyCycleOut(0));
-    // }));
-
-    // controller.y().onTrue(Commands.runOnce(() -> {
-    // hood.setControl(new DutyCycleOut(-hoodSpeed));
-    // })).onFalse(Commands.runOnce(() -> {
-    // hood.setControl(new DutyCycleOut(0));
-    // }));
+    controller.b().whileTrue(superstructure.hoodDownCommand());
   }
 }
