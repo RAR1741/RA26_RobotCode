@@ -1,17 +1,32 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
 public class Constants {
     public static class SwerveDriveConstants {
-        private static final Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
-        private static final Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
-        private static final Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
-        private static final Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
-        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation); //get this in when we know bot dims
+        private final static Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
+        private final static Translation2d m_frontRightLocation = new Translation2d(0.381, -0.381);
+        private final static Translation2d m_backLeftLocation = new Translation2d(-0.381, 0.381);
+        private final static Translation2d m_backRightLocation = new Translation2d(-0.381, -0.381);
+
+        public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(
+            m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation
+        ); //get this in when we know bot dims
+        
         public static final double k_maxSpeed = Units.feetToMeters(14.5); 
+
+        public static final double k_maxDriverSpeed = 1.0; // Meters per second
+        public static final double k_maxDriverBoostSpeed = 4.5;
+
+        public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
     }
 
     public static class ControllerConstants{
@@ -27,10 +42,53 @@ public class Constants {
         public static final double k_gravitationalAcceleration = 32.174;
         public static final double k_turretHeight = 2.0;
         public static final double k_hubHeight = 6.0;
-        public static final double k_hubX = 0.0; // adjust to field coordinate convention
-        public static final double k_hubY = (158.6 + (47.0 / 2)) / 12.0; // same as above
-        public static final double k_fuelRadius = 5.91 / 12.0 / 2.0;
-        public static final double k_fuelMass = 0.474; // average
-        public static final double k_ceilingHeight = 15.0; // estimated
+        public static final double k_ceilingHeight = 15.0;
+        public static final double k_fuelRadius = 0.246063;
+        public static final double k_fuelMass = 0.474; // estimate
+        public static final double k_minYHeightToHub = 0.5 + k_fuelRadius + k_hubHeight - k_turretHeight; 
+        public static final double k_minYVelocityToHub = Math.sqrt(2.0 * k_gravitationalAcceleration * k_minYHeightToHub);
+        
+    } // TODO check and adjust constants
+
+    
+    public static class FieldConstants {
+        public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
+        public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
     }
-} // TODO check and adjust constants
+
+    /**
+     * Logging-related global constants. Toggle features here so the rest of the code
+     * can read a single source of truth for telemetry / autolog / recorder configuration.
+     */
+    public static class LoggingConstants {
+        /** Enable simple Telemetry (Telemetry.log / SmartDashboard) */
+        public static final boolean k_enableTelemetry = true;
+
+        /** Enable AutoLog / recording (if you add an AutoLog/recorder integration elsewhere) */
+        public static final boolean k_enableAutolog = false;
+
+        /** Enable junction Logger recordings (org.littletonrobotics.junction.Logger) */
+        public static final boolean k_enableJunctionLogger = true;
+
+        /** Directory on the robot (or host) where logs should be written if recording is enabled. */
+        public static final String k_logDirectory = "/home/lvuser/logs";
+
+        /** Base filename to use for recordings (timestamp/extension may be added by recorder). */
+        public static final String k_logFileBaseName = "robotLog";
+
+        /** Target logging period in seconds for periodic recording (0 disables periodic flush). */
+        public static final double k_logPeriodSeconds = 0.02; // 20 ms
+    }
+    
+    public static class SimulationConstants{
+        public final static boolean k_isInSimulation = true;
+        public final static DriveTrainSimulationConfig k_config = DriveTrainSimulationConfig.Default()
+            .withGyro(COTS.ofPigeon2())
+            .withSwerveModule(COTS.ofMark4(
+                DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
+                DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
+                COTS.WHEELS.COLSONS.cof, // Use the COF for Colson Wheels
+                3))
+            .withBumperSize(Inches.of(28.5), Inches.of(33.5));
+    }
+}
