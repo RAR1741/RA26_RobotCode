@@ -35,8 +35,8 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class HoodSubsystem extends SubsystemBase {
-  private Angle MIN_ANGLE = Degrees.of(0); // degrees
-  private Angle MAX_ANGLE = Degrees.of(45); // degrees
+  public Angle MIN_ANGLE = Degrees.of(40);
+  public Angle MAX_ANGLE = Degrees.of(80);
 
   private double GEAR_RATIO = 0.891 * 360.0; // output/input
 
@@ -47,14 +47,13 @@ public class HoodSubsystem extends SubsystemBase {
       .withClosedLoopController(120.0, 0, 0,
           DegreesPerSecond.of(2440),
           DegreesPerSecondPerSecond.of(2440))
-      // TODO: make this work, and not error
       .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
       .withTelemetry("HoodMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
-      .withMotorInverted(true)
+      .withMotorInverted(false)
       .withIdleMode(MotorMode.BRAKE)
-      // .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
-      .withStatorCurrentLimit(Amps.of(10.0)) // TODO: make this not 0 to actually run
+      // .withSoftLimit(MIN_ANGLE, MAX_ANGLE) // TODO: Add this back... please
+      .withStatorCurrentLimit(Amps.of(10.0))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
@@ -62,8 +61,6 @@ public class HoodSubsystem extends SubsystemBase {
 
   private final PivotConfig hoodConfig = new PivotConfig(smc)
       // .withHardLimit(MIN_ANGLE, MAX_ANGLE)
-      // .withStartingPosition(Degrees.of(0)) // TODO: this breaks everything
-      // .withMOI(0.05)
       .withTelemetry("Hood", TelemetryVerbosity.HIGH);
 
   private Pivot hood = new Pivot(hoodConfig);
@@ -78,42 +75,38 @@ public class HoodSubsystem extends SubsystemBase {
    * Soft limits are temporarily disabled during homing.
    */
   public Command homeSequence() {
-    final double homingDutyCycle = -0.20;
+    final double homingDutyCycle = 0.20;
     final double stallVelocityThreshold = 0.01; // motor rot/s
 
     return Commands.sequence(
-        // Disable soft limits so we can move freely during homing
         Commands.runOnce(() -> {
           hoodKraken.getConfigurator().apply(
               new SoftwareLimitSwitchConfigs()
                   .withForwardSoftLimitEnable(false)
                   .withReverseSoftLimitEnable(false));
         }),
-        // Move slowly downward; give the motor time to start spinning
         Commands.run(() -> smc.setDutyCycle(homingDutyCycle), this)
             .withTimeout(0.5),
-        // Continue moving until stall detected (velocity drops to ~0)
         Commands.run(() -> smc.setDutyCycle(homingDutyCycle), this)
             .until(() -> Math.abs(hoodKraken.getVelocity().getValueAsDouble()) < stallVelocityThreshold)
             .withTimeout(5.0),
-        // Stop the motor and reset encoder to 80 degrees (mechanism rotations —
-        // SensorToMechanismRatio is already configured by YAMS, so no extra gear ratio
-        // needed)
         Commands.runOnce(() -> {
           smc.setDutyCycle(0);
-          hoodKraken.setPosition(0);
-          // hoodKraken.setPosition(MAX_ANGLE.in(Rotations));
+          hoodKraken.setPosition(MAX_ANGLE.in(Rotations));
         }, this),
-        // Re-enable soft limits at the correct positions (mechanism rotations, no gear
-        // ratio needed)
         Commands.runOnce(() -> {
-          hoodKraken.getConfigurator().apply(
-              new SoftwareLimitSwitchConfigs()
-                  .withForwardSoftLimitEnable(true)
-                  .withForwardSoftLimitThreshold(MAX_ANGLE)
-                  .withReverseSoftLimitEnable(true)
-                  .withReverseSoftLimitThreshold(MIN_ANGLE));
+          // TODO: Add this back... please
+          // hoodKraken.getConfigurator().apply(
+          // new SoftwareLimitSwitchConfigs()
+          // .withForwardSoftLimitEnable(true)
+          // .withForwardSoftLimitThreshold(getScaledLimit(MAX_ANGLE))
+          // .withReverseSoftLimitEnable(true)
+          // .withReverseSoftLimitThreshold(getScaledLimit(MIN_ANGLE)));
         })).withName("Hood.Home");
+  }
+
+  public double getScaledLimit(Angle angle) {
+    return angle.in(Rotations) * GEAR_RATIO;
   }
 
   public Command setAngle(Angle angle) {
