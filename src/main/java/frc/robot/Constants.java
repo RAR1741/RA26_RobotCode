@@ -75,6 +75,7 @@ public class Constants {
         public static final double k_fuelRadius = 5.91 / 2.0 / 12.0;
         public static final double k_fuelMass = 0.474; // average
         public static final double k_ceilingHeight = 15.0; // estimated
+        public static final double k_hubNetOverhang = 0.5; // need to measure
     } // check and adjust constants
     
     /**

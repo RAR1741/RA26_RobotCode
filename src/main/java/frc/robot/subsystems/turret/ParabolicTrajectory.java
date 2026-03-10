@@ -49,6 +49,7 @@ public class ParabolicTrajectory {
     public final double launchX;
     public final double launchY;
     public final double launchHeight;
+    public boolean doShoot;
 
     public ParabolicTrajectory(double launchDirection, double launchAngle, double launchVelocity, double launchX, double launchY, double launchHeight) {
         this.launchDirection = launchDirection;
@@ -57,6 +58,17 @@ public class ParabolicTrajectory {
         this.launchX = launchX;
         this.launchY = launchY;
         this.launchHeight = launchHeight;
+        this.doShoot = true;
+    }
+
+    public ParabolicTrajectory(double launchDirection, double launchAngle, double launchVelocity, double launchX, double launchY, double launchHeight, boolean doShoot) {
+        this.launchDirection = launchDirection;
+        this.launchAngle = launchAngle;
+        this.launchVelocity = launchVelocity;
+        this.launchX = launchX;
+        this.launchY = launchY;
+        this.launchHeight = launchHeight;
+        this.doShoot = doShoot;
     }
 
     // graph link: https://www.desmos.com/calculator/67orqpt33w
@@ -158,14 +170,23 @@ public class ParabolicTrajectory {
 
     public static ParabolicTrajectory toZoneFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
         double targetX;
-        double targetY = k_hubY;
+        double targetY;
         double targetDirection;
+        boolean doShoot = true;
         boolean topHalf = launchY > k_hubY;
+        double extraYOffset = FieldConstants.k_hubNetOverhang + k_fuelRadius;
         
         if (isBlueTeam) {
-            targetX = 0.0;
-            if (launchX > k_allianceZoneDepth && Math.abs((launchY - k_hubY) / launchX) < (k_hubBodyWidth / 2.0) / k_allianceZoneDepth) {
-                
+            if (launchX > FieldConstants.k_redHubX && Math.abs(launchY - k_hubY) < k_hubBodyWidth / 2.0 + FieldConstants.k_hubNetOverhang + k_fuelRadius) {
+                targetX = k_allianceZoneDepth;
+                targetY = launchY;
+                doShoot = false;
+            } else if (launchX > k_allianceZoneDepth && Math.abs((launchY - k_hubY) / launchX) < (k_hubBodyWidth / 2.0 + extraYOffset) / k_allianceZoneDepth) { // if the line to (0, k_hubY) is blocked
+                targetX = k_allianceZoneDepth + ((Math.abs(launchY - k_hubY) < k_hubBodyWidth / 2.0 + extraYOffset)? k_hubBodyDepth : 0.0);
+                targetY = k_hubY + (k_hubBodyWidth / 2.0 + extraYOffset) * (topHalf? 1.0 : -1.0);
+            } else {
+                targetX = 0.0;
+                targetY = k_hubY;
             }
         } else {
             targetX = k_fieldLength;
