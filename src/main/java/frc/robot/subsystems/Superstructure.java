@@ -71,6 +71,18 @@ public class Superstructure extends SubsystemBase {
     return intake.intakeCommand().asProxy().withName("Superstructure.intake");
   }
 
+  public Command intakeRezero() {
+    return intake.rezero().asProxy().withName("Superstructure.intakeRezero");
+  }
+
+  public Command intakeStowCommand() {
+    return intake.setIntakeStow().asProxy().withName("Superstructure.intakeStow");
+  }
+
+  public Command intakeDeployCommand() {
+    return intake.setIntakeDeployed().asProxy().withName("Superstructure.intakeDeploy");
+  }
+
   public Command hoodUpCommand() {
     return hood.setAngle(hood.MIN_ANGLE).asProxy().withName("Superstructure.hoodUp");
   }
