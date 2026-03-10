@@ -186,11 +186,12 @@ public class ParabolicTrajectory {
                 targetY = k_hubY + (k_hubBodyWidth / 2.0 + extraYOffset) * (topHalf? 1.0 : -1.0);
             } else {
                 targetX = 0.0;
-                targetY = k_hubY;
+                targetY = k_hubY + (k_hubBodyWidth / 2.0 + extraYOffset) * (topHalf? 1.0 : -1.0);
             }
         } else {
             targetX = k_fieldLength;
         }
+        targetDirection = atan2(targetY - launchY, targetX - launchX);
         /*
         if (isBlueTeam && launchX < k_hubX) {
             targetX = 0.0;
