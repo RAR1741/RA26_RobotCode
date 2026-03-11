@@ -102,13 +102,15 @@ public class TurretSubsystem extends SubsystemBase {
     m12TAbsEncoder = new REVThroughBoreEncoder(1);
     m13TAbsEncoder = new REVThroughBoreEncoder(0);
 
-    new Trigger(() -> shouldRezero()).onTrue(rezero().ignoringDisable(true));
+    // TODO: Actually make this work at some point, PLEASE
+    // new Trigger(() -> shouldRezero()).onTrue(rezero().ignoringDisable(true));
   }
 
-  private boolean shouldRezero() {
-    // Rezero if both encoders are connected and we haven't already rezeroed
-    return (m12TAbsEncoder.isConnected() && m13TAbsEncoder.isConnected()) || !isRezeroed;
-  }
+  // private boolean shouldRezero() {
+  // // Rezero if both encoders are connected and we haven't already rezeroed
+  // return (m12TAbsEncoder.isConnected() && m13TAbsEncoder.isConnected()) ||
+  // !isRezeroed;
+  // }
 
   public Command rezero() {
     return Commands.runOnce(() -> {
@@ -204,7 +206,15 @@ public class TurretSubsystem extends SubsystemBase {
   public void periodic() {
     turret.updateTelemetry();
 
-    rezero().schedule();
+    if (!isRezeroed && m12TAbsEncoder.isConnected() && m13TAbsEncoder.isConnected()) {
+      CommandScheduler.getInstance().schedule(rezero());
+    }
+
+    Logger.recordOutput("Turret/isRezeroed", isRezeroed);
+    Logger.recordOutput("Turret/m12TAbsEncoderConnected", m12TAbsEncoder.isConnected());
+    Logger.recordOutput("Turret/m13TAbsEncoderConnected", m13TAbsEncoder.isConnected());
+
+    // rezero().schedule();
 
     Logger.recordOutput("Turret/RelYamsAngle", getAngle());
     Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs());
