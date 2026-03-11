@@ -14,9 +14,9 @@ public class OperatorControls {
 
     controller.x().whileTrue(superstructure.intakeCommand());
 
-    controller.y().whileTrue(superstructure.hoodUpCommand());
+    controller.y().onTrue(superstructure.hoodUpCommand());
 
-    controller.b().whileTrue(superstructure.hoodDownCommand());
+    controller.b().onTrue(superstructure.hoodDownCommand());
 
     controller.start().onTrue(superstructure.hoodHomeSequence());
 

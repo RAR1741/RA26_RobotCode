@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -30,6 +31,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -44,7 +47,7 @@ import com.revrobotics.spark.SparkMax;
 
 public class TurretSubsystem extends SubsystemBase {
 
-  private final double MAX_ONE_DIR_FOV = 180; // degrees
+  private final double MAX_ONE_DIR_FOV = 45; // degrees
 
   private static final double M12_OFFSET = 0.951269;
   private static final double M13_OFFSET = 0.306114;
@@ -55,6 +58,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
   // Total reduction: 5 * 5 = 25:1
+  public final double GEAR_RATIO = 5.0 * (60.0 / 12.0);
 
   private SparkMax turretSpark = new SparkMax(Constants.TurretConstants.k_turretMotorId, MotorType.kBrushless);
 
@@ -66,26 +70,29 @@ public class TurretSubsystem extends SubsystemBase {
       // TODO: make this work, and not error
       // .withFeedforward(new SimpleMotorFeedforward(0.0, 7.5, 0.0))
       .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
-      .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 5)))
+      .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(true)
       .withIdleMode(MotorMode.COAST)
       .withSoftLimit(Degrees.of(-MAX_ONE_DIR_FOV), Degrees.of(MAX_ONE_DIR_FOV))
-      .withStatorCurrentLimit(Amps.of(0)) // TODO: make this not 0 to actually run
+      .withStatorCurrentLimit(Amps.of(30))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
   private SmartMotorController smc = new SparkWrapper(turretSpark, DCMotor.getNEO(1), smcConfig);
 
   private final PivotConfig turretConfig = new PivotConfig(smc)
-      .withHardLimit(Degrees.of(-MAX_ONE_DIR_FOV - 5), Degrees.of(MAX_ONE_DIR_FOV +
-          5))
-      .withStartingPosition(Degrees.of(0))
+      // .withHardLimit(Degrees.of(-MAX_ONE_DIR_FOV - 5), Degrees.of(MAX_ONE_DIR_FOV +
+      // 5))
+      // .withStartingPosition(Degrees.of(0))
       // .withMOI(0.05)
+      // .withWrapping(Degrees.of(0), Degrees.of(360))
       .withTelemetry("Turret", TelemetryVerbosity.HIGH)
       .withMechanismPositionConfig(
           new MechanismPositionConfig().withMovementPlane(Plane.XY).withRelativePosition(turretTranslation));
 
   private Pivot turret = new Pivot(turretConfig);
+
+  private boolean isRezeroed = false;
 
   // Absolute encoders
   private final REVThroughBoreEncoder m12TAbsEncoder;
@@ -95,12 +102,29 @@ public class TurretSubsystem extends SubsystemBase {
     m12TAbsEncoder = new REVThroughBoreEncoder(1);
     m13TAbsEncoder = new REVThroughBoreEncoder(0);
 
-    new Trigger(() -> m12TAbsEncoder.isConnected() &&
-        m13TAbsEncoder.isConnected()).onTrue(rezero().ignoringDisable(true));
+    new Trigger(() -> shouldRezero()).onTrue(rezero().ignoringDisable(true));
+  }
+
+  private boolean shouldRezero() {
+    // Rezero if both encoders are connected and we haven't already rezeroed
+    return (m12TAbsEncoder.isConnected() && m13TAbsEncoder.isConnected()) || !isRezeroed;
   }
 
   public Command rezero() {
-    return Commands.runOnce(() -> turretSpark.getEncoder().setPosition(computeTurretAngleFromAbs()), this)
+    return Commands.runOnce(() -> {
+      Angle turretAngle = computeTurretAngleFromAbs();
+
+      System.out.println("==============================");
+      System.out.println("====== Rezeroing turret ======");
+      System.out.println("==============================");
+      System.out.println("Setting Offset: " + turretAngle.in(Degrees) + " deg (" + turretAngle.in(Rotations) + " rot)");
+
+      turretSpark.getEncoder().setPosition(turretAngle.in(Rotations));
+      turretConfig.withStartingPosition(turretAngle);
+
+      isRezeroed = true;
+    }, this)
+        .ignoringDisable(true)
         .withName("Turret.Rezero");
   }
 
@@ -124,7 +148,7 @@ public class TurretSubsystem extends SubsystemBase {
     return m13TAbsEncoder.get();
   }
 
-  private double computeTurretAngleFromAbs() {
+  private Angle computeTurretAngleFromAbs() {
     double e1 = getM12TAbsAngleWithOffset();
     double e2 = getM13TAbsAngleWithOffset();
 
@@ -133,11 +157,17 @@ public class TurretSubsystem extends SubsystemBase {
     double colG = ((colF * 2.6) + 2.0) % 1.0; // 2.6 = (12/60) * (13/60) / ((12/60) - (13/60))
     double turretAngleDeg = colG * 360.0;
 
+    // // Wrap from [0, 360) to [-180, 180) so negative turret positions are
+    // // represented correctly
+    if (turretAngleDeg > 180.0) {
+      turretAngleDeg -= 360.0;
+    }
+
     Logger.recordOutput("Turret/CRT/colF", colF);
     Logger.recordOutput("Turret/CRT/colG", colG);
     Logger.recordOutput("Turret/CRT/turretAngleDeg", turretAngleDeg);
 
-    return turretAngleDeg;
+    return Degrees.of(turretAngleDeg);
   }
 
   public Command setAngle(Angle angle) {
@@ -173,6 +203,8 @@ public class TurretSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     turret.updateTelemetry();
+
+    rezero().schedule();
 
     Logger.recordOutput("Turret/RelYamsAngle", getAngle());
     Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs());
