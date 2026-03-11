@@ -27,7 +27,7 @@ public class Constants {
         public static final double k_turretDistToRobotCenter = Math.hypot(k_turretRelativeX, k_turretRelativeY);
         public static final double k_turretHeight = 21.0 / 12.0;
         public static final double k_turretMaxHorizontalRadius = 9999999.0;
-        public static final double k_extraTimeToPassSensor = 1.5; // first gave a shot distribution for this but it has a wide spread, so we should decide either more or less
+        public static final double k_extraTimeToPassSensor = 1.5; // FIRST gave a shot distribution for this but it has a wide spread, so we should decide either more or less
         public static final double k_targetLaunchVY = 20.0;
         public static final double k_maxRPM = 99999999999999.0;
         public static final double k_maxLaunchVelocity = 5000000000000000.0; // whatever is 67% motor power   --_(ツ)_/¯

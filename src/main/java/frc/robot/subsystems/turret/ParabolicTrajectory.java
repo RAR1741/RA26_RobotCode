@@ -92,6 +92,23 @@ public class ParabolicTrajectory {
         return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, launchHeight);
     }
 
+    public static ParabolicTrajectory toDDHFromVXYMinimizeAngle(double launchDirection, double horizontalDistance, double targetHeight, double launchX, 
+                                                                 double launchY, double launchVelocity) {
+        double verticalDistance = targetHeight - k_turretHeight;
+        double launchAngle = solveLowerLaunchAngle(launchVelocity, horizontalDistance, verticalDistance);
+        if (launchAngle == Double.NaN) {return null;}
+        if (launchAngle < TurretConstants.k_minLaunchAngle) {
+            launchAngle = TurretConstants.k_minLaunchAngle;
+            launchVelocity = solveLaunchVelocity(launchAngle, horizontalDistance, verticalDistance);
+            if (launchVelocity == Double.NaN) {return null;}
+        } else if (launchAngle > TurretConstants.k_maxLaunchAngle) {
+            launchAngle = TurretConstants.k_maxLaunchAngle;
+            launchVelocity = solveLaunchVelocity(launchAngle, horizontalDistance, verticalDistance);
+            if (launchVelocity == Double.NaN) {return null;}
+        }
+        return new ParabolicTrajectory(launchDirection, launchAngle, launchVelocity, launchX, launchY, k_turretHeight);
+    }
+
     public static double timeToHubFromAXYSkewInput(double launchAngle, double launchDirection, double launchX, double launchY, double turretVX, double turretVY) {
         double xDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
         double yDistance = k_hubHeight - k_turretHeight;
@@ -171,62 +188,46 @@ public class ParabolicTrajectory {
     public static ParabolicTrajectory toZoneFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
         double targetX;
         double targetY;
-        double targetDirection;
-        boolean doShoot = true;
+        boolean doShoot;
         boolean topHalf = launchY > k_hubY;
-        double extraYOffset = FieldConstants.k_hubNetOverhang + k_fuelRadius;
-        
+        double halfHubEffectiveWidth = k_hubBodyWidth / 2.0 + FieldConstants.k_hubNetOverhang + k_fuelRadius;
+        double hubTargetXDistance = k_allianceZoneDepth + k_hubZoneDepth + k_fuelRadius;
+        double targetDirection;
+        double targetDistance;
         if (isBlueTeam) {
-            if (launchX > FieldConstants.k_redHubX && Math.abs(launchY - k_hubY) < k_hubBodyWidth / 2.0 + FieldConstants.k_hubNetOverhang + k_fuelRadius) {
-                targetX = k_allianceZoneDepth;
+            if (launchX > FieldConstants.k_redHubX &&  Math.abs(launchY - k_hubY) < halfHubEffectiveWidth) {
+                targetX = hubTargetXDistance;
                 targetY = launchY;
                 doShoot = false;
-            } else if (launchX > k_allianceZoneDepth && Math.abs((launchY - k_hubY) / launchX) < (k_hubBodyWidth / 2.0 + extraYOffset) / k_allianceZoneDepth) { // if the line to (0, k_hubY) is blocked
-                targetX = k_allianceZoneDepth + ((Math.abs(launchY - k_hubY) < k_hubBodyWidth / 2.0 + extraYOffset)? k_hubBodyDepth : 0.0);
-                targetY = k_hubY + (k_hubBodyWidth / 2.0 + extraYOffset) * (topHalf? 1.0 : -1.0);
             } else {
-                targetX = 0.0;
-                targetY = k_hubY + (k_hubBodyWidth / 2.0 + extraYOffset) * (topHalf? 1.0 : -1.0);
+                targetX = (launchX > FieldConstants.k_blueHubX && Math.abs(launchY - k_hubY) < halfHubEffectiveWidth)? hubTargetXDistance : 0.0;
+                targetY = k_hubY + halfHubEffectiveWidth * (topHalf? 1.0 : -1.0);
+                doShoot = true;
             }
+            targetDirection = atan2(targetY - launchY, targetX - launchX) - TurretConstants.k_launchAngleTolerance * (topHalf? 1.0 : -1.0);
+            targetDistance = Math.abs(Math.max(k_allianceZoneDepth, launchX - k_allianceZoneDepth) / cos(targetDirection));
         } else {
-            targetX = k_fieldLength;
-        }
-        targetDirection = atan2(targetY - launchY, targetX - launchX);
-        /*
-        if (isBlueTeam && launchX < k_hubX) {
-            targetX = 0.0;
-        } else if (isRedTeam && launchX > k_fieldLength - k_allianceZoneDepth - k_hubZoneDepth) {
-            targetX = k_fieldLength;
-        } else if (Math.abs(targetY - launchY) > k_hubBodyWidth / 2.0 + k_fuelRadius) {
-            double hubCornerX = isBlueTeam? k_allianceZoneDepth : k_fieldLength - k_allianceZoneDepth;
-            double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
-            double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
-            targetDirection = directionToHubCorner - k_launchDirectionTolerance * (topHalf? 1.0 : -1.0) * (isBlueTeam? 1.0 : -1.0);
-            targetY = launchY + (targetX - launchX) * tan(targetDirection);
-            if (targetY < 0 || targetY > k_fieldWidth) {
-                return null;
-            } else if (targetY < k_trenchWidth || targetY > k_fieldWidth - k_trenchWidth) {
-                targetY = Math.min(k_trenchWidth, Math.max(k_fieldWidth - k_trenchWidth, targetY));
+            if (launchX < FieldConstants.k_blueHubX &&  Math.abs(launchY - k_hubY) < halfHubEffectiveWidth) {
+                targetX = k_fieldLength - hubTargetXDistance;
+                targetY = launchY;
+                doShoot = false;
+            } else {
+                targetX = (launchX < FieldConstants.k_redHubX && Math.abs(launchY - k_hubY) < halfHubEffectiveWidth)? k_fieldLength - hubTargetXDistance : 0.0;
+                targetY = k_hubY + halfHubEffectiveWidth * (topHalf? 1.0 : -1.0);
+                doShoot = true;
             }
-        } else if (launchX > k_allianceZoneDepth && launchX < k_fieldLength - k_allianceZoneDepth) {
-            double hubCornerX = isBlueTeam? k_allianceZoneDepth : k_fieldLength - k_allianceZoneDepth;
-            double hubCornerY = targetY + k_hubBodyWidth / 2.0 * (topHalf? 1.0 : -1.0);
-            double directionToHubCorner = atan2(hubCornerY - launchY, hubCornerX - launchX);
-            targetDirection = directionToHubCorner - k_launchDirectionTolerance * (topHalf? 1.0 : -1.0) * (isBlueTeam? 1.0 : -1.0);
-            targetY = launchY + (targetX - launchX) * tan(targetDirection);
-            if (targetY < 0 || targetY > k_fieldWidth) {
-                return null;
-            } else if (targetY < k_trenchWidth || targetY > k_fieldWidth - k_trenchWidth) {
-                targetY = Math.min(k_trenchWidth, Math.max(k_fieldWidth - k_trenchWidth, targetY));
-                targetDirection = atan2(targetY - launchY, targetX - launchX);
-            }
-        } else {
-            return null;
+            targetDirection = atan2(targetY - launchY, targetX - launchX) + TurretConstants.k_launchAngleTolerance * (topHalf? 1.0 : -1.0);
+            targetDistance = Math.abs(Math.max(k_allianceZoneDepth, k_fieldLength - k_allianceZoneDepth - launchX) / cos(targetDirection));
         }
-        */
-        double targetDistance = Math.hypot(targetX - launchX, targetY - launchY);
-        double idealLaunchVelocity = (TurretConstants.k_minZoneLaunchVelocity + targetDistance * (TurretConstants.k_maxLaunchVelocity)) / TurretConstants.k_maxZoneLaunchDistance;
-        ParabolicTrajectory trajectory = toXYHFromVXYHMinimizeAngle(targetX, targetY, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);
+        targetX = launchX + targetDistance * cos(targetDirection);
+        targetY = launchY + targetDistance * sin(targetDirection);
+        if (targetY < 0.0 || targetY > k_fieldWidth) {
+            doShoot = false; // this should only happen if we are shooting from right behind our own hub, in which case there would be no good shot to take
+        } 
+        double idealLaunchVelocity = TurretConstants.k_minZoneLaunchVelocity + (targetDistance - k_allianceZoneDepth) / (TurretConstants.k_maxZoneLaunchDistance - k_allianceZoneDepth)
+                                                                                * (TurretConstants.k_maxLaunchVelocity - TurretConstants.k_minZoneLaunchVelocity);
+        double time = timeToXYHFromVXY(stuff);
+        ParabolicTrajectory trajectory = toDDHFromVXYMinimizeAngle(targetDirection, targetDistance, k_turretHeight, launchX, launchY, idealLaunchVelocity);
         if (trajectory == null) {return null;} // need to sort this out another time bc idk but ts pmo irl ykwim
         double skewedLaunchVelocity = skewVelocityByTurretVelocity(trajectory.launchAngle, trajectory.launchDirection, idealLaunchVelocity, turretVX, turretVY);
         double time = targetDistance / trajectory.getHorizontalLaunchVelocity();

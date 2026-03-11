@@ -58,7 +58,7 @@ public class ShooterInstruction {
     }
 
     public static double gameTime() {
-        return (DriverStation.isAutonomous()? 20.0 : 140.0) - DriverStation.getMatchTime();
+        return (DriverStation.isAutonomous()? 20.0 : 160.0) - DriverStation.getMatchTime();
     }
 
     public static int getZone(double turretX) {
