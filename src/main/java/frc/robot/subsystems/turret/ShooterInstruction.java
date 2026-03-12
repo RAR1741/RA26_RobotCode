@@ -222,6 +222,35 @@ public class ShooterInstruction {
         }
         return testInstruction;
     }
+
+    public static ShooterInstruction generateInstructionBareMinimumFunctional() {
+        Translation3d turretPosition = getTurretPose().getTranslation();
+        double turretX = turretPosition.getX();
+        double turretY = turretPosition.getY();
+        Translation2d turretVelocity = getTurretVelocity();
+        double turretVX = turretVelocity.getX();
+        double turretVY = turretVelocity.getY();
+
+        ParabolicTrajectory testTrajectory = null;
+        int zone = getZone(turretX);
+        boolean aimingToHub = isBlueTeam && zone <= 2 || isRedTeam && zone >= 4;
+        boolean underTrenchBar = isBlueTeam && zone == 2 || isRedTeam && zone == 4;
+        if (aimingToHub) {
+            testTrajectory = ParabolicTrajectory.toHubFromAXYWhileDriving(70.0, turretX, turretY, turretVX, turretVY);
+        }
+        if (testTrajectory == null) {
+            return HoldStateDontShoot();
+        }
+        ShooterInstruction testInstruction = new ShooterInstruction(!underTrenchBar && (!aimingToHub || activeHubOnShot(testTrajectory)), 
+            Degrees.of(testTrajectory.launchDirection), 
+            Degrees.of(testTrajectory.launchAngle), 
+            ShooterSystem.launchVelocityToAngular(testTrajectory.launchVelocity));
+
+        if (!testTrajectory.testValid()) {
+            testInstruction.doShoot = false;
+        }
+        return testInstruction;
+    }
 }
 //     public class ShootOnTheMoveCommand extends Command {
 //         public ShootOnTheMoveCommand(SwerveSubsystem drivetrain, Superstructure superstructure,
