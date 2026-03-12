@@ -59,6 +59,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    
   }
 
   @Override
@@ -96,8 +97,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationInit() {
     // TODO: reimplement this when we have a simulation to run
-    // sim = new Simulation(m_robotContainer.getSwerveSystem());
-    // sim.init();
+    sim = new Simulation(m_robotContainer.getSwerveSystem());
+    sim.init();
   }
 
   @Override

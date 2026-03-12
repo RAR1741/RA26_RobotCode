@@ -21,7 +21,7 @@ public class Simulation {
     public void periodic() {
         m_arena.simulationPeriodic();
         Logger.recordOutput("FieldSimulation/Fuel",
-                m_arena.getGamePiecesArrayByType("Fuel"));
+                m_arena.getGamePiecesArrayByType("Fuel")); //TODO: why does this error
         
         Logger.recordOutput("Sim/RobotPose", m_swerve.getState().Pose);
     }

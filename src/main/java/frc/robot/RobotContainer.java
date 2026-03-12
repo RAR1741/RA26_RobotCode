@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import choreo.auto.AutoChooser;
-import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.controls.DriverControls;
@@ -13,10 +11,7 @@ import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
-
-import frc.robot.auto.CustomAutoFactory;
-import frc.robot.auto.CustomAutoChooser;
-import frc.robot.auto.Binder;
+import frc.robot.auto.AutoMaker;
 
 public class RobotContainer {
     private final Telemetry logger = new Telemetry();
@@ -24,9 +19,7 @@ public class RobotContainer {
     private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
     private final Superstructure superstructure = new Superstructure();
 
-    private AutoFactory m_factory;
-    private AutoChooser m_chooser;
-    private Binder m_binder;
+    private final AutoMaker m_auto = new AutoMaker(swerve);
   
     public RobotContainer() {
       configureBindings();
@@ -46,32 +39,22 @@ public class RobotContainer {
     }
   
     public Command getAutonomousCommand() {
-      m_factory = new CustomAutoFactory(this.getSwerveSystem()).getFactory();
-      m_chooser = new CustomAutoChooser().getAutoChooser();
-      m_binder = new Binder(m_factory);
+      var routine = m_auto.get().newRoutine("Routine");
 
-      Command command = Commands.print("printed");
+      var traj = routine.trajectory("NewPath");
 
-      m_binder.bind("Print", command);
-      m_chooser.addCmd("Print", () -> command);
+      routine.active().onTrue(
+        Commands.sequence(
+          traj.resetOdometry(),
+          traj.cmd()
+        )
+      );
 
-      return m_factory.trajectoryCmd("Print");
-    
-    //return Commands.none();
-    // Simple drive forward auton
-    // final var idle = new SwerveRequest.Idle();
-    // return Commands.sequence(
-    // // Reset our field centric heading to match the robot
-    // // facing away from our alliance station wall (0 deg).
-    // swerve.runOnce(() -> swerve.seedFieldCentric(Rotation2d.kZero)),
-    // // Then slowly drive forward (away from us) for 5 seconds.
-    // swerve.applyRequest(() -> drive.withVelocityX(0.5)
-    // .withVelocityY(0)
-    // .withRotationalRate(0))
-    // .withTimeout(5.0),
-    // // Finally idle for the rest of auton
-    // swerve.applyRequest(() -> idle));
-  }
+      traj.atTime("Event").onTrue(Commands.print("Event Fired"));
+      traj.done().onTrue(Commands.print("Event Done"));
+
+      return routine.cmd();
+    }
 
   public CommandSwerveDrivetrain getSwerveSystem() {
     return swerve;
