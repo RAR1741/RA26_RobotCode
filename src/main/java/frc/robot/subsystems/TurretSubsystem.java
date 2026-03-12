@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -64,17 +65,17 @@ public class TurretSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(15.0, 0, 0,
-          DegreesPerSecond.of(2440),
-          DegreesPerSecondPerSecond.of(2440))
-      // TODO: make this work, and not error
-      // .withFeedforward(new SimpleMotorFeedforward(0.0, 7.5, 0.0))
+      .withClosedLoopController(2.5, 0, 0,
+          DegreesPerSecond.of(2440 * GEAR_RATIO),
+          DegreesPerSecondPerSecond.of(2440 * GEAR_RATIO))
+      // .withFeedforward(new ArmFeedforward(0.0, 0.0, 7.5))
       .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(true)
-      .withIdleMode(MotorMode.COAST)
-      .withSoftLimit(Degrees.of(-MAX_ONE_DIR_FOV), Degrees.of(MAX_ONE_DIR_FOV))
-      .withStatorCurrentLimit(Amps.of(30))
+      .withIdleMode(MotorMode.BRAKE)
+      // .withSoftLimit(Degrees.of(-MAX_ONE_DIR_FOV), Degrees.of(MAX_ONE_DIR_FOV))
+      .withStatorCurrentLimit(Amps.of(60))
+      .withSupplyCurrentLimit(Amps.of(60))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
