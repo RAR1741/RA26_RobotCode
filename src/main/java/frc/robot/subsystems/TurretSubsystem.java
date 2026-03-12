@@ -65,17 +65,18 @@ public class TurretSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(2.5, 0, 0,
+      .withClosedLoopController(0., 0, 0,
           DegreesPerSecond.of(2440 * GEAR_RATIO),
           DegreesPerSecondPerSecond.of(2440 * GEAR_RATIO))
+      .withFeedforward(new SimpleMotorFeedforward(0.0, 1.0, 0.0))
       // .withFeedforward(new ArmFeedforward(0.0, 0.0, 7.5))
       .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(true)
       .withIdleMode(MotorMode.BRAKE)
       // .withSoftLimit(Degrees.of(-MAX_ONE_DIR_FOV), Degrees.of(MAX_ONE_DIR_FOV))
-      .withStatorCurrentLimit(Amps.of(60))
-      .withSupplyCurrentLimit(Amps.of(60))
+      .withStatorCurrentLimit(Amps.of(30))
+      .withSupplyCurrentLimit(Amps.of(30))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
