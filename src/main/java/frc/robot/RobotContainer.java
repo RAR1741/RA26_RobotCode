@@ -4,44 +4,56 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-
-import frc.robot.controls.DriverController;
-import frc.robot.subsystems.SwerveSystem;
+import frc.robot.controls.DriverControls;
+import frc.robot.controls.OperatorControls;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Superstructure;
 
 public class RobotContainer {
-  private final SwerveSystem m_swerve = new SwerveSystem();
+  private final Telemetry logger = new Telemetry();
+
+  private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
+  private final Superstructure superstructure = new Superstructure();
 
   public RobotContainer() {
     configureBindings();
-    
-    m_swerve.setDefaultCommand( 
-      m_swerve.driveCommand( 
-        DriverController.getController().getLeftY() * -1, 
-        DriverController.getController().getLeftX() * -1, 
-        DriverController.getController().getRightX() * -1 
-      ) 
-    );
-
-    DataLogManager.log("RobotContainer: Initializing...");
-
-    configureBindings();
+    buildNamedAutoCommands();
   }
 
-
   private void configureBindings() {
-    DriverController.configure(Constants.ControllerConstants.kDriverControllerPort, m_swerve);
-    DataLogManager.log("Button X Pressed - Activating Intake");
-    DataLogManager.log("Button Y Pressed - Activating Intake");
-    DataLogManager.log("Button A Pressed - Activating Intake");
-    DataLogManager.log("Button B Pressed - Activating Intake");
+    DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, swerve, superstructure, logger);
+    OperatorControls.configure(Constants.ControllerConstants.kOperatorControllerPort, swerve, superstructure);
+  }
+
+  private void buildNamedAutoCommands() {
+    // Add any auto commands to the NamedCommands here
+    // NamedCommands.registerCommand("driveForwards",
+    // drivebase.driveForward().withTimeout(2)
+    // .withName("Auto.driveForwards"));
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return Commands.none();
+
+    // Simple drive forward auton
+    // final var idle = new SwerveRequest.Idle();
+    // return Commands.sequence(
+    // // Reset our field centric heading to match the robot
+    // // facing away from our alliance station wall (0 deg).
+    // swerve.runOnce(() -> swerve.seedFieldCentric(Rotation2d.kZero)),
+    // // Then slowly drive forward (away from us) for 5 seconds.
+    // swerve.applyRequest(() -> drive.withVelocityX(0.5)
+    // .withVelocityY(0)
+    // .withRotationalRate(0))
+    // .withTimeout(5.0),
+    // // Finally idle for the rest of auton
+    // swerve.applyRequest(() -> idle));
+  }
+
+  public CommandSwerveDrivetrain getSwerveSystem() {
+    return swerve;
   }
 }
-
-

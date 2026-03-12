@@ -4,10 +4,8 @@
 
 package frc.robot;
 
-import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.junction.Logger;
 
@@ -16,24 +14,21 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
+  private Simulation sim;
 
   private final RobotContainer m_robotContainer;
 
   public Robot() {
+    Logger.recordMetadata("ProjectName", "RA26_RobotCode");
+    Logger.addDataReceiver(new NT4Publisher());
+
+    if (isReal()) {
+      Logger.addDataReceiver(new WPILOGWriter());
+    }
+
+    Logger.start();
+
     m_robotContainer = new RobotContainer();
-    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
-
-if (isReal()) {
-    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-} else {
-    setUseTiming(false); // Run as fast as possible
-    String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-    Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-    Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
-}
-
-Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
   }
 
   @Override
@@ -42,13 +37,16 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -60,10 +58,12 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -73,10 +73,12 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -84,9 +86,22 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
-}
+  public void testExit() {
+  }
 
+  @Override
+  public void simulationInit() {
+    // TODO: reimplement this when we have a simulation to run
+    // sim = new Simulation(m_robotContainer.getSwerveSystem());
+    // sim.init();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    sim.periodic();
+  }
+}
