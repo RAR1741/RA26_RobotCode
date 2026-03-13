@@ -188,6 +188,7 @@ public class ParabolicTrajectory {
     public static ParabolicTrajectory toZoneFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
         double targetX;
         double targetY;
+        @SuppressWarnings("unused")
         boolean doShoot;
         boolean topHalf = launchY > k_hubY;
         double halfHubEffectiveWidth = k_hubBodyWidth / 2.0 + FieldConstants.k_hubNetOverhang + k_fuelRadius;
@@ -226,9 +227,10 @@ public class ParabolicTrajectory {
         } 
         double idealLaunchVelocity = TurretConstants.k_minZoneLaunchVelocity + (targetDistance - k_allianceZoneDepth) / (TurretConstants.k_maxZoneLaunchDistance - k_allianceZoneDepth)
                                                                                 * (TurretConstants.k_maxLaunchVelocity - TurretConstants.k_minZoneLaunchVelocity);
-        double time = timeToXYHFromVXY(stuff);
+        //double time = timeToXYHFromVXY(stuff);
         ParabolicTrajectory trajectory = toDDHFromVXYMinimizeAngle(targetDirection, targetDistance, k_turretHeight, launchX, launchY, idealLaunchVelocity);
         if (trajectory == null) {return null;} // need to sort this out another time bc idk but ts pmo irl ykwim
+        @SuppressWarnings("unused")
         double skewedLaunchVelocity = skewVelocityByTurretVelocity(trajectory.launchAngle, trajectory.launchDirection, idealLaunchVelocity, turretVX, turretVY);
         double time = targetDistance / trajectory.getHorizontalLaunchVelocity();
         trajectory = toXYHFromVXYHMinimizeAngle(targetX - turretVX * time, targetY - turretVY * time, k_turretHeight, launchX, launchY, k_turretHeight, idealLaunchVelocity);

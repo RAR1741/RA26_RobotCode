@@ -7,6 +7,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class Simulation {
     private SimulatedArena m_arena;
+    @SuppressWarnings("unused")
     private CommandSwerveDrivetrain m_swerve;
 
     public Simulation(CommandSwerveDrivetrain swerveDrive) {
@@ -23,7 +24,7 @@ public class Simulation {
         Logger.recordOutput("FieldSimulation/Fuel",
                 m_arena.getGamePiecesArrayByType("Fuel"));
 
-        // TODO: Add this back
+        // tOdO: Add this back
         // Logger.recordOutput("Sim/RobotPose", m_swerve.getSwerveDrive().getPose());
     }
 }

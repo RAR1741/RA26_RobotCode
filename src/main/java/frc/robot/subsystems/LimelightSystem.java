@@ -1,20 +1,20 @@
 package frc.robot.subsystems;
 
-import java.util.Optional;
+// import java.util.Optional;
 
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import frc.robot.Telemetry;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.geometry.Pose3d;
+// import static edu.wpi.first.units.Units.DegreesPerSecond;
+// import frc.robot.Telemetry;
+// import edu.wpi.first.wpilibj.Timer;
+// import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import limelight.Limelight;
-import limelight.networktables.AngularVelocity3d;
-import limelight.networktables.LimelightPoseEstimator.EstimationMode;
-import limelight.networktables.LimelightSettings.LEDMode;
-import limelight.networktables.Orientation3d;
-import limelight.networktables.PoseEstimate;
-import swervelib.SwerveDrive;
-import frc.robot.Constants;
+// import limelight.Limelight;
+// import limelight.networktables.AngularVelocity3d;
+// import limelight.networktables.LimelightPoseEstimator.EstimationMode;
+// import limelight.networktables.LimelightSettings.LEDMode;
+// import limelight.networktables.Orientation3d;
+// import limelight.networktables.PoseEstimate;
+// import swervelib.SwerveDrive;
+// import frc.robot.Constants;
 
 //https://github.com/Yet-Another-Software-Suite/YALL
 
@@ -27,13 +27,13 @@ https://firstfrc.blob.core.windows.net/frc2026/FieldAssets/2026-field-dimension-
 
 public class LimelightSystem extends SubsystemBase {
 
-    private Limelight limelight;
-    private SwerveDrive swerveDrive; 
-    private Optional<PoseEstimate> visionEstimate;
-    private boolean allowed;
-    private String lastRejectReason = "";
+    // private Limelight limelight;
+    // private SwerveDrive swerveDrive; 
+    // private Optional<PoseEstimate> visionEstimate;
+    // private boolean allowed;
+    // private String lastRejectReason = "";
 
-    public LimelightSystem(SwerveDrive swerve){
+    public LimelightSystem(/*SwerveDrive swerve*/){/*
         limelight = new Limelight("limelight");
         swerveDrive = swerve;
 
@@ -112,5 +112,5 @@ public class LimelightSystem extends SubsystemBase {
 
         return true;
 
-    }
+    */}
 }

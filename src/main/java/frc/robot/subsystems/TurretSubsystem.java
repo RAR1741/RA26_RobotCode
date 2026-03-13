@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
+// import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+// import edu.wpi.first.math.geometry.Pose3d;
+// import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
@@ -29,7 +29,7 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Radians;
+// import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -50,7 +50,7 @@ public class TurretSubsystem extends SubsystemBase {
   private static final double M13_OFFSET = 0.306114;
   // reading
 
-  // TODO: check these for the real bot; these are just estimates
+  // tOdO: check these for the real bot; these are just estimates
   public final Translation3d turretTranslation = new Translation3d(-0.205, 0.0, 0.375);
 
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
@@ -63,14 +63,14 @@ public class TurretSubsystem extends SubsystemBase {
       .withClosedLoopController(15.0, 0, 0,
           DegreesPerSecond.of(2440),
           DegreesPerSecondPerSecond.of(2440))
-      // TODO: make this work, and not error
+      // tOdO: make this work, and not error
       // .withFeedforward(new SimpleMotorFeedforward(0.0, 7.5, 0.0))
       .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(5, 5)))
       .withMotorInverted(true)
       .withIdleMode(MotorMode.COAST)
       .withSoftLimit(Degrees.of(-MAX_ONE_DIR_FOV), Degrees.of(MAX_ONE_DIR_FOV))
-      .withStatorCurrentLimit(Amps.of(0)) // TODO: make this not 0 to actually run
+      .withStatorCurrentLimit(Amps.of(0)) // tOdO: make this not 0 to actually run
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 

@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.FieldConstants;
-// import frc.robot.subsystems.turret.ParabolicTrajectory;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 // import frc.robot.Telemetry;
 // import frc.robot.subsystems.SwerveSystem;
 
@@ -111,13 +111,6 @@ public class ShooterInstruction {
         return AngleChangerSystem.pitchMotorToLaunchPitch(TurretConstants.k_maxTrenchPitchMotorPos + availableTime * TurretConstants.k_maxPitchMotorSpeed);
     }
 
-    public static Pose3d getTurretPose() {
-        return new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0)); // tOdO gibb dis
-    }
-    public static Translation2d getTurretVelocity() { // tOdO gib mehr
-        return new Translation2d(0, 0);
-    }
-
     public static boolean activeHubOnShot(ParabolicTrajectory testTrajectory) {
         return hubIsActive(gameTime() + testTrajectory.timeToHubScoring());
     }
@@ -187,11 +180,11 @@ public class ShooterInstruction {
     }
 
     // 70 degree launch to hub
-    public static ShooterInstruction generateInstructionJordanMode() {
-        Translation3d turretPosition = getTurretPose().getTranslation();
+    public static ShooterInstruction generateInstructionJordanMode(Supplier<Translation2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier) {
+        Translation2d turretPosition = turretPositionSupplier.get();
         double turretX = turretPosition.getX();
         double turretY = turretPosition.getY();
-        Translation2d turretVelocity = getTurretVelocity();
+        Translation2d turretVelocity = turretVelocitySupplier.get();
         double turretVX = turretVelocity.getX();
         double turretVY = turretVelocity.getY();
 
@@ -223,11 +216,11 @@ public class ShooterInstruction {
         return testInstruction;
     }
 
-    public static ShooterInstruction generateInstructionBareMinimumFunctional() {
-        Translation3d turretPosition = getTurretPose().getTranslation();
+    public static ShooterInstruction generateInstructionBareMinimumFunctional(Supplier<Translation2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier) {
+        Translation2d turretPosition = turretPositionSupplier.get();
         double turretX = turretPosition.getX();
         double turretY = turretPosition.getY();
-        Translation2d turretVelocity = getTurretVelocity();
+        Translation2d turretVelocity = turretVelocitySupplier.get();
         double turretVX = turretVelocity.getX();
         double turretVY = turretVelocity.getY();
 
@@ -252,91 +245,3 @@ public class ShooterInstruction {
         return testInstruction;
     }
 }
-//     public class ShootOnTheMoveCommand extends Command {
-//         public ShootOnTheMoveCommand(SwerveSubsystem drivetrain, Superstructure superstructure,
-//       Supplier<Translation3d> aimPointSupplier) {
-//     this.drivetrain = drivetrain;
-//     this.superstructure = superstructure;
-//     this.aimPointSupplier = aimPointSupplier;
-
-//     // t0d0: figure out if the above is actually required. Right now, when you start
-//     // some other command, the auto aim can't start back up again
-//   }
-
-//   @Override
-//   public void initialize() {
-//     super.initialize();
-
-//     latestHoodAngle = superstructure.getHoodAngle();
-//     latestTurretAngle = superstructure.getTurretAngle();
-//     latestShootSpeed = superstructure.getShooterSpeed();
-
-//     // t0d0: when this current command ends, we should probably cancel the dynamic
-//     // aim command
-//     superstructure.aimDynamicCommand(() -> this.latestShootSpeed, () -> this.latestTurretAngle, () -> this.latestHoodAngle).schedule();
-//   }
-
-//   @Override
-//   public boolean isFinished() {
-//     return false;
-//   }
-
-//   @Override
-//   public void execute() {
-//     // Calculate trajectory to aimPoint
-//     Translation3d target = aimPointSupplier.get();
-
-//     Translation3d shooterLocation = drivetrain.getPose3d().getTranslation()
-//         .plus(superstructure.getShooterPose().getTranslation());
-
-//     Translation2d shooterOnGround = new Translation2d(shooterLocation.getX(), shooterLocation.getY());
-//     Translation2d targetOnGround = new Translation2d(target.getX(), target.getY());
-
-//     Meters distanceToTarget = Meters.of(shooterOnGround.getDistance(targetOnGround));
-
-//     // Get time of flight. We could try to do this analytically but for now it's
-//     // easier and more realistic
-//     // to use a simple linear approximation based on empirical data.
-//     double timeOfFlight = getFlightTime(distanceToTarget);
-
-//     // Calculate corrective vector based on our current velocity multiplied by time
-//     // of flight.
-//     // If we're stationary, this should be zero. If we're backing up, this will be
-//     // "ahead" of the target, etc.
-//     var updatedPosition = drivetrain.getFieldVelocity().times(timeOfFlight);
-//     Translation2d correctiveVector = new Translation2d(updatedPosition.vxMetersPerSecond, updatedPosition.vyMetersPerSecond)
-//         .unaryMinus();
-//     Translation3d correctiveVector3d = new Translation3d(correctiveVector.getX(), correctiveVector.getY(), 0);
-
-//     Logger.recordOutput("FieldSimulation/AimTargetCorrected",
-//         new Pose3d(target.plus(correctiveVector3d), Rotation3d.kZero));
-
-//     Translation2d correctedTarget = targetOnGround.plus(correctiveVector);
-
-//     Translation2d vectorToTarget = drivetrain.getPose().getTranslation().minus(correctedTarget);
-
-//     Meters correctedDistance = Meters.of(vectorToTarget.getNorm());
-//     var calculatedHeading = vectorToTarget.getAngle()
-//         .rotateBy(drivetrain.getHeading().unaryMinus())
-//         .getMeasure();
-
-//     Logger.recordOutput("ShootOnTheMove/RobotHeading", drivetrain.getHeading());
-//     Logger.recordOutput("ShootOnTheMove/CalculatedHeading", calculatedHeading);
-//     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
-
-//     latestTurretAngle = calculatedHeading;
-//     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
-
-//     latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
-
-//     superstructure.setShooterSetpoints(
-//         latestShootSpeed,
-//         latestTurretAngle,
-//         latestHoodAngle);
-
-//     // System.out.println("Shooting at distance: " + correctedDistance + " requires
-//     // speed: " + latestShootSpeed
-//     // + ", hood angle: " + latestHoodAngle + ", turret angle: " +
-//     // latestTurretAngle);
-//   }
-//     }
