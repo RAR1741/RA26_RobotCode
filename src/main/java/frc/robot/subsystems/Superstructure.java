@@ -96,7 +96,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command turretLeftCommand() {
-    return turret.setAngle(Degrees.of(45)).asProxy().withName("Superstructure.turretLeft");
+    return turret.setAngle(Degrees.of(160)).asProxy().withName("Superstructure.turretLeft");
   }
 
   public Command turretCenterCommand() {
@@ -104,7 +104,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command turretRightCommand() {
-    return turret.setAngle(Degrees.of(-45)).asProxy().withName("Superstructure.turretRight");
+    return turret.setAngle(Degrees.of(-160)).asProxy().withName("Superstructure.turretRight");
   }
 
   public Command turretRezeroCommand() {

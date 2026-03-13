@@ -54,14 +54,14 @@ public class TurretSubsystem extends SubsystemBase {
 
   // TODO: Tune PID gains
   private final ProfiledPIDController profiledPID = new ProfiledPIDController(
-      0.0, // kP (tune me)
-      0.0, // kI
+      15.0, // kP (tune me)
+      0.5, // kI
       0.0, // kD
       new TrapezoidProfile.Constraints(MAX_VELOCITY_DEG_PER_SEC, MAX_ACCEL_DEG_PER_SEC2));
 
   // Feedforward (kS, kV, kA — in volts, volts*s/deg, volts*s^2/deg)
   // TODO: Tune feedforward gains via SysId
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 4.0, 0.0);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 4.5, 0.0);
 
   private boolean isRezeroed = false;
   private boolean closedLoopEnabled = false;
@@ -77,7 +77,7 @@ public class TurretSubsystem extends SubsystemBase {
     // Configure SparkMax
     SparkMaxConfig config = new SparkMaxConfig();
     config.inverted(true);
-    config.idleMode(IdleMode.kBrake);
+    config.idleMode(IdleMode.kCoast);
     config.smartCurrentLimit(30);
     config.openLoopRampRate(0.1);
     config.closedLoopRampRate(0.1);
