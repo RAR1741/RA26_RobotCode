@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -35,7 +36,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private static final double INTAKE_SPEED = 0.75;
+  private static final double INTAKE_ROLLER_POWER = 0.75;
 
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
   private SparkMax pivotSecondaySpark = new SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
@@ -72,20 +73,21 @@ public class IntakeSubsystem extends SubsystemBase {
   private SparkFlex rollerSpark = new SparkFlex(Constants.IntakeConstants.k_rollerMotorId, MotorType.kBrushless);
 
   private SmartMotorControllerConfig rollerSmcConfig = new SmartMotorControllerConfig(this)
-      .withControlMode(ControlMode.OPEN_LOOP)
+      .withControlMode(ControlMode.CLOSED_LOOP)
+      .withClosedLoopController(0.0300, 0, 0)
       .withTelemetry("RollerMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(true)
-      .withIdleMode(MotorMode.COAST)
-      .withStatorCurrentLimit(Amps.of(40));
+      .withIdleMode(MotorMode.COAST);
+  // .withStatorCurrentLimit(Amps.of(60));
 
   private SmartMotorController rollerSmc = new SparkWrapper(rollerSpark, DCMotor.getNeoVortex(1), rollerSmcConfig);
 
   private final FlyWheelConfig rollerConfig = new FlyWheelConfig(rollerSmc)
       .withDiameter(Inches.of(2))
       .withMass(Pounds.of(0.5))
-      .withUpperSoftLimit(RPM.of(6000))
-      .withLowerSoftLimit(RPM.of(-6000))
+      // .withUpperSoftLimit(RPM.of(10000))
+      // .withLowerSoftLimit(RPM.of(-10000))
       .withTelemetry("roller", TelemetryVerbosity.HIGH);
 
   private FlyWheel roller = new FlyWheel(rollerConfig);
@@ -95,7 +97,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeCommand() {
-    return roller.set(INTAKE_SPEED);
+    return roller.setSpeed(RPM.of(6000.0)).withName("Intake.IntakeCommand");
   }
 
   public Command setPivotAngle(Angle angle) {
