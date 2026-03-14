@@ -175,23 +175,25 @@ public class TurretSubsystem extends SubsystemBase {
     return run(() -> {
       // Safety check: prevent commanding angles outside of physical limits (which
       // could cause damage)
-      Angle desiredAngle = angle;
-
-      if (angle.in(Degrees) > MAX_ONE_DIR_FOV) {
-        desiredAngle = Degrees.of(MAX_ONE_DIR_FOV);
-      } else if (angle.in(Degrees) < -MAX_ONE_DIR_FOV) {
-        desiredAngle = Degrees.of(-MAX_ONE_DIR_FOV);
-      }
       closedLoopEnabled = true;
-      profiledPID.setGoal(desiredAngle.in(Rotations));
+      profiledPID.setGoal(clampSafeAngle(angle).in(Rotations));
     }).withName("Turret.SetAngle(" + angle.in(Degrees) + " deg)");
   }
 
   public Command setAngleDynamic(Supplier<Angle> turretAngleSupplier) {
     return run(() -> {
       closedLoopEnabled = true;
-      profiledPID.setGoal(turretAngleSupplier.get().in(Rotations));
+      profiledPID.setGoal(clampSafeAngle(turretAngleSupplier.get()).in(Rotations));
     }).withName("Turret.SetAngleDynamic");
+  }
+
+  public Angle clampSafeAngle(Angle angle) {
+    if (angle.in(Degrees) > MAX_ONE_DIR_FOV) {
+      return Degrees.of(MAX_ONE_DIR_FOV);
+    } else if (angle.in(Degrees) < -MAX_ONE_DIR_FOV) {
+      return Degrees.of(-MAX_ONE_DIR_FOV);
+    }
+    return angle;
   }
 
   public Command center() {
