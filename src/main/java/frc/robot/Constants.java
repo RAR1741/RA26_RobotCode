@@ -103,6 +103,18 @@ public class Constants {
     public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
   }
 
+  public static class VisionConstants {
+    public static final double xyStdDevCoefficient = 0.005;
+    public static final double thetaStdDevCoefficient = 0.01;
+    public static final double stdDevFactor = 0.5;
+    // public static final boolean useVisionRotation = false;
+
+    public static final int minTagCount = 1;
+    public static final double maxAvgDistance = 100.0;
+    public static final double autoStdDevScale = 0.0;
+    public static final double autoTranslationMax = 100.0;
+  }
+
   /**
    * Logging-related global constants. Toggle features here so the rest of the
    * code
