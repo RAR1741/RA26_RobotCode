@@ -1,5 +1,5 @@
 {
- "name":"Routine",
+ "name":"choreo-project",
  "version":2,
  "type":"Swerve",
  "variables":{
@@ -76,7 +76,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":null,
+  "root":"",
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true
