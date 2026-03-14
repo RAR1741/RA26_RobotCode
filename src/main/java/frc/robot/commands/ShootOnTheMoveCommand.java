@@ -121,13 +121,15 @@ public class ShootOnTheMoveCommand extends Command {
 
     latestTurretAngle = calculatedHeading;
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
+    latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
 
-    // TODO: add this back if/when we have a real hood, for now, just set it to the
-    // current angle
-    // latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
-
-    latestShootSpeed = RPM.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
-    latestHoodAngle = superstructure.getHoodAngle();
+    // FORE TESTING - DO NOT USE
+    // latestShootSpeed =
+    // RPM.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
+    // latestShootSpeed = RPM.of(2400);
+    // latestHoodAngle =
+    // Degrees.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
+    // latestHoodAngle = superstructure.getHoodAngle();
 
     superstructure.setShooterSetpoints(
         latestShootSpeed,
@@ -166,11 +168,11 @@ public class ShootOnTheMoveCommand extends Command {
   private static final InterpolatingDoubleTreeMap SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.2319, 2350.0), // HUB
       Map.entry(3.319674, 2400.0), // TRENCH
-      Map.entry(5.145179, 2400.0)); // TRENCH
+      Map.entry(5.145179, 2400.0)); // OUTPOST
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.2319, 80.0), // HUB
       Map.entry(3.319674, 70.0), // TRENCH
-      Map.entry(5.145179, 45.0)); // TRENCH
+      Map.entry(5.145179, 55.0)); // OUTPOST
 }

@@ -52,7 +52,7 @@ public class HoodSubsystem extends SubsystemBase {
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(false)
       .withIdleMode(MotorMode.BRAKE)
-      // .withSoftLimit(MIN_ANGLE, MAX_ANGLE) // TODO: Add this back... please
+      .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
       .withStatorCurrentLimit(Amps.of(10.0))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
