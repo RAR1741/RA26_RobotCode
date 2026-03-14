@@ -1,23 +1,6 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.wrappers.REVThroughBoreEncoder;
-
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
@@ -32,8 +15,20 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.wrappers.REVThroughBoreEncoder;
 
 public class TurretSubsystem extends SubsystemBase {
 

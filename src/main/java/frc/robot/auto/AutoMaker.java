@@ -5,21 +5,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class AutoMaker {
-    private final AutoFactory autoFactory;
+  private final AutoFactory autoFactory;
 
-    public AutoMaker(CommandSwerveDrivetrain swerve){
-        autoFactory = new AutoFactory(() -> swerve.getState().Pose, (pose) -> swerve.resetPose(pose), swerve::followTrajectory, false, swerve);
-    }
+  public AutoMaker(CommandSwerveDrivetrain swerve) {
+    autoFactory = new AutoFactory(() -> swerve.getState().Pose, (pose) -> swerve.resetPose(pose),
+        swerve::followTrajectory, false, swerve);
+  }
 
-    public void useTrajectory(String TrajectoryName) {
-        autoFactory.trajectoryCmd(TrajectoryName);
-    }
+  public void useTrajectory(String TrajectoryName) {
+    autoFactory.trajectoryCmd(TrajectoryName);
+  }
 
-    public void bind(String name, Command command) {
-        autoFactory.bind(name, command);
-    }
+  public void bind(String name, Command command) {
+    autoFactory.bind(name, command);
+  }
 
-    public AutoFactory get(){
-        return autoFactory;
-    }
+  public AutoFactory get() {
+    return autoFactory;
+  }
 }
