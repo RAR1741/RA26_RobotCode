@@ -4,6 +4,8 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
+
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
@@ -26,13 +28,14 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class HopperSubsystem extends SubsystemBase {
 
-  private static final double HOPPER_SPEED = 0.4;
+  private static final AngularVelocity HOPPER_RPM = RPM.of(1000);
 
   // Nova motor controller with NEO motor
   private SparkFlex hopperSpark = new SparkFlex(Constants.HopperConstants.kHopperMotorId, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-      .withControlMode(ControlMode.OPEN_LOOP)
+      .withControlMode(ControlMode.CLOSED_LOOP)
+      .withClosedLoopController(0.0300, 0, 0)
       .withTelemetry("HopperMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(true)
@@ -55,11 +58,11 @@ public class HopperSubsystem extends SubsystemBase {
   }
 
   public Command feedCommand() {
-    return hopper.set(HOPPER_SPEED).withName("Hopper.Feed");
+    return hopper.setSpeed(HOPPER_RPM).withName("Hopper.Feed");
   }
 
   public Command reverseCommand() {
-    return hopper.set(-HOPPER_SPEED).withName("Hopper.Reverse");
+    return hopper.setSpeed(HOPPER_RPM.unaryMinus()).withName("Hopper.Reverse");
   }
 
   @Override

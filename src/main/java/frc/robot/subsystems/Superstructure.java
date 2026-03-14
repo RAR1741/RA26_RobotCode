@@ -128,23 +128,6 @@ public class Superstructure extends SubsystemBase {
     return turret.rezero().asProxy().withName("Superstructure.turretRezero");
   }
 
-  // Aim at shooter for auto
-  public Command aimCommand(AngularVelocity shooterSpeed, Angle turretAngle) {
-    return Commands.runOnce(() -> {
-      targetShooterSpeed = shooterSpeed;
-      targetTurretAngle = turretAngle;
-    }).andThen(
-        Commands.parallel(
-            shooter.setSpeed(shooterSpeed).asProxy(),
-            turret.setAngle(turretAngle).asProxy())
-            .withName("Superstructure.aimCommand"));
-  }
-
-  public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle) {
-    targetShooterSpeed = shooterSpeed;
-    targetTurretAngle = turretAngle;
-  }
-
   public Command stopAllCommand() {
     return Commands.parallel(
         shooter.stopCommand().asProxy(),
