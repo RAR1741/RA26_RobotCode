@@ -16,8 +16,8 @@ public class AutoMaker {
         swerve);
   }
 
-  public void useTrajectory(String TrajectoryName) {
-    autoFactory.trajectoryCmd(TrajectoryName);
+  public Command useTrajectory(String TrajectoryName) {
+    return autoFactory.trajectoryCmd(TrajectoryName);
   }
 
   public void bind(String name, Command command) {

@@ -9,8 +9,11 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.auto.AutoChooser;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
@@ -29,6 +32,24 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     m_robotContainer = new RobotContainer();
+
+    configureAutos();
+  }
+
+  public void configureAutos() {
+    // AutoChooser autoChooser = new AutoChooser();
+
+    // autoChooser.addRoutine("Test Routine", m_robotContainer::getTestAuto);
+    // // autoChooser.addCmd("Example Auto Command",
+    // // m_robotContainer::exampleAutoCommand);
+
+    // AutoChooser autoChooser = new AutoChooser();
+
+    // // Put the auto chooser on the dashboard
+    // SmartDashboard.putData(autoChooser);
+
+    // // Schedule the selected auto during the autonomous period
+    // RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
   }
 
   @Override
@@ -51,6 +72,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    System.out.println("=================== Selected Auto: " + m_autonomousCommand.getName());
 
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);

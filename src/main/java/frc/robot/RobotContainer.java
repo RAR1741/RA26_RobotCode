@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.auto.AutoMaker;
@@ -19,10 +22,19 @@ public class RobotContainer {
   private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
   private final Superstructure superstructure = new Superstructure(swerve);
 
-  private final AutoMaker m_auto = new AutoMaker(swerve);
+  // private final AutoMaker m_auto = new AutoMaker(swerve);
+  private final AutoFactory autoFactory;
 
   public RobotContainer() {
+    autoFactory = new AutoFactory(
+        () -> swerve.getState().Pose,
+        (pose) -> swerve.resetPose(pose),
+        swerve::followTrajectory,
+        true,
+        swerve);
+
     configureBindings();
+
     buildNamedAutoCommands();
   }
 
@@ -39,17 +51,19 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    var routine = m_auto.get().newRoutine("Routine");
+    // AutoFactory factory = m_auto.get();
+    AutoRoutine routine = autoFactory.newRoutine("Routine");
 
-    var traj = routine.trajectory("NewPath");
+    AutoTrajectory traj = routine.trajectory("TestPath");
+    System.out.println("=================== Trajectory loaded: " + traj.toString());
 
     routine.active().onTrue(
         Commands.sequence(
             traj.resetOdometry(),
             traj.cmd()));
 
-    traj.atTime("Event").onTrue(Commands.print("Event Fired"));
-    traj.done().onTrue(Commands.print("Event Done"));
+    traj.atTime("Event").onTrue(Commands.print("=================== Event Fired ==================="));
+    traj.done().onTrue(Commands.print("=================== Event Done ==================="));
 
     return routine.cmd();
   }
