@@ -4,11 +4,15 @@ import static edu.wpi.first.units.Units.Degrees;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Superstructure extends SubsystemBase {
   private final IntakeSubsystem intake;
@@ -28,6 +32,10 @@ public class Superstructure extends SubsystemBase {
 
   private AngularVelocity targetShooterSpeed;
   private Angle targetTurretAngle;
+  private Angle targetHoodAngle;
+
+  // Default aim point is red hub
+  private Translation3d aimPoint = Constants.AimPoints.RED_HUB.value;
 
   public Superstructure(CommandSwerveDrivetrain swerve) {
     this.drivetrain = swerve;
@@ -142,10 +150,55 @@ public class Superstructure extends SubsystemBase {
         turret.setAngle(Degrees.of(0)).asProxy()).withName("Superstructure.stopAll");
   }
 
-  public Command aimDynamic(Supplier<AngularVelocity> shooterSpeedSupplier, Supplier<Angle> turretAngleSupplier) {
+  public Command aimDynamicCommand(
+      Supplier<AngularVelocity> shooterSpeedSupplier,
+      Supplier<Angle> turretAngleSupplier,
+      Supplier<Angle> hoodAngleSupplier) {
     return Commands.parallel(
         shooter.setSpeedDynamic(shooterSpeedSupplier).asProxy(),
-        turret.setAngleDynamic(turretAngleSupplier).asProxy())
+        turret.setAngleDynamic(turretAngleSupplier).asProxy(),
+        hood.setAngleDynamic(hoodAngleSupplier).asProxy())
         .withName("Superstructure.aimDynamic");
+  }
+
+  public Translation3d getAimPoint() {
+    return aimPoint;
+  }
+
+  public void setAimPoint(Translation3d newAimPoint) {
+    this.aimPoint = newAimPoint;
+  }
+
+  public Angle getHoodAngle() {
+    return hood.getAngle();
+  }
+
+  public Angle getTurretAngle() {
+    return turret.getAngle();
+  }
+
+  public AngularVelocity getShooterSpeed() {
+    return shooter.getSpeed();
+  }
+
+  public Pose3d getShooterPose() {
+    // Position of the shooter relative to the "front" of the robot. Rotation
+    // element is based on hood and turret angles
+    return new Pose3d(turret.turretTranslation, getAimRotation3d());
+  }
+
+  public Rotation3d getAimRotation3d() {
+    // See
+    // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
+    return new Rotation3d(
+        Degrees.of(0), // no roll 🤞
+        hood.getAngle().unaryMinus(), // pitch is negative hood angle
+        turret.getRobotAdjustedAngle());
+  }
+
+  public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle, Angle hoodAngle) {
+    targetShooterSpeed = shooterSpeed;
+    targetTurretAngle = turretAngle;
+    targetHoodAngle = hoodAngle;
   }
 }

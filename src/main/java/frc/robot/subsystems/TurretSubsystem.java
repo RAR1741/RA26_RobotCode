@@ -13,6 +13,8 @@ import frc.robot.Constants;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.Supplier;
@@ -35,8 +37,10 @@ public class TurretSubsystem extends SubsystemBase {
   private static final double M12_OFFSET = 0.951269;
   private static final double M13_OFFSET = 0.306114;
 
-  // TODO: check these for the real bot; these are just estimates
-  public final Translation3d turretTranslation = new Translation3d(-0.205, 0.0, 0.375);
+  public final Translation3d turretTranslation = new Translation3d(
+      Inches.of(-6.25).in(Meters),
+      Inches.of(6.75).in(Meters),
+      Inches.of(20.0).in(Meters));
 
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
   // Total reduction: 5 * 5 = 25:1

@@ -80,6 +80,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.run(() -> setSpeed(RPM.of(0)));
   }
 
+  public AngularVelocity getSpeed() {
+    return shooter.getSpeed();
+  }
+
   public boolean isAtSpeed(AngularVelocity targetSpeed) {
     // Tolerance of 100 RPM, adjust as needed
     return Math.abs(leaderTalon.getVelocity().getValueAsDouble() - targetSpeed.in(RPM)) < 100;

@@ -11,11 +11,13 @@ import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import com.ctre.phoenix6.CANBus;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Constants {
   public static final CANBus ctreCANBus = new CANBus("Drivetrain");
@@ -147,5 +149,33 @@ public class Constants {
             COTS.WHEELS.COLSONS.cof, // Use the COF for Colson Wheels
             3))
         .withBumperSize(Inches.of(28.5), Inches.of(33.5));
+  }
+
+  public static enum AimPoints {
+    RED_HUB(new Translation3d(11.938, 4.034536, 1.5748)),
+    RED_OUTPOST(new Translation3d(15.75, 7.25, 0)),
+    RED_FAR_SIDE(new Translation3d(15.75, 0.75, 0)),
+
+    BLUE_HUB(new Translation3d(4.5974, 4.034536, 1.5748)),
+    BLUE_OUTPOST(new Translation3d(0.75, 0.75, 0)),
+    BLUE_FAR_SIDE(new Translation3d(0.75, 7.25, 0));
+
+    public final Translation3d value;
+
+    private AimPoints(Translation3d value) {
+      this.value = value;
+    }
+
+    public static final Translation3d getAllianceHubPosition() {
+      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_HUB.value : BLUE_HUB.value;
+    }
+
+    public static final Translation3d getAllianceOutpostPosition() {
+      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_OUTPOST.value : BLUE_OUTPOST.value;
+    }
+
+    public static final Translation3d getAllianceFarSidePosition() {
+      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_FAR_SIDE.value : BLUE_FAR_SIDE.value;
+    }
   }
 }
