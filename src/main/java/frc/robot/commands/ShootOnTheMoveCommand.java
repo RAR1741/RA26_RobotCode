@@ -108,7 +108,7 @@ public class ShootOnTheMoveCommand extends Command {
         new Pose3d(target.plus(correctiveVector3d), Rotation3d.kZero));
 
     var correctedTarget = targetOnGround.plus(correctiveVector);
-    var vectorToTarget = correctedTarget.minus(shooterLocation);
+    var vectorToTarget = shooterLocation.minus(correctedTarget);
 
     var correctedDistance = Meters.of(vectorToTarget.getNorm());
     var calculatedHeading = vectorToTarget.getAngle()
@@ -157,8 +157,9 @@ public class ShootOnTheMoveCommand extends Command {
 
   // meters, seconds
   private static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.0, 1.0),
-      Map.entry(4.86, 1.5));
+      Map.entry(1.0, 1.2),
+      Map.entry(5.145179, 1.2));
+
   // TODO: add more data points here.
   // CLOSE: NEED
   // MID: maybe good enough
