@@ -32,10 +32,10 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class TurretSubsystem extends SubsystemBase {
 
-  private final double MAX_ONE_DIR_FOV = 45; // degrees
+  private final double MAX_ONE_DIR_FOV = 90; // degrees
 
-  private static final double M12_OFFSET = 0.951269;
-  private static final double M13_OFFSET = 0.306114;
+  private static final double M12_OFFSET = 0.944253;
+  private static final double M13_OFFSET = 0.307141;
 
   public final Translation3d turretTranslation = new Translation3d(
       Inches.of(-6.25).in(Meters),
@@ -58,7 +58,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   // TODO: Tune PID gains
   private final ProfiledPIDController profiledPID = new ProfiledPIDController(
-      15.0, // kP (tune me)
+      20.0, // kP (tune me)
       0.5, // kI
       0.0, // kD
       new TrapezoidProfile.Constraints(MAX_VELOCITY_DEG_PER_SEC, MAX_ACCEL_DEG_PER_SEC2));
@@ -173,8 +173,17 @@ public class TurretSubsystem extends SubsystemBase {
 
   public Command setAngle(Angle angle) {
     return run(() -> {
+      // Safety check: prevent commanding angles outside of physical limits (which
+      // could cause damage)
+      Angle desiredAngle = angle;
+
+      if (angle.in(Degrees) > MAX_ONE_DIR_FOV) {
+        desiredAngle = Degrees.of(MAX_ONE_DIR_FOV);
+      } else if (angle.in(Degrees) < -MAX_ONE_DIR_FOV) {
+        desiredAngle = Degrees.of(-MAX_ONE_DIR_FOV);
+      }
       closedLoopEnabled = true;
-      profiledPID.setGoal(angle.in(Rotations));
+      profiledPID.setGoal(desiredAngle.in(Rotations));
     }).withName("Turret.SetAngle(" + angle.in(Degrees) + " deg)");
   }
 
