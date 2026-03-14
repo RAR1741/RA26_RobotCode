@@ -65,7 +65,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command shoot() {
-    return setSpeed(RPM.of(10000));
+    return setSpeed(RPM.of(3000));
   }
 
   public Command setSpeed(AngularVelocity speed) {
@@ -78,6 +78,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public Command stopCommand() {
     return Commands.run(() -> setSpeed(RPM.of(0)));
+  }
+
+  public AngularVelocity getSpeed() {
+    return shooter.getSpeed();
   }
 
   public boolean isAtSpeed(AngularVelocity targetSpeed) {
@@ -99,5 +103,15 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.run(() -> setSpeed(targetSpeed))
         .until(() -> isAtSpeedWithTolerance(targetSpeed, tolerance))
         .withName("ShooterSystem.setSpeedWithToleranceCommand");
+  }
+
+  @Override
+  public void periodic() {
+    shooter.updateTelemetry();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    shooter.simIterate();
   }
 }

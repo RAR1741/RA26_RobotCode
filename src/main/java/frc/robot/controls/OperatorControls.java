@@ -10,20 +10,21 @@ public class OperatorControls {
 
     controller.a().whileTrue(superstructure.feedAllCommand());
 
-    controller.b().whileTrue(superstructure.shootCommand());
+    controller.rightTrigger().whileTrue(superstructure.shootCommand());
 
-    // double hoodSpeed = 0.5;
+    controller.x().whileTrue(superstructure.intakeCommand());
 
-    // controller.x().onTrue(Commands.runOnce(() -> {
-    // hood.setControl(new DutyCycleOut(hoodSpeed));
-    // })).onFalse(Commands.runOnce(() -> {
-    // hood.setControl(new DutyCycleOut(0));
-    // }));
+    controller.y().onTrue(superstructure.hoodUpCommand());
 
-    // controller.y().onTrue(Commands.runOnce(() -> {
-    // hood.setControl(new DutyCycleOut(-hoodSpeed));
-    // })).onFalse(Commands.runOnce(() -> {
-    // hood.setControl(new DutyCycleOut(0));
-    // }));
+    controller.b().onTrue(superstructure.hoodDownCommand());
+
+    controller.start().onTrue(superstructure.hoodHomeSequence());
+
+    // Intake Pivot Rezero (for testing, not intended for driver use)
+    controller.back().onTrue(superstructure.intakeRezero().ignoringDisable(true));
+
+    // Intake pivot deployment
+    controller.povLeft().whileTrue(superstructure.intakeStowCommand());
+    controller.povRight().whileTrue(superstructure.intakeDeployCommand());
   }
 }

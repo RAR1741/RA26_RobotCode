@@ -14,47 +14,49 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.auto.AutoMaker;
 
 public class RobotContainer {
-    private final Telemetry logger = new Telemetry();
+  private final Telemetry logger = new Telemetry();
 
-    private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
-    private final Superstructure superstructure = new Superstructure();
+  private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
+  private final Superstructure superstructure = new Superstructure(swerve);
 
-    private final AutoMaker m_auto = new AutoMaker(swerve);
-  
-    public RobotContainer() {
-      configureBindings();
-      buildNamedAutoCommands();
-    }
-  
-    private void configureBindings() {
-      DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, swerve, superstructure, logger);
-      OperatorControls.configure(Constants.ControllerConstants.kOperatorControllerPort, swerve, superstructure);
-    }
-  
-    private void buildNamedAutoCommands() {
-      // Add any auto commands to the NamedCommands here
-      // NamedCommands.registerCommand("driveForwards",
-      // drivebase.driveForward().withTimeout(2)
-      // .withName("Auto.driveForwards"));
-    }
-  
-    public Command getAutonomousCommand() {
-      var routine = m_auto.get().newRoutine("Routine");
+  private final AutoMaker m_auto = new AutoMaker(swerve);
 
-      var traj = routine.trajectory("NewPath");
+  public RobotContainer() {
+    configureBindings();
+    buildNamedAutoCommands();
+  }
 
-      routine.active().onTrue(
+  private void configureBindings() {
+    DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, swerve, superstructure, logger);
+    OperatorControls.configure(Constants.ControllerConstants.kOperatorControllerPort, swerve, superstructure);
+  }
+
+  private void buildNamedAutoCommands() {
+    // Add any auto commands to the NamedCommands here
+    // NamedCommands.registerCommand("driveForwards",
+    // drivebase.driveForward().withTimeout(2)
+    // .withName("Auto.driveForwards"));
+  }
+
+  public Command getAutonomousCommand() {
+    var routine = m_auto.get().newRoutine("Routine");
+
+    var traj = routine.trajectory("NewPath");
+
+    routine.active().onTrue(
         Commands.sequence(
-          traj.resetOdometry(),
-          traj.cmd()
-        )
-      );
+            traj.resetOdometry(),
+            traj.cmd()));
 
-      traj.atTime("Event").onTrue(Commands.print("Event Fired"));
-      traj.done().onTrue(Commands.print("Event Done"));
+    traj.atTime("Event").onTrue(Commands.print("Event Fired"));
+    traj.done().onTrue(Commands.print("Event Done"));
 
-      return routine.cmd();
-    }
+    return routine.cmd();
+  }
+
+  public Command getHoodHomeCommand() {
+    return superstructure.hoodHomeSequence();
+  }
 
   public CommandSwerveDrivetrain getSwerveSystem() {
     return swerve;

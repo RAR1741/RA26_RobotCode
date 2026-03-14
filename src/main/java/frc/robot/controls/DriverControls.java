@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.net.ContentHandler;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -12,13 +14,15 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Telemetry;
+import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.commands.ShootOnTheMoveCommand;
 
 public class DriverControls {
   // kSpeedAt12Volts desired top speed
-  private static double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+  private static double MaxSpeed = 0.5 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
 
   // 3/4 of a rotation per second max angular velocity
   private static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
@@ -63,5 +67,16 @@ public class DriverControls {
     controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    controller.povLeft().onTrue(superstructure.turretLeftCommand());
+    controller.povRight().onTrue(superstructure.turretRightCommand());
+    controller.povUp().onTrue(superstructure.turretCenterCommand());
+
+    controller.leftBumper().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
+
+    controller.rightBumper().toggleOnTrue(
+        new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
+            .ignoringDisable(true)
+            .withName("OperatorControls.aimCommand"));
   }
 }

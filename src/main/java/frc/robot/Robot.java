@@ -71,6 +71,8 @@ public class Robot extends LoggedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());
   }
 
   @Override

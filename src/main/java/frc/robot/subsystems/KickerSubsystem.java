@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,12 +26,13 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class KickerSubsystem extends SubsystemBase {
-  private static final double KICKER_SPEED = 0.5;
+  private static final AngularVelocity KICKER_RPM = RPM.of(4000);
 
   private SparkFlex kickerSpark = new SparkFlex(Constants.KickerConstants.kKickerMotorId, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-      .withControlMode(ControlMode.OPEN_LOOP)
+      .withControlMode(ControlMode.CLOSED_LOOP)
+      .withClosedLoopController(0.0600, 0, 0)
       .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(false)
@@ -53,7 +55,7 @@ public class KickerSubsystem extends SubsystemBase {
   }
 
   public Command feedCommand() {
-    return kicker.set(KICKER_SPEED).withName("Kicker.Feed");
+    return kicker.setSpeed(KICKER_RPM).withName("Kicker.Feed");
   }
 
   @Override
