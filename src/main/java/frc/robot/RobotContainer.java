@@ -16,7 +16,7 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry();
 
   private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
-  private final Superstructure superstructure = new Superstructure();
+  private final Superstructure superstructure = new Superstructure(swerve);
 
   public RobotContainer() {
     configureBindings();
@@ -51,6 +51,10 @@ public class RobotContainer {
     // .withTimeout(5.0),
     // // Finally idle for the rest of auton
     // swerve.applyRequest(() -> idle));
+  }
+
+  public Command getHoodHomeCommand() {
+    return superstructure.hoodHomeSequence();
   }
 
   public CommandSwerveDrivetrain getSwerveSystem() {
