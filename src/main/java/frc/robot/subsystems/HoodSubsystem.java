@@ -60,7 +60,9 @@ public class HoodSubsystem extends SubsystemBase {
   private SmartMotorController smc = new TalonFXWrapper(hoodKraken, DCMotor.getKrakenX44(1), smcConfig);
 
   private final PivotConfig hoodConfig = new PivotConfig(smc)
-      // .withHardLimit(MIN_ANGLE, MAX_ANGLE)
+      .withStartingPosition(MIN_ANGLE)
+      .withHardLimit(MIN_ANGLE, MAX_ANGLE)
+      .withMOI(0.5) // TODO: Measure this
       .withTelemetry("Hood", TelemetryVerbosity.HIGH);
 
   private Pivot hood = new Pivot(hoodConfig);
