@@ -18,6 +18,10 @@ public class Superstructure extends SubsystemBase {
   private final HoodSubsystem hood;
   private final ShooterSubsystem shooter;
 
+  private final CommandSwerveDrivetrain drivetrain;
+
+  private final LimeLightSubsystem limelight;
+
   private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
                                    // firing, can be used in an auto command to wait until the shooter is ready
                                    // before firing
@@ -25,7 +29,9 @@ public class Superstructure extends SubsystemBase {
   private AngularVelocity targetShooterSpeed;
   private Angle targetTurretAngle;
 
-  public Superstructure() {
+  public Superstructure(CommandSwerveDrivetrain swerve) {
+    this.drivetrain = swerve;
+
     // Initialize subsystems here if needed
     this.intake = new IntakeSubsystem();
     this.hopper = new HopperSubsystem();
@@ -33,6 +39,8 @@ public class Superstructure extends SubsystemBase {
     this.turret = new TurretSubsystem();
     this.hood = new HoodSubsystem();
     this.shooter = new ShooterSubsystem();
+
+    this.limelight = new LimeLightSubsystem(drivetrain);
 
     this.isShooter = false;
   }

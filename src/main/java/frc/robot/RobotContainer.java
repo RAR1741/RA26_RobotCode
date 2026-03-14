@@ -16,7 +16,7 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry();
 
   private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
-  private final Superstructure superstructure = new Superstructure();
+  private final Superstructure superstructure = new Superstructure(swerve);
 
   public RobotContainer() {
     configureBindings();
