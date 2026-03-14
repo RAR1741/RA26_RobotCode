@@ -93,7 +93,7 @@
  "codegen":{
   "root":"src/main/java/frc/robot/auto",
   "genVars":true,
-  "genTrajData":false,
+  "genTrajData":true,
   "useChoreoLib":true
  }
 }

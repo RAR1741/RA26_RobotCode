@@ -319,6 +319,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     var drive = new SwerveRequest.ApplyRobotSpeeds();
 
-    this.applyRequest(() -> drive.withSpeeds(speed));
+    this.setControl(drive.withSpeeds(speed));
   }
 }
