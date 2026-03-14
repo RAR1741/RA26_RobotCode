@@ -120,18 +120,13 @@ public class LimeLightSubsystem extends SubsystemBase {
               Meter.of(0.0),
               new Rotation3d(0, 0, 0));
 
-          // The limelight's pose is 180 degrees rotated from the robot's actual pose, so
-          // rotate it back to get the
-          Pose3d robotPose = poseEstimate.pose.rotateAround(poseEstimate.pose.getTranslation(),
-              new Rotation3d(0, 0, Degrees.of(180).in(Radians)));
-
-          distanceToHub = robotPose.toPose2d().minus(redHub.toPose2d()).getTranslation().getNorm();
+          distanceToHub = poseEstimate.pose.toPose2d().minus(redHub.toPose2d()).getTranslation().getNorm();
 
           Logger.recordOutput("FieldSimulation/hubDiff", distanceToHub);
 
           // Add it to the pose estimator.
           drivetrain.addVisionMeasurement(
-              robotPose.toPose2d(),
+              poseEstimate.pose.toPose2d(),
               poseEstimate.timestampSeconds);
 
           // TODO: possibly add stddevs here
