@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -21,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.Constants;
+import frc.robot.Constants.AimPoints;
 import frc.robot.Constants.VisionConstants;
 import limelight.Limelight;
 import limelight.networktables.AngularVelocity3d;
@@ -93,16 +96,6 @@ public class LimeLightSubsystem extends SubsystemBase {
       RobotModeTriggers.autonomous().onTrue(onEnable);
       RobotModeTriggers.test().onTrue(onEnable);
 
-      // Required for megatag2 in periodic() function before fetching pose.
-      // limelight.getSettings()
-      // .withRobotOrientation(
-      // new Orientation3d(drivetrain.getRotation3d(),
-      // new AngularVelocity3d(
-      // DegreesPerSecond.of(0),
-      // DegreesPerSecond.of(0),
-      // DegreesPerSecond.of(0))))
-      // .save();
-
       poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
     }
   }
@@ -139,45 +132,69 @@ public class LimeLightSubsystem extends SubsystemBase {
         Logger.recordOutput("Limelight/Megatag2Count", poseEstimate.tagCount);
         Logger.recordOutput("FieldSimulation/LLPose", poseEstimate.pose);
 
-        if (poseEstimate.tagCount > 0) {
-          Pose3d redHub = new Pose3d(
-              Meter.of(11.902),
-              Meter.of(4.031),
-              Meter.of(0.0),
-              new Rotation3d(0, 0, 0));
-
-          distanceToHub = poseEstimate.pose.toPose2d().minus(redHub.toPose2d()).getTranslation().getNorm();
-
-          Logger.recordOutput("FieldSimulation/hubDiff", distanceToHub);
-
-          double avgDistance = poseEstimate.avgTagDist;
-          double xyStdDev = VisionConstants.xyStdDevCoefficient
-              * Math.pow(avgDistance, 2.0)
-              / poseEstimate.tagCount
-              * VisionConstants.stdDevFactor
-              * (DriverStation.isAutonomous() ? VisionConstants.autoStdDevScale : 1.0);
-
-          double thetaStdDev = !DriverStation.isEnabled()
-              ? VisionConstants.thetaStdDevCoefficient
-                  * Math.pow(avgDistance, 2.0)
-                  / poseEstimate.tagCount
-                  * VisionConstants.stdDevFactor
-                  * (DriverStation.isAutonomous() ? VisionConstants.autoStdDevScale : 1.0)
-              : Double.POSITIVE_INFINITY;
-
-          // Add it to the pose estimator.
-          drivetrain.addVisionMeasurement(
-              poseEstimate.pose.toPose2d(),
-              poseEstimate.timestampSeconds,
-              VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
-
-          // TODO: possibly add stddevs here
-          // TODO: Instead of providing the limelight's pose as is, replace the rotation
-          // component with the current pose rotation so the process doesn't take it into
-          // account?
+        if (checkPose(poseEstimate)) {
+          updatePoseWithStdDev(poseEstimate);
         }
       });
     }
+  }
+
+  private void updatePoseWithStdDev(PoseEstimate estimate) {
+    distanceToHub = estimate.pose.toPose2d().minus(
+        new Pose3d(AimPoints.getAllianceHubPosition(), Rotation3d.kZero).toPose2d()).getTranslation().getNorm();
+
+    Logger.recordOutput("FieldSimulation/hubDiff", distanceToHub);
+    Logger.recordOutput("FieldSimulation/drivetrainAngularVelocity",
+        drivetrain.getPigeon2().getAngularVelocityZDevice().getValueAsDouble());
+
+    double avgDistance = estimate.avgTagDist;
+    double xyStdDev = VisionConstants.xyStdDevCoefficient
+        * Math.pow(avgDistance, 2.0)
+        / estimate.tagCount
+        * VisionConstants.stdDevFactor
+        * (DriverStation.isAutonomous() ? VisionConstants.autoStdDevScale : 1.0);
+
+    double thetaStdDev = !DriverStation.isEnabled()
+        ? VisionConstants.thetaStdDevCoefficient
+            * Math.pow(avgDistance, 2.0)
+            / estimate.tagCount
+            * VisionConstants.stdDevFactor
+            * (DriverStation.isAutonomous() ? VisionConstants.autoStdDevScale : 1.0)
+        : Double.POSITIVE_INFINITY;
+
+    // Add it to the pose estimator.
+    drivetrain.addVisionMeasurement(
+        estimate.pose.toPose2d(),
+        estimate.timestampSeconds,
+        VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev));
+  }
+
+  private boolean checkPose(PoseEstimate estimate) {
+    if (estimate == null) {
+      return false;
+    }
+
+    if (estimate.tagCount <= 0) {
+      return false;
+    }
+
+    if (estimate.pose.equals(new Pose3d())) {
+      return false;
+    }
+
+    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > Constants.FieldConstants.k_length) {
+      return false;
+    }
+
+    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > Constants.FieldConstants.k_width) {
+      return false;
+    }
+
+    if (Math.abs(drivetrain.getPigeon2().getAngularVelocityZDevice().getValueAsDouble()) > 75.0) {
+      return false;
+    }
+
+    return true;
   }
 
   @Override
