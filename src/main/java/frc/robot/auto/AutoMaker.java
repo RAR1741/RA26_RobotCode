@@ -8,8 +8,12 @@ public class AutoMaker {
   private final AutoFactory autoFactory;
 
   public AutoMaker(CommandSwerveDrivetrain swerve) {
-    autoFactory = new AutoFactory(() -> swerve.getState().Pose, (pose) -> swerve.resetPose(pose),
-        swerve::followTrajectory, false, swerve);
+    autoFactory = new AutoFactory(
+        () -> swerve.getState().Pose,
+        (pose) -> swerve.resetPose(pose),
+        swerve::followTrajectory,
+        true,
+        swerve);
   }
 
   public void useTrajectory(String TrajectoryName) {
