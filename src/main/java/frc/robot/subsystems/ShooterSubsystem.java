@@ -104,4 +104,14 @@ public class ShooterSubsystem extends SubsystemBase {
         .until(() -> isAtSpeedWithTolerance(targetSpeed, tolerance))
         .withName("ShooterSystem.setSpeedWithToleranceCommand");
   }
+
+  @Override
+  public void periodic() {
+    shooter.updateTelemetry();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    shooter.simIterate();
+  }
 }

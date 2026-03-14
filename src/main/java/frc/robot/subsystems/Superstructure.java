@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 
 import java.util.function.Supplier;
@@ -100,7 +101,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command hoodUpCommand() {
-    return hood.setAngle(hood.MIN_ANGLE).asProxy().withName("Superstructure.hoodUp");
+    return hood.setAngle(Degree.of(65)).asProxy().withName("Superstructure.hoodUp");
   }
 
   public Command hoodDownCommand() {

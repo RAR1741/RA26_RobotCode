@@ -11,11 +11,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -124,6 +126,8 @@ public class ShootOnTheMoveCommand extends Command {
     // TODO: add this back if/when we have a real hood, for now, just set it to the
     // current angle
     // latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
+
+    latestShootSpeed = RPM.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
     latestHoodAngle = superstructure.getHoodAngle();
 
     superstructure.setShooterSetpoints(
@@ -161,14 +165,11 @@ public class ShootOnTheMoveCommand extends Command {
 
   // meters, RPS
   private static final InterpolatingDoubleTreeMap SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(2.0, 2700.0),
-      Map.entry(3.0, 3000.0),
-      Map.entry(4.0, 3300.0),
-      Map.entry(4.86, 3750.0));
+      Map.entry(1.2319, 2350.0),
+      Map.entry(3.446305, 2350.0));
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.0, 15.0),
-      Map.entry(2.0, 30.0),
-      Map.entry(3.0, 45.0));
+      Map.entry(1.2319, 80.0),
+      Map.entry(3.446305, 70.0));
 }
