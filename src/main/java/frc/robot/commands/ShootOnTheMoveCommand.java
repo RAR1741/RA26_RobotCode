@@ -109,15 +109,16 @@ public class ShootOnTheMoveCommand extends Command {
 
     var correctedTarget = targetOnGround.plus(correctiveVector);
 
-    var vectorToTarget = drivetrain.getState().Pose.getTranslation().minus(correctedTarget);
+    // var vectorToTarget = drivetrain.getState().Pose.getTranslation().minus(correctedTarget);
+    var vectorToTarget = correctedTarget.minus(drivetrain.getState().Pose.getTranslation());
 
     var correctedDistance = Meters.of(vectorToTarget.getNorm());
     var calculatedHeading = vectorToTarget.getAngle()
         .rotateBy(drivetrain.getState().RawHeading.unaryMinus())
         .getMeasure();
 
-    Logger.recordOutput("ShootOnTheMove/RobotHeading", drivetrain.getState().RawHeading);
-    Logger.recordOutput("ShootOnTheMove/CalculatedHeading", calculatedHeading);
+    Logger.recordOutput("ShootOnTheMove/RobotHeading", drivetrain.getState().RawHeading.getDegrees());
+    Logger.recordOutput("ShootOnTheMove/DesiredTurretHeading", calculatedHeading.in(Degrees));
     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
 
     latestTurretAngle = calculatedHeading;
