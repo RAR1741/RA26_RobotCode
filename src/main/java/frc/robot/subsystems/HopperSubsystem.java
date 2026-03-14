@@ -39,8 +39,8 @@ public class HopperSubsystem extends SubsystemBase {
       .withTelemetry("HopperMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(true)
-      .withIdleMode(MotorMode.COAST)
-      .withStatorCurrentLimit(Amps.of(40));
+      .withIdleMode(MotorMode.COAST);
+  // .withStatorCurrentLimit(Amps.of(40));
 
   private SmartMotorController smc = new SparkWrapper(hopperSpark, DCMotor.getNeoVortex(1), smcConfig);
 

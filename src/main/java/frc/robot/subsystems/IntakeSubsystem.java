@@ -97,7 +97,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeCommand() {
-    return roller.setSpeed(RPM.of(6000.0)).withName("Intake.IntakeCommand");
+    return roller.setSpeed(RPM.of(3000.0)).withName("Intake.IntakeCommand");
   }
 
   public Command setPivotAngle(Angle angle) {
