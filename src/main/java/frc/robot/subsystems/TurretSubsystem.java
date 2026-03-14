@@ -39,7 +39,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   public final Translation3d turretTranslation = new Translation3d(
       Inches.of(-6.25).in(Meters),
-      Inches.of(6.75).in(Meters),
+      Inches.of(-6.75).in(Meters),
       Inches.of(20.0).in(Meters));
 
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg

@@ -108,9 +108,7 @@ public class ShootOnTheMoveCommand extends Command {
         new Pose3d(target.plus(correctiveVector3d), Rotation3d.kZero));
 
     var correctedTarget = targetOnGround.plus(correctiveVector);
-
-    // var vectorToTarget = drivetrain.getState().Pose.getTranslation().minus(correctedTarget);
-    var vectorToTarget = correctedTarget.minus(drivetrain.getState().Pose.getTranslation());
+    var vectorToTarget = correctedTarget.minus(shooterLocation);
 
     var correctedDistance = Meters.of(vectorToTarget.getNorm());
     var calculatedHeading = vectorToTarget.getAngle()
