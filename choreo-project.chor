@@ -4,7 +4,22 @@
  "type":"Swerve",
  "variables":{
   "expressions":{},
-  "poses":{}
+  "poses":{
+   "Test":{
+    "x":{
+     "exp":"2.329193592071533 m",
+     "val":2.329193592071533
+    },
+    "y":{
+     "exp":"6.3451080322265625 m",
+     "val":6.3451080322265625
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   }
+  }
  },
  "config":{
   "frontLeft":{
@@ -76,7 +91,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":"",
+  "root":"src/main/java/frc/robot/auto",
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true
