@@ -26,18 +26,18 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class KickerSubsystem extends SubsystemBase {
-  private static final AngularVelocity KICKER_RPM = RPM.of(4000);
+  private static final AngularVelocity KICKER_RPM = RPM.of(6000);
 
   private SparkFlex kickerSpark = new SparkFlex(Constants.KickerConstants.kKickerMotorId, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.0600, 0, 0)
+      .withClosedLoopController(0.0055, 0, 0)
       .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(false)
-      .withIdleMode(MotorMode.BRAKE)
-      .withStatorCurrentLimit(Amps.of(40));
+      .withIdleMode(MotorMode.COAST);
+  // .withStatorCurrentLimit(Amps.of(40));
 
   private SmartMotorController smc = new SparkWrapper(kickerSpark, DCMotor.getNeoVortex(1), smcConfig);
 

@@ -5,15 +5,13 @@
 package frc.robot;
 
 import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends LoggedRobot {
-  private Command m_autonomousCommand;
   private Simulation sim;
 
   private final RobotContainer m_robotContainer;
@@ -50,15 +48,12 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    if (m_autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(m_autonomousCommand);
-    }
+    // Auto is scheduled automatically by AutoChooser via RobotModeTriggers
   }
 
   @Override
   public void autonomousPeriodic() {
+
   }
 
   @Override
@@ -67,10 +62,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
-    }
-
     CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());
   }
 
@@ -98,8 +89,8 @@ public class Robot extends LoggedRobot {
   @Override
   public void simulationInit() {
     // TODO: reimplement this when we have a simulation to run
-    // sim = new Simulation(m_robotContainer.getSwerveSystem());
-    // sim.init();
+    sim = new Simulation(m_robotContainer.getSwerveSystem());
+    sim.init();
   }
 
   @Override

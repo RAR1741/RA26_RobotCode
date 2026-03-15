@@ -64,7 +64,7 @@ public class DriverControls {
     controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // Reset the field-centric heading on left bumper press.
-    controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+    // controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
     drivetrain.registerTelemetry(logger::telemeterize);
 

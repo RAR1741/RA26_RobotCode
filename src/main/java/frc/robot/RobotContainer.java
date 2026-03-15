@@ -4,8 +4,15 @@
 
 package frc.robot;
 
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoRoutine;
+import choreo.auto.AutoTrajectory;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.auto.AutoChooser;
+import frc.robot.auto.ChoreoTraj;
 import frc.robot.controls.DriverControls;
 import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
@@ -18,9 +25,47 @@ public class RobotContainer {
   private final CommandSwerveDrivetrain swerve = TunerConstants.createDrivetrain();
   private final Superstructure superstructure = new Superstructure(swerve);
 
+  private final AutoFactory autoFactory;
+  private final AutoChooser autoChooser;
+
   public RobotContainer() {
+    autoFactory = new AutoFactory(
+        () -> swerve.getState().Pose,
+        (pose) -> swerve.resetPose(pose),
+        swerve::followTrajectory,
+        true,
+        swerve);
+
     configureBindings();
     buildNamedAutoCommands();
+
+    // Build the auto chooser with all Choreo trajectories + DO NOTHING
+    autoChooser = new AutoChooser("DO NOTHING");
+    for (String name : ChoreoTraj.ALL_TRAJECTORIES.keySet()) {
+      autoChooser.addRoutine(name, () -> buildTrajectoryRoutine(name));
+    }
+
+    // Publish to SmartDashboard so it appears on the driver dashboard
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    // Schedule the selected auto when autonomous mode starts
+    RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
+  }
+
+  /**
+   * Builds an AutoRoutine that resets odometry and follows the named trajectory.
+   */
+  private AutoRoutine buildTrajectoryRoutine(String trajectoryName) {
+    AutoRoutine routine = autoFactory.newRoutine(trajectoryName);
+    AutoTrajectory traj = routine.trajectory(trajectoryName);
+
+    routine.active().onTrue(
+        Commands.sequence(
+            // DO NOT CALL THIS
+            // traj.resetOdometry(),
+            traj.cmd()));
+
+    return routine;
   }
 
   private void configureBindings() {
@@ -29,28 +74,7 @@ public class RobotContainer {
   }
 
   private void buildNamedAutoCommands() {
-    // Add any auto commands to the NamedCommands here
-    // NamedCommands.registerCommand("driveForwards",
-    // drivebase.driveForward().withTimeout(2)
-    // .withName("Auto.driveForwards"));
-  }
-
-  public Command getAutonomousCommand() {
-    return Commands.none();
-
-    // Simple drive forward auton
-    // final var idle = new SwerveRequest.Idle();
-    // return Commands.sequence(
-    // // Reset our field centric heading to match the robot
-    // // facing away from our alliance station wall (0 deg).
-    // swerve.runOnce(() -> swerve.seedFieldCentric(Rotation2d.kZero)),
-    // // Then slowly drive forward (away from us) for 5 seconds.
-    // swerve.applyRequest(() -> drive.withVelocityX(0.5)
-    // .withVelocityY(0)
-    // .withRotationalRate(0))
-    // .withTimeout(5.0),
-    // // Finally idle for the rest of auton
-    // swerve.applyRequest(() -> idle));
+    // Add any named auto commands here via autoFactory.bind()
   }
 
   public Command getHoodHomeCommand() {
