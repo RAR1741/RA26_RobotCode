@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.Logger;
+
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
@@ -57,9 +59,12 @@ public class RobotContainer {
     AutoTrajectory traj = routine.trajectory("TestPath");
     System.out.println("=================== Trajectory loaded: " + traj.toString());
 
+    Logger.recordOutput("Auto/InitialPose", traj.getInitialPose().get());
+    Logger.recordOutput("Auto/FinalPose", traj.getFinalPose().get());
+
     routine.active().onTrue(
         Commands.sequence(
-            traj.resetOdometry(),
+            // traj.resetOdometry(),
             traj.cmd()));
 
     traj.atTime("Event").onTrue(Commands.print("=================== Event Fired ==================="));
