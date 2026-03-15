@@ -40,9 +40,9 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  * https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/index.html
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-  private final PIDController xController = new PIDController(5.0, 0.0, 0.0);
-  private final PIDController yController = new PIDController(5.0, 0.0, 0.0);
-  private final PIDController headingController = new PIDController(10.0, 0.0, 0.0);
+  private final PIDController xController = new PIDController(1.0, 0.0, 0.0);
+  private final PIDController yController = new PIDController(1.0, 0.0, 0.0);
+  private final PIDController headingController = new PIDController(1.0, 0.0, 0.0);
 
   private static final double kSimLoopPeriod = 0.004; // 4 ms
   private Notifier m_simNotifier = null;
@@ -313,18 +313,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   }
 
   public void followTrajectory(SwerveSample sample) {
-    var pose = this.getState().Pose;
-
-    Logger.recordOutput("Auto/SamplePose", sample.getPose());
-    Logger.recordOutput("Auto/CurrentPose", pose);
+    Pose2d pose = this.getState().Pose;
 
     ChassisSpeeds speed = new ChassisSpeeds(
         (sample.vx + xController.calculate(pose.getX(), sample.x)) * -1,
         (sample.vy + yController.calculate(pose.getY(), sample.y)) * -1,
         sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading));
 
-    ApplyRobotSpeeds drive = new SwerveRequest.ApplyRobotSpeeds();
+    Logger.recordOutput("Auto/X/sampleVX", -sample.vx);
+    Logger.recordOutput("Auto/X/sampleXCalc", -xController.calculate(pose.getX(), sample.x));
+    Logger.recordOutput("Auto/X/sampleXFinal", speed.vxMetersPerSecond);
 
+    Logger.recordOutput("Auto/SamplePose", sample.getPose());
+    Logger.recordOutput("Auto/CurrentPose", pose);
+
+    Logger.recordOutput("Auto/chassisSpeeds", this.getState().Speeds);
+    Logger.recordOutput("Auto/commandedChassisSpeeds", speed);
+
+    ApplyRobotSpeeds drive = new SwerveRequest.ApplyRobotSpeeds();
     this.setControl(drive.withSpeeds(speed));
   }
 }

@@ -119,6 +119,7 @@ public class AutoChooser implements Sendable {
       allianceAtGeneration = DriverStation.getAlliance();
       nameAtGeneration = selected;
       generatedCommand = autoRoutines.get(nameAtGeneration).get().withName(nameAtGeneration);
+      System.out.println("[AutoChooser] Preloaded auto: " + nameAtGeneration);
     } else {
       allianceAtGeneration = Optional.empty();
       nameAtGeneration = DO_NOTHING_NAME;
