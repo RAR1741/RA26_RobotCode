@@ -5,14 +5,14 @@
  "variables":{
   "expressions":{},
   "poses":{
-   "Test":{
+   "TrenchStartRight":{
     "x":{
-     "exp":"2.329193592071533 m",
-     "val":2.329193592071533
+     "exp":"4.412508964538574 m",
+     "val":4.412508964538574
     },
     "y":{
-     "exp":"6.3451080322265625 m",
-     "val":6.3451080322265625
+     "exp":"0.6610009074211121 m",
+     "val":0.6610009074211121
     },
     "heading":{
      "exp":"0 deg",
@@ -91,7 +91,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":"src/main/java/frc/robot/auto",
+  "root":"../../java/frc/robot/auto",
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":true
