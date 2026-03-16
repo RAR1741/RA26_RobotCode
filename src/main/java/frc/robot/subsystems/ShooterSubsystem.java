@@ -2,8 +2,11 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.function.Supplier;
 
@@ -13,6 +16,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -103,6 +107,15 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.run(() -> setSpeed(targetSpeed))
         .until(() -> isAtSpeedWithTolerance(targetSpeed, tolerance))
         .withName("ShooterSystem.setSpeedWithToleranceCommand");
+  }
+
+  public LinearVelocity getTangentialVelocity() {
+    // Calculate tangential velocity at the edge of the wheel and convert to
+    // LinearVelocity
+
+    return MetersPerSecond.of(
+        getSpeed().in(RadiansPerSecond)
+            * Inches.of(2).in(Meters));
   }
 
   @Override

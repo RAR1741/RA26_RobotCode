@@ -10,9 +10,12 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Robot;
+import frc.robot.Simulation;
 import frc.robot.Telemetry;
 import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.generated.TunerConstants;
@@ -52,16 +55,17 @@ public class DriverControls {
     RobotModeTriggers.disabled().whileTrue(
         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-    controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    controller.b().whileTrue(drivetrain.applyRequest(
-        () -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(), -controller.getLeftX()))));
+    // controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    // controller.b().whileTrue(drivetrain.applyRequest(
+    // () -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(),
+    // -controller.getLeftX()))));
 
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-    controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    // // Run SysId routines when holding back/start and X/Y.
+    // // Note that each routine should be run exactly once in a single log.
+    // controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    // controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    // controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    // controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // Reset the field-centric heading on left bumper press.
     // controller.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -78,5 +82,13 @@ public class DriverControls {
         new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
             .ignoringDisable(true)
             .withName("OperatorControls.aimCommand"));
+
+    if (Robot.isSimulation()) {
+      // Fire fuel 10 times per second while button is held
+      controller.a().whileTrue(
+          Commands.repeatingSequence(
+              Simulation.fireFuel(drivetrain, superstructure),
+              Commands.waitSeconds(1.0)));
+    }
   }
 }

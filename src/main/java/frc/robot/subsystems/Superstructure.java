@@ -16,16 +16,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Superstructure extends SubsystemBase {
-  private final IntakeSubsystem intake;
-  private final HopperSubsystem hopper;
-  private final KickerSubsystem kicker;
-  private final TurretSubsystem turret;
-  private final HoodSubsystem hood;
-  private final ShooterSubsystem shooter;
+  public final IntakeSubsystem intake;
+  public final HopperSubsystem hopper;
+  public final KickerSubsystem kicker;
+  public final TurretSubsystem turret;
+  public final HoodSubsystem hood;
+  public final ShooterSubsystem shooter;
 
-  private final CommandSwerveDrivetrain drivetrain;
+  public final CommandSwerveDrivetrain drivetrain;
 
-  private final LimeLightSubsystem limelight;
+  public final LimeLightSubsystem limelight;
 
   private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
                                    // firing, can be used in an auto command to wait until the shooter is ready
@@ -52,26 +52,6 @@ public class Superstructure extends SubsystemBase {
     this.limelight = new LimeLightSubsystem(drivetrain);
 
     this.isShooter = false;
-  }
-
-  public IntakeSubsystem getIntakeSubsystem() {
-    return intake;
-  }
-
-  public ShooterSubsystem getShooterSubsystem() {
-    return shooter;
-  }
-
-  public TurretSubsystem getTurretSubsystem() {
-    return turret;
-  }
-
-  public KickerSubsystem getKickerSubsystem() {
-    return kicker;
-  }
-
-  public HopperSubsystem getHopperSubsystem() {
-    return hopper;
   }
 
   public Command feedAllCommand() {
