@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ShooterConstants;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -88,24 +89,16 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooter.getSpeed();
   }
 
-  public boolean isAtSpeed(AngularVelocity targetSpeed) {
-    // Tolerance of 100 RPM, adjust as needed
-    return Math.abs(leaderTalon.getVelocity().getValueAsDouble() - targetSpeed.in(RPM)) < 100;
+  public boolean isAtSpeed() {
+    return shooter.isNear(
+        shooter.getMechanismSetpointVelocity().get(),
+        ShooterConstants.k_shooterRPMTolerance)
+        .getAsBoolean();
   }
 
-  public AngularVelocity getCurrentSpeed() {
-    return RPM.of(leaderTalon.getVelocity().getValueAsDouble());
-  }
-
-  public boolean isAtSpeedWithTolerance(AngularVelocity targetSpeed, double tolerance) {
-    return Math
-        .abs((leaderTalon.getVelocity().getValueAsDouble() - targetSpeed.in(RPM))
-            / (targetSpeed.in(RPM))) < tolerance;
-  }
-
-  public Command setSpeedWithToleranceCommand(AngularVelocity targetSpeed, double tolerance) {
+  public Command setSpeedWithToleranceCommand(AngularVelocity targetSpeed) {
     return Commands.run(() -> setSpeed(targetSpeed))
-        .until(() -> isAtSpeedWithTolerance(targetSpeed, tolerance))
+        .until(() -> isAtSpeed())
         .withName("ShooterSystem.setSpeedWithToleranceCommand");
   }
 

@@ -91,6 +91,8 @@ public class Constants {
   public static class ShooterConstants {
     public static final int k_leaderMotorId = 52;
     public static final int k_followerMotorId = 53;
+
+    public static final AngularVelocity k_shooterRPMTolerance = RPM.of(100); // RPM tolerance for "at speed" condition
   }
 
   public static class SuperstructureConstants {
