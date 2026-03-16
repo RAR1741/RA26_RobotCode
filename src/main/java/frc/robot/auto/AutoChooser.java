@@ -89,6 +89,13 @@ public class AutoChooser implements Sendable {
   }
 
   /**
+   * @return the name of the currently selected auto option.
+   */
+  public String getSelectedName() {
+    return selected;
+  }
+
+  /**
    * Select a new option in the chooser.
    *
    * <p>

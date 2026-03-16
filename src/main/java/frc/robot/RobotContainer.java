@@ -7,6 +7,8 @@ package frc.robot;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import choreo.util.ChoreoAllianceFlipUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -83,5 +85,23 @@ public class RobotContainer {
 
   public CommandSwerveDrivetrain getSwerveSystem() {
     return swerve;
+  }
+
+  /**
+   * Resets the drivetrain pose to the starting pose of the currently selected
+   * auto.
+   * Intended for use in simulation only.
+   */
+  public void resetPoseToAutoStart() {
+    String selected = autoChooser.getSelectedName();
+    ChoreoTraj traj = ChoreoTraj.ALL_TRAJECTORIES.get(selected);
+    if (traj != null) {
+      Pose2d startPose = traj.initialPoseBlue();
+      if (ChoreoAllianceFlipUtil.shouldFlip()) {
+        startPose = ChoreoAllianceFlipUtil.flip(startPose);
+      }
+      swerve.resetPose(startPose);
+      System.out.println("[Sim] Reset pose to start of auto: " + selected);
+    }
   }
 }
