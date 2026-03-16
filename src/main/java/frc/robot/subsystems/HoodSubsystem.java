@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -60,9 +62,9 @@ public class HoodSubsystem extends SubsystemBase {
   private SmartMotorController smc = new TalonFXWrapper(hoodKraken, DCMotor.getKrakenX44(1), smcConfig);
 
   private final PivotConfig hoodConfig = new PivotConfig(smc)
+      .withMOI(Inches.of(0.5), Pounds.of(0.5))
       .withStartingPosition(MIN_ANGLE)
       .withHardLimit(MIN_ANGLE, MAX_ANGLE)
-      .withMOI(0.5) // TODO: Measure this
       .withTelemetry("Hood", TelemetryVerbosity.HIGH);
 
   private Pivot hood = new Pivot(hoodConfig);
