@@ -315,14 +315,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   public void followTrajectory(SwerveSample sample) {
     Pose2d pose = this.getState().Pose;
 
-    ChassisSpeeds speed = new ChassisSpeeds(
-        (sample.vx + xController.calculate(pose.getX(), sample.x)) * -1,
-        (sample.vy + yController.calculate(pose.getY(), sample.y)) * -1,
-        sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading));
-
-    Logger.recordOutput("Auto/X/sampleVX", -sample.vx);
-    Logger.recordOutput("Auto/X/sampleXCalc", -xController.calculate(pose.getX(), sample.x));
-    Logger.recordOutput("Auto/X/sampleXFinal", speed.vxMetersPerSecond);
+    ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(
+        sample.vx + xController.calculate(pose.getX(), sample.x),
+        sample.vy + yController.calculate(pose.getY(), sample.y),
+        sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading),
+        pose.getRotation());
 
     Logger.recordOutput("Auto/SamplePose", sample.getPose());
     Logger.recordOutput("Auto/CurrentPose", pose);
