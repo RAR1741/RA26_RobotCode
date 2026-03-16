@@ -63,11 +63,12 @@
             "/AdvantageKit/RealOutputs/Auto",
             "/AdvantageKit/RealOutputs/Choreo Alerts",
             "/AdvantageKit/RealOutputs/Choreo Alerts/errors",
-            "/AdvantageKit/RealOutputs/Auto/chassisSpeeds"
+            "/AdvantageKit/RealOutputs/Auto/chassisSpeeds",
+            "/AdvantageKit/RealOutputs/Auto/X"
           ]
         },
         "tabs": {
-          "selected": 3,
+          "selected": 4,
           "tabs": [
             {
               "type": 0,
@@ -139,7 +140,7 @@
                     "type": "ghost",
                     "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/LLPose",
                     "logType": "Pose3d",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#00ff00"
                     }
@@ -274,6 +275,61 @@
               "controllerUUID": "aaqz6nikkhjs84i8lvgdq71e3y11eyed",
               "renderer": null,
               "controlsHeight": 254
+            },
+            {
+              "type": 1,
+              "title": "AutoX",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/X/sampleVX",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/X/sampleXCalc",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/X/sampleXFinal",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "5h5a2nv9quwkiltt4c6wnlct5yaw7ttb",
+              "renderer": null,
+              "controlsHeight": 200
             },
             {
               "type": 1,
