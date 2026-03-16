@@ -65,15 +65,22 @@ public class HoodSubsystem extends SubsystemBase {
   private SmartMotorController smc = new TalonFXWrapper(hoodKraken, DCMotor.getKrakenX44(1), smcConfig);
 
   private final PivotConfig hoodConfig = new PivotConfig(smc)
-      .withMOI(Inches.of(0.5), Pounds.of(0.5))
-      .withStartingPosition(MIN_ANGLE)
+      .withMOI(Inches.of(6), Pounds.of(1))
+      .withStartingPosition(MAX_ANGLE)
       .withHardLimit(MIN_ANGLE, MAX_ANGLE)
       .withTelemetry("Hood", TelemetryVerbosity.HIGH);
 
   private Pivot hood = new Pivot(hoodConfig);
 
   public HoodSubsystem() {
-    // this.setDefaultCommand(Commands.run(() -> hood.setSpeed(RPM.of(0)), this));
+    // YAMS Pivot bug workaround: the Pivot constructor creates a new DCMotorSim
+    // at 0 radians and overwrites the SimSupplier, but never initializes the
+    // DCMotorSim position to match withStartingPosition(). This causes the sim
+    // to think the hood is at 0° instead of MIN_ANGLE on the first simIterate(),
+    // resulting in a huge PID correction and runaway oscillation.
+    if (Robot.isSimulation()) {
+      smc.getSimSupplier().ifPresent(sim -> sim.setMechanismPosition(MAX_ANGLE));
+    }
   }
 
   /**
