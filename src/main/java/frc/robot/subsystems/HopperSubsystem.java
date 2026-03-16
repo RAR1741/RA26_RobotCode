@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
@@ -54,7 +55,7 @@ public class HopperSubsystem extends SubsystemBase {
   private FlyWheel hopper = new FlyWheel(hopperConfig);
 
   public HopperSubsystem() {
-    this.setDefaultCommand(Commands.runOnce(() -> smc.setDutyCycle(0), this));
+    this.setDefaultCommand(Commands.run(() -> smc.setDutyCycle(0), this));
   }
 
   public Command feedCommand() {
@@ -72,6 +73,8 @@ public class HopperSubsystem extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
+    double voltage = RoboRioSim.getVInVoltage();
     hopper.simIterate();
+    RoboRioSim.setVInVoltage(voltage);
   }
 }

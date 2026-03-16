@@ -17,6 +17,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
       .withFollowers(Pair.of(followerTalon, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withClosedLoopController(0.00936, 0, 0)
-      .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
+      .withFeedforward(new SimpleMotorFeedforward(0.191, 0.1156, 0.0))
       .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
       .withMotorInverted(true)
@@ -66,7 +67,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private final FlyWheel shooter = new FlyWheel(shooterConfig);
 
   public ShooterSubsystem() {
-    this.setDefaultCommand(Commands.runOnce(() -> smc.setDutyCycle(0), this));
+    // this.setDefaultCommand(Commands.run(() -> shooter.setSpeed(RPM.of(0)),
+    // this));
   }
 
   public Command shoot() {
@@ -118,6 +120,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
+    double voltage = RoboRioSim.getVInVoltage();
     shooter.simIterate();
+    RoboRioSim.setVInVoltage(voltage);
   }
 }

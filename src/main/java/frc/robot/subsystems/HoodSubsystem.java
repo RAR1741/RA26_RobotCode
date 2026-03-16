@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -21,10 +22,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.PivotConfig;
@@ -47,8 +50,8 @@ public class HoodSubsystem extends SubsystemBase {
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withClosedLoopController(120.0, 0, 0,
-          DegreesPerSecond.of(2440),
-          DegreesPerSecondPerSecond.of(2440))
+          DegreesPerSecond.of(80),
+          DegreesPerSecondPerSecond.of(160))
       .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
       .withTelemetry("HoodMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
@@ -70,7 +73,7 @@ public class HoodSubsystem extends SubsystemBase {
   private Pivot hood = new Pivot(hoodConfig);
 
   public HoodSubsystem() {
-    this.setDefaultCommand(Commands.runOnce(() -> smc.setDutyCycle(0), this));
+    // this.setDefaultCommand(Commands.run(() -> hood.setSpeed(RPM.of(0)), this));
   }
 
   /**
@@ -81,6 +84,13 @@ public class HoodSubsystem extends SubsystemBase {
   public Command homeSequence() {
     final double homingDutyCycle = 0.20;
     final double stallVelocityThreshold = 0.01; // motor rot/s
+
+    if (Robot.isSimulation()) {
+      // In simulation, YAMS already initializes the hood at the starting position
+      // (MIN_ANGLE) via withStartingPosition(). No homing needed — just command
+      // the hood to the starting angle so the closed-loop controller is active.
+      return setAngle(MIN_ANGLE).withName("Hood.HomeSim");
+    }
 
     return Commands.sequence(
         Commands.runOnce(() -> {
@@ -136,14 +146,15 @@ public class HoodSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     hood.updateTelemetry();
-
-    Logger.recordOutput("Hood/Angle", hood.getAngle());
-    Logger.recordOutput("Hood/MechanismSetpoint",
-        hood.getMechanismSetpoint().orElse(Degrees.of(9999)));
   }
 
   @Override
   public void simulationPeriodic() {
+    // Save battery voltage before simIterate — YAMS Pivot.simIterate() overwrites
+    // RoboRioSim.setVInVoltage() based on this motor's current alone, which
+    // corrupts the global voltage that MapleSim's SimulatedBattery manages.
+    double voltage = RoboRioSim.getVInVoltage();
     hood.simIterate();
+    RoboRioSim.setVInVoltage(voltage);
   }
 }
