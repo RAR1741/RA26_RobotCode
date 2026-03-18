@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import frc.robot.subsystems.turret;
+
 import static edu.wpi.first.units.Units.Degrees;
 
 import java.util.function.Supplier;
@@ -13,7 +15,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Superstructure extends SubsystemBase {
   private final IntakeSubsystem intake;
   private final ShooterSubsystem shooter;
-  private final TurretSubsystem turret;
+  private final SwivelSubsystem swivel;
+  private final AngleChangerSystem angleChanger;
   private final KickerSubsystem kicker;
   private final HopperSubsystem hopper;
 
@@ -21,18 +24,21 @@ public class Superstructure extends SubsystemBase {
   private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
                                    // firing, can be used in an auto command to wait until the shooter is ready
                                    // before firing
+                                   // then why is this final? whatt??
 
   @SuppressWarnings("unused")
   private AngularVelocity targetShooterSpeed;
   @SuppressWarnings("unused")
-  private Angle targetTurretAngle;
+  private Angle targetTurretYaw;
+  private Angle targetTurretPitch;
 
   public Superstructure() {
     // Initialize subsystems here if needed
     this.intake = new IntakeSubsystem();
     this.hopper = new HopperSubsystem();
     this.kicker = new KickerSubsystem();
-    this.turret = new TurretSubsystem();
+    this.swivel = new SwivelSubsystem();
+    this.angleChanger = new AngleChangerSystem();
     this.shooter = new ShooterSubsystem();
 
     this.isShooter = false;
@@ -42,13 +48,17 @@ public class Superstructure extends SubsystemBase {
     return intake;
   }
 
-  public ShooterSubsystem getShooterSubsystem() {
+  public ShooterSystem getShooterSubsystem() {
     return shooter;
   }
 
-  public TurretSubsystem getTurretSubsystem() {
-    return turret;
+  public SwivelSystem getSwivelSubsystem() {
+    return swivel;
   }
+
+  public AngleChangerSystem getAngleChangerSubsystem() [
+    return angleChanger;
+  ]
 
   public KickerSubsystem getKickerSubsystem() {
     return kicker;
@@ -91,7 +101,7 @@ public class Superstructure extends SubsystemBase {
         turret.setAngle(Degrees.of(0)).asProxy()).withName("Superstructure.stopAll");
   }
 
-  public Command aimDynamic(Supplier<AngularVelocity> shooterSpeedSupplier, Supplier<Angle> turretAngleSupplier) {
+  public Command aimDynamic(Supplier<AngularVelocity> shooterSpeedSupplier, Supplier<Angle> turretSupplier) {
     return Commands.parallel(
         shooter.setSpeedDynamic(shooterSpeedSupplier).asProxy(),
         turret.setAngleDynamic(turretAngleSupplier).asProxy())

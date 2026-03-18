@@ -110,16 +110,16 @@ public class ParabolicTrajectory {
     }
 
     public static double timeToHubFromAXYSkewInput(double launchAngle, double launchDirection, double launchX, double launchY, double turretVX, double turretVY) {
-        double xDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
-        double yDistance = k_hubHeight - k_turretHeight;
+        double horizontalDistance = Math.hypot(k_hubX - launchX, k_hubY - launchY);
+        double verticalDistance = k_hubHeight - k_turretHeight;
         // dot product
         double turretVelocityToHub = turretVX * cos(launchDirection) + turretVY * sin(launchDirection);
-        double launchVelocity = solveLaunchVelocity(launchAngle, xDistance, yDistance);
+        double launchVelocity = solveLaunchVelocity(launchAngle, horizontalDistance, verticalDistance);
         for (int i = 0; i < TurretConstants.k_timeSolvingIterations; i++) { // 5 trig ops + 1 sqrt ops + 1 div operation per iteration
             launchAngle = skewLaunchToHubAngleByVelocity(launchAngle, launchDirection, launchVelocity, turretVelocityToHub);
-            launchVelocity = solveLaunchVelocity(launchAngle, xDistance, yDistance);
+            launchVelocity = solveLaunchVelocity(launchAngle, horizontalDistance, verticalDistance);
         }
-        return xDistance / (launchVelocity * cos(launchAngle));
+        return horizontalDistance / (launchVelocity * cos(launchAngle));
     }
 
     // public static ParabolicTrajectory toHubFromVXY(double launchVelocity, double launchX, double launchY) { // maybe don't need, but nonetheless skew angles
@@ -175,7 +175,9 @@ public class ParabolicTrajectory {
         double naiveYDisplacement = k_hubY - launchY;
         double naiveLaunchDirection = atan2(naiveYDisplacement, naiveXDisplacement);
         double time = timeToHubFromAXYSkewInput(launchAngle, naiveLaunchDirection, launchX, launchY, turretVX, turretVY);
-        if (time == Double.NaN) {return null;}
+        if (time == Double.NaN) {
+            time = 0.0;
+        }
         double xDisplacement = naiveXDisplacement - time * turretVX;
         double yDisplacement = naiveYDisplacement - time * turretVY;
         double horizontalDistance = Math.hypot(xDisplacement, yDisplacement);
