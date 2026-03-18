@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -68,6 +69,7 @@ public class TurretSubsystem extends SubsystemBase {
   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 4.5, 0.0);
 
   private boolean isRezeroed = false;
+  private boolean isRezeroing = false;
   private boolean closedLoopEnabled = false;
 
   // Absolute encoders
@@ -96,21 +98,38 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public Command rezero() {
-    return Commands.runOnce(() -> {
-      Angle turretAngle = computeTurretAngleFromAbs();
+    final ArrayList<Double> samples = new ArrayList<>();
+    double averageTime = 3.0;
 
-      System.out.println("==============================");
-      System.out.println("====== Rezeroing turret ======");
-      System.out.println("==============================");
-      System.out.println(
-          "Setting Offset: " + turretAngle.in(Degrees) + " deg (" + turretAngle.in(Rotations) + " rot)");
+    return Commands.sequence(
+        Commands.runOnce(() -> {
+          isRezeroing = true;
+          samples.clear();
+          System.out.println("==============================");
+          System.out.println("== Rezeroing turret (3s avg) =");
+          System.out.println("==============================");
+        }),
+        Commands.run(() -> {
+          samples.add(computeTurretAngleFromAbs().in(Rotations));
+        }, this).withTimeout(averageTime),
+        Commands.runOnce(() -> {
+          double avgRotations = samples.stream()
+              .mapToDouble(Double::doubleValue)
+              .average()
+              .orElse(0.0);
+          Angle turretAngle = Rotations.of(avgRotations);
 
-      // Set encoder position in degrees (conversion factor is already applied)
-      turretEncoder.setPosition(turretAngle.in(Rotations));
-      profiledPID.reset(turretAngle.in(Rotations));
+          System.out.println("Averaged " + samples.size() + " samples over 3 seconds");
+          System.out.println(
+              "Setting Offset: " + turretAngle.in(Degrees) + " deg (" + turretAngle.in(Rotations) + " rot)");
 
-      isRezeroed = true;
-    }, this)
+          // Set encoder position (conversion factor is already applied)
+          turretEncoder.setPosition(avgRotations);
+          profiledPID.reset(avgRotations);
+
+          isRezeroed = true;
+        }, this))
+        .finallyDo(() -> isRezeroing = false)
         .ignoringDisable(true)
         .withName("Turret.Rezero");
   }
@@ -220,7 +239,7 @@ public class TurretSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Auto-rezero when absolute encoders become available
-    if (!isRezeroed && m12TAbsEncoder.isConnected() && m13TAbsEncoder.isConnected()) {
+    if (!isRezeroed && !isRezeroing && m12TAbsEncoder.isConnected() && m13TAbsEncoder.isConnected()) {
       CommandScheduler.getInstance().schedule(rezero());
     }
 
