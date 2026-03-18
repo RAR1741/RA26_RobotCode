@@ -71,17 +71,20 @@ public class RobotContainer {
             traj.cmd()));
 
     // // When the trajectory is done, score
-    traj.done().onTrue(superstructure.feedAllCommand());
+    // traj.done().onTrue(superstructure.feedAllCommand());
 
     return routine;
   }
 
   private AutoTrajectory addNamedEvents(AutoTrajectory traj) {
-    // Add any named events here, for example:
+    // Intake
     traj.atTime("intakeCommand").onTrue(superstructure.intakeCommand());
     traj.atTime("intakeStopCommand").onTrue(superstructure.intakeStopCommand());
 
+    // Feeding
     traj.atTime("feedAllCommand").onTrue(superstructure.feedAllCommand());
+
+    // Shooting
     traj.atTime("ShootOnTheMoveCommand")
         .toggleOnTrue(new ShootOnTheMoveCommand(swerve, superstructure, () -> superstructure.getAimPoint()));
 

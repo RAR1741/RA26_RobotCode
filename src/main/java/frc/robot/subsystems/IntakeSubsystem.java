@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.wrappers.REVThroughBoreEncoder;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.ArmConfig;
@@ -39,6 +42,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
   private SparkMax pivotSecondaySpark = new SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
+
+  private final REVThroughBoreEncoder pivotAbsEncoder;
 
   private static final double PIVOT_GEAR_RATIO = 5 * (36.0 / 24.0);
 
@@ -93,6 +98,25 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public IntakeSubsystem() {
     this.setDefaultCommand(Commands.runOnce(() -> rollerSmc.setDutyCycle(0), this));
+
+    pivotAbsEncoder = new REVThroughBoreEncoder(2);
+
+    seedRelativeEncoderFromAbsolute();
+  }
+
+  private void seedRelativeEncoderFromAbsolute() {
+    double mechanismRotations = getAbsAngleWithOffset();
+    pivotLeaderSpark.getEncoder().setPosition(mechanismRotations);
+  }
+
+  @AutoLogOutput(key = "Intake/absAngleWithOffset")
+  private double getAbsAngleWithOffset() {
+    return getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset;
+  }
+
+  @AutoLogOutput(key = "Intake/absAngle")
+  private double getAbsAngle() {
+    return pivotAbsEncoder.get();
   }
 
   public Command intakeCommand() {
@@ -113,7 +137,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command rezero() {
-    return Commands.runOnce(() -> pivotLeaderSpark.getEncoder().setPosition(0), this).withName("IntakePivot.Rezero");
+    return Commands.runOnce(() -> seedRelativeEncoderFromAbsolute(), this).withName("IntakePivot.Rezero");
   }
 
   public Command setIntakeStow() {
@@ -130,6 +154,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    seedRelativeEncoderFromAbsolute();
+
     rollerSmc.updateTelemetry();
     pivotSmc.updateTelemetry();
   }

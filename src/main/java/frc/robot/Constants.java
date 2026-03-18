@@ -58,6 +58,10 @@ public class Constants {
     // public static final Angle k_IntakeHold = Degrees.of(115);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
     public static final Angle k_IntakeDeployed = Degrees.of(113);
+
+    // WARNING: make sure this doesn't loop over 0.0/1.0!
+    // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
+    public static final double k_pivotAbsEncoderOffset = 0.352112;
   }
 
   public static class HopperConstants {
