@@ -71,7 +71,7 @@ public class RobotContainer {
             traj.cmd()));
 
     // // When the trajectory is done, score
-    traj.done().toggleOnTrue(new ShootOnTheMoveCommand(swerve, superstructure, () -> superstructure.getAimPoint()));
+    traj.done().onTrue(superstructure.feedAllCommand());
 
     return routine;
   }
