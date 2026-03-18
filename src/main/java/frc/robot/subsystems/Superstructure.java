@@ -68,6 +68,10 @@ public class Superstructure extends SubsystemBase {
     return intake.intakeCommand().asProxy().withName("Superstructure.intake");
   }
 
+  public Command intakeStopCommand() {
+    return intake.stopCommand().asProxy().withName("Superstructure.intakeStop");
+  }
+
   public Command intakeRezero() {
     return intake.rezero().asProxy().withName("Superstructure.intakeRezero");
   }
@@ -110,7 +114,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command ejectAllFuel() {
     return Commands.parallel(
-        intake.ejectCommand().asProxy(),
+        // intake.ejectCommand().asProxy(),
         hopper.ejectCommand().asProxy(),
         kicker.ejectCommand().asProxy()).withName("Superstructure.ejectAllFuel");
   }

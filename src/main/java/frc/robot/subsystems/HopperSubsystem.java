@@ -4,7 +4,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -22,25 +23,25 @@ import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.remote.TalonFXWrapper;
+import yams.motorcontrollers.local.SparkWrapper;
 
 public class HopperSubsystem extends SubsystemBase {
 
-  private static final AngularVelocity HOPPER_RPM = RPM.of(4000);
+  private static final AngularVelocity HOPPER_RPM = RPM.of(1000);
 
   // Nova motor controller with NEO motor
-  private TalonFX hopperSpark = new TalonFX(Constants.HopperConstants.kHopperMotorId, Constants.ctreCANBus);
+  private SparkMax hopperSpark = new SparkMax(Constants.HopperConstants.kHopperMotorId, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withClosedLoopController(0.055, 0, 0)
       .withTelemetry("HopperMotor", TelemetryVerbosity.HIGH)
-      .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
+      .withGearing(new MechanismGearing(GearBox.fromReductionStages(4))) // no gear reduction
       .withMotorInverted(true)
       .withIdleMode(MotorMode.COAST);
   // .withStatorCurrentLimit(Amps.of(40));
 
-  private SmartMotorController smc = new TalonFXWrapper(hopperSpark, DCMotor.getNeoVortex(1), smcConfig);
+  private SmartMotorController smc = new SparkWrapper(hopperSpark, DCMotor.getNeoVortex(1), smcConfig);
 
   private final FlyWheelConfig hopperConfig = new FlyWheelConfig(smc)
       .withDiameter(Inches.of(2))

@@ -35,7 +35,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private static final AngularVelocity INTAKE_ROLLER_POWER = RPM.of(3000.0);
+  private static final AngularVelocity INTAKE_ROLLER_POWER = RPM.of(3500.0);
 
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
   private SparkMax pivotSecondaySpark = new SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
@@ -49,13 +49,13 @@ public class IntakeSubsystem extends SubsystemBase {
       // .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
       .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(PIVOT_GEAR_RATIO)))
-      .withMotorInverted(true)
+      .withMotorInverted(false)
       .withIdleMode(MotorMode.BRAKE)
-      .withStatorCurrentLimit(Amps.of(30.0));
+      .withStatorCurrentLimit(Amps.of(40.0));
 
   private final SmartMotorController pivotSmc = new SparkWrapper(
       pivotLeaderSpark,
-      DCMotor.getNeoVortex(1),
+      DCMotor.getNEO(2),
       pivotSmcConfig);
 
   private final ArmConfig intakePivotConfig = new ArmConfig(pivotSmc)
@@ -97,6 +97,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command intakeCommand() {
     return roller.setSpeed(INTAKE_ROLLER_POWER).withName("Intake.IntakeCommand");
+  }
+
+  public Command stopCommand() {
+    return roller.setSpeed(RPM.of(0)).withName("Intake.StopCommand");
   }
 
   public Command ejectCommand() {

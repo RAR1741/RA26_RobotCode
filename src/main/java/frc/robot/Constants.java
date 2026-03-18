@@ -57,7 +57,7 @@ public class Constants {
     // public static final Angle k_IntakeFeed = Degrees.of(59);
     // public static final Angle k_IntakeHold = Degrees.of(115);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
-    public static final Angle k_IntakeDeployed = Degrees.of(73);
+    public static final Angle k_IntakeDeployed = Degrees.of(113);
   }
 
   public static class HopperConstants {
