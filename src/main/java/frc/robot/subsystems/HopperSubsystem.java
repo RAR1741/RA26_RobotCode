@@ -26,7 +26,7 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class HopperSubsystem extends SubsystemBase {
 
-  private static final AngularVelocity HOPPER_RPM = RPM.of(2000);
+  private static final AngularVelocity HOPPER_RPM = RPM.of(4000);
 
   // Nova motor controller with NEO motor
   private TalonFX hopperSpark = new TalonFX(Constants.HopperConstants.kHopperMotorId, Constants.ctreCANBus);
@@ -59,8 +59,8 @@ public class HopperSubsystem extends SubsystemBase {
     return hopper.setSpeed(HOPPER_RPM).withName("Hopper.Feed");
   }
 
-  public Command reverseCommand() {
-    return hopper.setSpeed(HOPPER_RPM.unaryMinus()).withName("Hopper.Reverse");
+  public Command ejectCommand() {
+    return hopper.setSpeed(HOPPER_RPM.unaryMinus()).withName("Hopper.Eject");
   }
 
   @Override

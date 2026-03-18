@@ -108,6 +108,13 @@ public class Superstructure extends SubsystemBase {
     return turret.rezero().asProxy().withName("Superstructure.turretRezero");
   }
 
+  public Command ejectAllFuel() {
+    return Commands.parallel(
+        intake.ejectCommand().asProxy(),
+        hopper.ejectCommand().asProxy(),
+        kicker.ejectCommand().asProxy()).withName("Superstructure.ejectAllFuel");
+  }
+
   public Command stopAllCommand() {
     return Commands.parallel(
         shooter.stopCommand().asProxy(),

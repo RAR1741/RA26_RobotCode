@@ -99,6 +99,10 @@ public class IntakeSubsystem extends SubsystemBase {
     return roller.setSpeed(INTAKE_ROLLER_POWER).withName("Intake.IntakeCommand");
   }
 
+  public Command ejectCommand() {
+    return roller.setSpeed(INTAKE_ROLLER_POWER.unaryMinus()).withName("Intake.EjectCommand");
+  }
+
   public Command setPivotAngle(Angle angle) {
     return Commands.runOnce(() -> intakePivot.setAngle(angle),
         this).withName("IntakePivot.SetAngle");
