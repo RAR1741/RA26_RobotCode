@@ -54,7 +54,7 @@ public class Constants {
     public static final int k_rollerMotorId = 32;
 
     public static final Angle k_IntakeStow = Degrees.of(0);
-    // public static final Angle k_IntakeFeed = Degrees.of(59);
+    public static final Angle k_IntakeFeed = Degrees.of(90);
     // public static final Angle k_IntakeHold = Degrees.of(115);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
     public static final Angle k_IntakeDeployed = Degrees.of(113);

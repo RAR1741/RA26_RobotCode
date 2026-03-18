@@ -56,6 +56,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command feedAllCommand() {
     return Commands.parallel(
+        // intake.setIntakeFeed().asProxy(),
         hopper.feedCommand().asProxy(),
         kicker.feedCommand().asProxy()).withName("Superstructure.feedAll");
   }

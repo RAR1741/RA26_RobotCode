@@ -120,6 +120,10 @@ public class IntakeSubsystem extends SubsystemBase {
     return intakePivot.setAngle(IntakeConstants.k_IntakeStow);
   }
 
+  public Command setIntakeFeed() {
+    return intakePivot.setAngle(IntakeConstants.k_IntakeFeed);
+  }
+
   public Command setIntakeDeployed() {
     return intakePivot.setAngle(IntakeConstants.k_IntakeDeployed);
   }
