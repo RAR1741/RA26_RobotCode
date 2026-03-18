@@ -1,17 +1,14 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
-
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,25 +22,25 @@ import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.local.SparkWrapper;
+import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class HopperSubsystem extends SubsystemBase {
 
   private static final AngularVelocity HOPPER_RPM = RPM.of(2000);
 
   // Nova motor controller with NEO motor
-  private SparkFlex hopperSpark = new SparkFlex(Constants.HopperConstants.kHopperMotorId, MotorType.kBrushless);
+  private TalonFX hopperSpark = new TalonFX(Constants.HopperConstants.kHopperMotorId, Constants.ctreCANBus);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.0055, 0, 0)
+      .withClosedLoopController(0.055, 0, 0)
       .withTelemetry("HopperMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(true)
       .withIdleMode(MotorMode.COAST);
   // .withStatorCurrentLimit(Amps.of(40));
 
-  private SmartMotorController smc = new SparkWrapper(hopperSpark, DCMotor.getNeoVortex(1), smcConfig);
+  private SmartMotorController smc = new TalonFXWrapper(hopperSpark, DCMotor.getNeoVortex(1), smcConfig);
 
   private final FlyWheelConfig hopperConfig = new FlyWheelConfig(smc)
       .withDiameter(Inches.of(2))

@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,12 +35,12 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private static final double INTAKE_ROLLER_POWER = 0.75;
+  private static final AngularVelocity INTAKE_ROLLER_POWER = RPM.of(3000.0);
 
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
   private SparkMax pivotSecondaySpark = new SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
 
-  private static final double PIVOT_GEAR_RATIO = 5 * (60.0 / 30.0);
+  private static final double PIVOT_GEAR_RATIO = 5 * (36.0 / 24.0);
 
   private final SmartMotorControllerConfig pivotSmcConfig = new SmartMotorControllerConfig(this)
       .withFollowers(Pair.of(pivotSecondaySpark, true))
@@ -95,7 +96,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeCommand() {
-    return roller.setSpeed(RPM.of(3000.0)).withName("Intake.IntakeCommand");
+    return roller.setSpeed(INTAKE_ROLLER_POWER).withName("Intake.IntakeCommand");
   }
 
   public Command setPivotAngle(Angle angle) {
