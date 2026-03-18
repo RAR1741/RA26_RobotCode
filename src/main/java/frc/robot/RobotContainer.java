@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.auto.AutoChooser;
 import frc.robot.auto.ChoreoTraj;
+import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.controls.DriverControls;
 import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
@@ -61,13 +62,39 @@ public class RobotContainer {
     AutoRoutine routine = autoFactory.newRoutine(trajectoryName);
     AutoTrajectory traj = routine.trajectory(trajectoryName);
 
+    traj = addNamedEvents(traj);
+
     routine.active().onTrue(
         Commands.sequence(
             // DO NOT CALL THIS
             // traj.resetOdometry(),
             traj.cmd()));
 
+    // // When the trajectory is done, score
+    traj.done().toggleOnTrue(new ShootOnTheMoveCommand(swerve, superstructure, () -> superstructure.getAimPoint()));
+
     return routine;
+  }
+
+  private AutoTrajectory addNamedEvents(AutoTrajectory traj) {
+    // Add any named events here, for example:
+    traj.atTime("intakeCommand").onTrue(superstructure.intakeCommand());
+    traj.atTime("intakeStopCommand").onTrue(superstructure.intakeStopCommand());
+
+    traj.atTime("feedAllCommand").onTrue(superstructure.feedAllCommand());
+    traj.atTime("ShootOnTheMoveCommand")
+        .toggleOnTrue(new ShootOnTheMoveCommand(swerve, superstructure, () -> superstructure.getAimPoint()));
+
+    // // When the trajectory is done, start the next trajectory
+    // pickupTraj.done().onTrue(scoreTraj.cmd());
+
+    // // While the trajectory is active, prepare the scoring subsystem
+    // scoreTraj.active().whileTrue(scoringSubsystem.getReady());
+
+    // // When the trajectory is done, score
+    // scoreTraj.done().onTrue(scoringSubsystem.score());
+
+    return traj;
   }
 
   private void configureBindings() {
