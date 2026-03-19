@@ -17,6 +17,8 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -54,6 +56,13 @@ public class ShootOnTheMoveCommand extends Command {
     latestHoodAngle = superstructure.getHoodAngle();
     latestTurretAngle = superstructure.getTurretAngle();
     latestShootSpeed = superstructure.getShooterSpeed();
+
+    // SmartDashboard.putNumber("ShootOnTheMove/ShooterSpeedRPM",
+    // latestShootSpeed.in(RPM));
+    // SmartDashboard.putNumber("ShootOnTheMove/TurretAngleDeg",
+    // latestTurretAngle.in(Degrees));
+    // SmartDashboard.putNumber("ShootOnTheMove/HoodAngleDeg",
+    // latestHoodAngle.in(Degrees));
 
     // TODO: when this current command ends, we should probably cancel the dynamic
     // aim command
@@ -125,10 +134,22 @@ public class ShootOnTheMoveCommand extends Command {
     // FORE TESTING - DO NOT USE
     // latestShootSpeed =
     // RPM.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
+
     // latestShootSpeed = RPM.of(2400);
     // latestHoodAngle =
     // Degrees.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
     // latestHoodAngle = superstructure.getHoodAngle();
+
+    // Smartdashboard testing:
+    // latestShootSpeed =
+    // RPM.of(SmartDashboard.getNumber("ShootOnTheMove/ShooterSpeedRPM",
+    // latestShootSpeed.in(RPM)));
+    // latestTurretAngle = Degrees
+    // .of(SmartDashboard.getNumber("ShootOnTheMove/TurretAngleDeg",
+    // latestTurretAngle.in(Degrees)));
+    // latestHoodAngle =
+    // Degrees.of(SmartDashboard.getNumber("ShootOnTheMove/HoodAngleDeg",
+    // latestHoodAngle.in(Degrees)));
 
     superstructure.setShooterSetpoints(
         latestShootSpeed,
@@ -157,7 +178,7 @@ public class ShootOnTheMoveCommand extends Command {
   // meters, seconds
   private static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.0, 1.2),
-      Map.entry(5.145179, 1.2));
+      Map.entry(5.208015, 1.2));
 
   // TODO: add more data points here.
   // CLOSE: NEED
@@ -166,13 +187,13 @@ public class ShootOnTheMoveCommand extends Command {
 
   // meters, RPS
   private static final InterpolatingDoubleTreeMap SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.2319, 2350.0), // HUB
-      Map.entry(3.319674, 2400.0), // TRENCH
-      Map.entry(5.145179, 2400.0)); // OUTPOST
+      Map.entry(1.2319, 2500.0), // HUB
+      Map.entry(3.319674, 2600.0), // TRENCH
+      Map.entry(5.208015, 2600.0)); // OUTPOST
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.2319, 80.0), // HUB
       Map.entry(3.319674, 70.0), // TRENCH
-      Map.entry(5.145179, 55.0)); // OUTPOST
+      Map.entry(5.208015, 55.0)); // OUTPOST
 }
