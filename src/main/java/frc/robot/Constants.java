@@ -58,7 +58,7 @@ public class Constants {
     public static final Angle k_IntakeFeed = Degrees.of(80);
     // public static final Angle k_IntakeHold = Degrees.of(115);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
-    public static final Angle k_IntakeDeployed = Degrees.of(113);
+    public static final Angle k_IntakeDeployed = Degrees.of(110);
 
     // WARNING: make sure this doesn't loop over 0.0/1.0!
     // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
@@ -68,11 +68,11 @@ public class Constants {
     public static final Time k_feedDownTime = Seconds.of(2.0);
 
     /** Current threshold (amps) to detect a stall when deploying. */
-    public static final double k_deployStallCurrentThreshold = 10.0;
+    public static final double k_deployStallCurrentThreshold = 35.0;
     /**
      * How long (seconds) current must stay above the threshold to count as a stall.
      */
-    public static final double k_deployStallDebounce = 0.25;
+    public static final double k_deployStallDebounce = 0.5;
     /** How far to back off (in degrees) when a deploy stall is detected. */
     public static final Angle k_deployBackoffAngle = Degrees.of(15);
     /** How long to wait (seconds) after backing off before retrying deploy. */

@@ -15,6 +15,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.units.measure.Angle;
@@ -102,6 +103,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private final Timer stallTimer = new Timer();
   private boolean stallTimerRunning = false;
 
+  private boolean hammerTime = false;
+
   public IntakeSubsystem() {
     this.setDefaultCommand(Commands.runOnce(() -> rollerSmc.setDutyCycle(0), this));
 
@@ -165,33 +168,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command setIntakeDeployed() {
-    return Commands.runOnce(this::resetStallTimer)
-        .andThen(intakePivot.setAngle(IntakeConstants.k_IntakeDeployed).until(this::isDeployStalled))
-        .andThen(
-            Commands.either(
-                // Stalled: back off, wait, then retry
-                intakePivot
-                    .setAngle(intakePivot.getAngle().minus(IntakeConstants.k_deployBackoffAngle))
-                    .withTimeout(IntakeConstants.k_deployRetryDelay.in(Seconds))
-                    .andThen(intakePivot.setAngle(IntakeConstants.k_IntakeDeployed)),
-                // Not stalled (reached target): hold position
-                intakePivot.setAngle(IntakeConstants.k_IntakeDeployed),
-                this::isDeployStalled))
-        .withName("Intake.setIntakeDeployed");
+    return intakePivot.setAngle(IntakeConstants.k_IntakeDeployed);
   }
 
-  /** Resets the stall debounce timer so a fresh deploy starts clean. */
-  private void resetStallTimer() {
-    stallTimer.stop();
-    stallTimer.reset();
-    stallTimerRunning = false;
-  }
-
-  /**
-   * Returns true when the pivot motor has been drawing current near the stator
-   * limit continuously for at least {@link IntakeConstants#k_deployStallDebounce}
-   * seconds, indicating the deploy motion is physically stuck.
-   */
   private boolean isDeployStalled() {
     boolean aboveThreshold = pivotSmc.getStatorCurrent().in(Amps) >= IntakeConstants.k_deployStallCurrentThreshold;
 
@@ -207,11 +186,6 @@ public class IntakeSubsystem extends SubsystemBase {
       stallTimerRunning = false;
     }
 
-    System.out.println("===============================================================");
-    System.out.println(stallTimerRunning + "|" + stallTimer.hasElapsed(IntakeConstants.k_deployStallDebounce)
-        + "Stall Timer: " + stallTimer.get());
-    System.out.println("===============================================================");
-
     return stallTimerRunning && stallTimer.hasElapsed(IntakeConstants.k_deployStallDebounce);
   }
 
@@ -221,6 +195,18 @@ public class IntakeSubsystem extends SubsystemBase {
 
     rollerSmc.updateTelemetry();
     pivotSmc.updateTelemetry();
+
+    if (isDeployStalled()) {
+      if (intakePivot.getMechanismSetpoint().get() == IntakeConstants.k_IntakeDeployed) {
+        hammerTime = true;
+        setIntakeStow().schedule();
+      }
+    }
+
+    if (hammerTime && intakePivot.isNear(IntakeConstants.k_IntakeStow, Degrees.of(5)).getAsBoolean()) {
+      hammerTime = false;
+      setIntakeDeployed().schedule();
+    }
   }
 
   @Override
