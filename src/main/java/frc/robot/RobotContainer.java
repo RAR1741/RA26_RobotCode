@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RPM;
 
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
@@ -49,7 +51,7 @@ public class RobotContainer {
         swerve);
 
     configureBindings();
-    buildNamedAutoCommands();
+    setupSmartDashboard();
 
     // Initialize alliance (default to red if not present)
     onAllianceChanged(getAlliance());
@@ -132,8 +134,11 @@ public class RobotContainer {
     OperatorControls.configure(Constants.ControllerConstants.kOperatorControllerPort, swerve, superstructure);
   }
 
-  private void buildNamedAutoCommands() {
-    // Add any named auto commands here via autoFactory.bind()
+  private void setupSmartDashboard() {
+    SmartDashboard.putBoolean("SOTMOverride", false);
+    SmartDashboard.putNumber("ShooterSpeedRPM", superstructure.getShooterSpeed().in(RPM));
+    SmartDashboard.putNumber("TurretAngleDeg", superstructure.getTurretAngle().in(Degrees));
+    SmartDashboard.putNumber("HoodAngleDeg", superstructure.getHoodAngle().in(Degrees));
   }
 
   public Command getHoodHomeCommand() {

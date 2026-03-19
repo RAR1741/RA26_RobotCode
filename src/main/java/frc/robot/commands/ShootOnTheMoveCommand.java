@@ -31,24 +31,15 @@ public class ShootOnTheMoveCommand extends Command {
   private final Superstructure superstructure;
 
   private Supplier<Translation3d> aimPointSupplier; // The point to aim at
-  private AngularVelocity latestShootSpeed;
-  private Angle latestHoodAngle;
-  private Angle latestTurretAngle;
+  private AngularVelocity latestShootSpeed = RPM.of(0);
+  private Angle latestHoodAngle = Degrees.of(80.0);
+  private Angle latestTurretAngle = Degrees.of(0.0);
 
   public ShootOnTheMoveCommand(CommandSwerveDrivetrain drivetrain, Superstructure superstructure,
       Supplier<Translation3d> aimPointSupplier) {
     this.drivetrain = drivetrain;
     this.superstructure = superstructure;
     this.aimPointSupplier = aimPointSupplier;
-
-    // We use the drivetrain to determine linear velocity, but don't require it for
-    // control. We
-    // will be using the superstructure to control the shooting mechanism so it's a
-    // requirement.
-    // addRequirements(superstructure);
-
-    // TODO: figure out if the above is actually required. Right now, when you start
-    // some other command, the auto aim can't start back up again
   }
 
   @Override
@@ -58,13 +49,6 @@ public class ShootOnTheMoveCommand extends Command {
     latestHoodAngle = superstructure.getHoodAngle();
     latestTurretAngle = superstructure.getTurretAngle();
     latestShootSpeed = superstructure.getShooterSpeed();
-
-    // SmartDashboard.putNumber("ShootOnTheMove/ShooterSpeedRPM",
-    // latestShootSpeed.in(RPM));
-    // SmartDashboard.putNumber("ShootOnTheMove/TurretAngleDeg",
-    // latestTurretAngle.in(Degrees));
-    // SmartDashboard.putNumber("ShootOnTheMove/HoodAngleDeg",
-    // latestHoodAngle.in(Degrees));
 
     // TODO: when this current command ends, we should probably cancel the dynamic
     // aim command
@@ -146,15 +130,11 @@ public class ShootOnTheMoveCommand extends Command {
     // latestHoodAngle = superstructure.getHoodAngle();
 
     // Smartdashboard testing:
-    // latestShootSpeed =
-    // RPM.of(SmartDashboard.getNumber("ShootOnTheMove/ShooterSpeedRPM",
-    // latestShootSpeed.in(RPM)));
-    // latestTurretAngle = Degrees
-    // .of(SmartDashboard.getNumber("ShootOnTheMove/TurretAngleDeg",
-    // latestTurretAngle.in(Degrees)));
-    // latestHoodAngle =
-    // Degrees.of(SmartDashboard.getNumber("ShootOnTheMove/HoodAngleDeg",
-    // latestHoodAngle.in(Degrees)));
+    if (SmartDashboard.getBoolean("SOTMOverride", false)) {
+      latestShootSpeed = RPM.of(SmartDashboard.getNumber("ShooterSpeedRPM", latestShootSpeed.in(RPM)));
+      latestTurretAngle = Degrees.of(SmartDashboard.getNumber("TurretAngleDeg", latestTurretAngle.in(Degrees)));
+      latestHoodAngle = Degrees.of(SmartDashboard.getNumber("HoodAngleDeg", latestHoodAngle.in(Degrees)));
+    }
 
     superstructure.setShooterSetpoints(
         latestShootSpeed,
