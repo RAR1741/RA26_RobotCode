@@ -55,7 +55,7 @@ public class Constants {
     public static final int k_rollerMotorId = 32;
 
     public static final Angle k_IntakeStow = Degrees.of(0);
-    public static final Angle k_IntakeFeed = Degrees.of(90);
+    public static final Angle k_IntakeFeed = Degrees.of(80);
     // public static final Angle k_IntakeHold = Degrees.of(115);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
     public static final Angle k_IntakeDeployed = Degrees.of(113);
@@ -64,7 +64,7 @@ public class Constants {
     // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
     public static final double k_pivotAbsEncoderOffset = 0.352112;
 
-    public static final Time k_feedUpTime = Seconds.of(2.0);
+    public static final Time k_feedUpTime = Seconds.of(0.5);
     public static final Time k_feedDownTime = Seconds.of(2.0);
   }
 
