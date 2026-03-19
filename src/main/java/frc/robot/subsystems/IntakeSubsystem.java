@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -15,6 +16,7 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -64,8 +66,8 @@ public class IntakeSubsystem extends SubsystemBase {
       pivotSmcConfig);
 
   private final ArmConfig intakePivotConfig = new ArmConfig(pivotSmc)
-      .withSoftLimits(Degrees.of(0), Degrees.of(150))
-      .withHardLimit(Degrees.of(0), Degrees.of(155))
+      .withSoftLimits(Degrees.of(0), Degrees.of(120))
+      .withHardLimit(Degrees.of(0), Degrees.of(125))
       .withStartingPosition(Degrees.of(0))
       .withLength(Feet.of(1))
       .withMass(Pounds.of(2))
@@ -96,6 +98,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private FlyWheel roller = new FlyWheel(rollerConfig);
 
+  /** Timer tracking how long pivot current has been above the stall threshold. */
+  private final Timer stallTimer = new Timer();
+  private boolean stallTimerRunning = false;
+
   public IntakeSubsystem() {
     this.setDefaultCommand(Commands.runOnce(() -> rollerSmc.setDutyCycle(0), this));
 
@@ -125,7 +131,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command feedCommand() {
     return Commands.parallel(
-        intakePivot.setAngle(IntakeConstants.k_IntakeFeed).asProxy(),
+        setIntakeFeedPivot().asProxy(),
         Commands.sequence(
             roller.setSpeed(INTAKE_ROLLER_SPEED).withTimeout(IntakeConstants.k_feedUpTime),
             roller.setSpeed(RPM.of(0)).withTimeout(IntakeConstants.k_feedDownTime))
@@ -154,12 +160,59 @@ public class IntakeSubsystem extends SubsystemBase {
     return intakePivot.setAngle(IntakeConstants.k_IntakeStow);
   }
 
-  public Command setIntakeFeed() {
+  public Command setIntakeFeedPivot() {
     return intakePivot.setAngle(IntakeConstants.k_IntakeFeed);
   }
 
   public Command setIntakeDeployed() {
-    return intakePivot.setAngle(IntakeConstants.k_IntakeDeployed);
+    return Commands.runOnce(this::resetStallTimer)
+        .andThen(intakePivot.setAngle(IntakeConstants.k_IntakeDeployed).until(this::isDeployStalled))
+        .andThen(
+            Commands.either(
+                // Stalled: back off, wait, then retry
+                intakePivot
+                    .setAngle(intakePivot.getAngle().minus(IntakeConstants.k_deployBackoffAngle))
+                    .withTimeout(IntakeConstants.k_deployRetryDelay.in(Seconds))
+                    .andThen(intakePivot.setAngle(IntakeConstants.k_IntakeDeployed)),
+                // Not stalled (reached target): hold position
+                intakePivot.setAngle(IntakeConstants.k_IntakeDeployed),
+                this::isDeployStalled))
+        .withName("Intake.setIntakeDeployed");
+  }
+
+  /** Resets the stall debounce timer so a fresh deploy starts clean. */
+  private void resetStallTimer() {
+    stallTimer.stop();
+    stallTimer.reset();
+    stallTimerRunning = false;
+  }
+
+  /**
+   * Returns true when the pivot motor has been drawing current near the stator
+   * limit continuously for at least {@link IntakeConstants#k_deployStallDebounce}
+   * seconds, indicating the deploy motion is physically stuck.
+   */
+  private boolean isDeployStalled() {
+    boolean aboveThreshold = pivotSmc.getStatorCurrent().in(Amps) >= IntakeConstants.k_deployStallCurrentThreshold;
+
+    if (aboveThreshold) {
+      if (!stallTimerRunning) {
+        stallTimer.restart();
+        stallTimerRunning = true;
+      }
+    } else {
+      // Current dropped below threshold — reset the debounce
+      stallTimer.stop();
+      stallTimer.reset();
+      stallTimerRunning = false;
+    }
+
+    System.out.println("===============================================================");
+    System.out.println(stallTimerRunning + "|" + stallTimer.hasElapsed(IntakeConstants.k_deployStallDebounce)
+        + "Stall Timer: " + stallTimer.get());
+    System.out.println("===============================================================");
+
+    return stallTimerRunning && stallTimer.hasElapsed(IntakeConstants.k_deployStallDebounce);
   }
 
   @Override

@@ -66,6 +66,17 @@ public class Constants {
 
     public static final Time k_feedUpTime = Seconds.of(0.5);
     public static final Time k_feedDownTime = Seconds.of(2.0);
+
+    /** Current threshold (amps) to detect a stall when deploying. */
+    public static final double k_deployStallCurrentThreshold = 10.0;
+    /**
+     * How long (seconds) current must stay above the threshold to count as a stall.
+     */
+    public static final double k_deployStallDebounce = 0.25;
+    /** How far to back off (in degrees) when a deploy stall is detected. */
+    public static final Angle k_deployBackoffAngle = Degrees.of(15);
+    /** How long to wait (seconds) after backing off before retrying deploy. */
+    public static final Time k_deployRetryDelay = Seconds.of(1.0);
   }
 
   public static class HopperConstants {
