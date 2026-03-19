@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.AimPoints;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
 
@@ -87,6 +88,7 @@ public class ShootOnTheMoveCommand extends Command {
   public void execute() {
     // Calculate trajectory to aimPoint
     var target = aimPointSupplier.get();
+    Logger.recordOutput("ShootOnTheMove/rawTarget", target);
 
     var shooterLocation = drivetrain.getState().Pose.getTranslation()
         .plus(superstructure.getShooterPose().toPose2d().getTranslation());
@@ -168,11 +170,23 @@ public class ShootOnTheMoveCommand extends Command {
   }
 
   private AngularVelocity calculateRequiredShooterSpeed(Distance distanceToTarget) {
-    return RPM.of(SHOOTING_SPEED_BY_DISTANCE.get(distanceToTarget.in(Meters)));
+    // If we're firing at the hub, use the distance to determine the hood angle
+    if (superstructure.getAimPoint() == AimPoints.getAllianceHubPosition()) {
+      return RPM.of(HUB_SHOOTING_SPEED_BY_DISTANCE.get(distanceToTarget.in(Meters)));
+    }
+
+    return RPM.of(PASS_SHOOTING_SPEED_BY_DISTANCE.get(distanceToTarget.in(Meters)));
   }
 
   private Angle calculateRequiredHoodAngle(Distance distanceToTarget) {
-    return Degrees.of(HOOD_ANGLE_BY_DISTANCE.get(distanceToTarget.in(Meters)));
+    // If we're firing at the hub, use the distance to determine the hood angle
+    if (superstructure.getAimPoint() == AimPoints.getAllianceHubPosition()) {
+      return Degrees.of(HOOD_ANGLE_BY_DISTANCE.get(distanceToTarget.in(Meters)));
+    }
+
+    // Default hood angle if we're not aiming at the hub
+    // return Degrees.of(45.0);
+    return Degrees.of(40.0);
   }
 
   // meters, seconds
@@ -185,15 +199,25 @@ public class ShootOnTheMoveCommand extends Command {
   // MID: maybe good enough
   // FAR: NEED
 
-  // meters, RPS
-  private static final InterpolatingDoubleTreeMap SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
+  // meters, RPM
+  private static final InterpolatingDoubleTreeMap HUB_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.2319, 2500.0), // HUB
       Map.entry(3.319674, 2600.0), // TRENCH
-      Map.entry(5.208015, 2600.0)); // OUTPOST
+      Map.entry(5.208015, 2600.0), // OUTPOST
+      Map.entry(7.866163, 2600.0)); // Midfield
+
+  // meters, RPM
+  private static final InterpolatingDoubleTreeMap PASS_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap
+      .ofEntries(
+          Map.entry(5.281523, 1900.0), // Close bump
+          Map.entry(7.883727, 2500.0), // Midfield
+          Map.entry(10.29897, 3000.0), // Far bump
+          Map.entry(14.07683, 3500.0)); // Far wall
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.2319, 80.0), // HUB
       Map.entry(3.319674, 70.0), // TRENCH
       Map.entry(5.208015, 55.0)); // OUTPOST
+
 }

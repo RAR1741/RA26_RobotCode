@@ -27,12 +27,16 @@ public class Superstructure extends SubsystemBase {
 
   public final LimeLightSubsystem limelight;
 
+  @SuppressWarnings("unused")
   private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
                                    // firing, can be used in an auto command to wait until the shooter is ready
                                    // before firing
 
+  @SuppressWarnings("unused")
   private AngularVelocity targetShooterSpeed;
+  @SuppressWarnings("unused")
   private Angle targetTurretAngle;
+  @SuppressWarnings("unused")
   private Angle targetHoodAngle;
 
   // Default aim point is red hub

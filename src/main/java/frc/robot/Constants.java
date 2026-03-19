@@ -171,12 +171,12 @@ public class Constants {
 
   public static enum AimPoints {
     RED_HUB(new Translation3d(11.938, 4.034536, 1.5748)),
-    RED_OUTPOST(new Translation3d(15.75, 7.25, 0)),
-    RED_FAR_SIDE(new Translation3d(15.75, 0.75, 0)),
+    RED_OUTPOST(new Translation3d(16.0, 7.0, 0)),
+    RED_FAR_SIDE(new Translation3d(16.0, 1.0, 0)),
 
     BLUE_HUB(new Translation3d(4.5974, 4.034536, 1.5748)),
-    BLUE_OUTPOST(new Translation3d(0.75, 0.75, 0)),
-    BLUE_FAR_SIDE(new Translation3d(0.75, 7.25, 0));
+    BLUE_OUTPOST(new Translation3d(0.0, 1.0, 0)),
+    BLUE_FAR_SIDE(new Translation3d(0.0, 7.0, 0));
 
     public final Translation3d value;
 

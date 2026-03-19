@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -13,17 +12,14 @@ import java.util.Optional;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants;
-import frc.robot.Constants.AimPoints;
 import frc.robot.Constants.VisionConstants;
 import limelight.Limelight;
 import limelight.networktables.AngularVelocity3d;
@@ -42,15 +38,6 @@ public class LimeLightSubsystem extends SubsystemBase {
   private final CommandSwerveDrivetrain drivetrain;
 
   private final boolean IS_LIMELIGHT_ENABLED = true;
-
-  private double distanceToHub = 0.0;
-
-  public double getDistanceToHub() {
-    if (IS_LIMELIGHT_ENABLED) {
-      return distanceToHub;
-    }
-    return 0.0;
-  }
 
   public LimeLightSubsystem(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
@@ -140,10 +127,6 @@ public class LimeLightSubsystem extends SubsystemBase {
   }
 
   private void updatePoseWithStdDev(PoseEstimate estimate) {
-    distanceToHub = estimate.pose.toPose2d().minus(
-        new Pose3d(AimPoints.getAllianceHubPosition(), Rotation3d.kZero).toPose2d()).getTranslation().getNorm();
-
-    Logger.recordOutput("FieldSimulation/hubDiff", distanceToHub);
     Logger.recordOutput("FieldSimulation/drivetrainAngularVelocity",
         drivetrain.getPigeon2().getAngularVelocityZDevice().getValueAsDouble());
 
