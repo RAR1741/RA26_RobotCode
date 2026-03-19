@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -109,7 +110,9 @@ public class ShootOnTheMoveCommand extends Command {
     // of flight.
     // If we're stationary, this should be zero. If we're backing up, this will be
     // "ahead" of the target, etc.
-    var updatedPosition = drivetrain.getState().Speeds.times(timeOfFlight);
+    var updatedPosition = ChassisSpeeds
+        .fromRobotRelativeSpeeds(drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation())
+        .times(timeOfFlight);
     var correctiveVector = new Translation2d(updatedPosition.vxMetersPerSecond, updatedPosition.vyMetersPerSecond)
         .unaryMinus();
     var correctiveVector3d = new Translation3d(correctiveVector.getX(), correctiveVector.getY(), 0);
@@ -192,12 +195,8 @@ public class ShootOnTheMoveCommand extends Command {
   // meters, seconds
   private static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.0, 1.2),
-      Map.entry(5.208015, 1.2));
-
-  // TODO: add more data points here.
-  // CLOSE: NEED
-  // MID: maybe good enough
-  // FAR: NEED
+      Map.entry(5.208015, 1.2),
+      Map.entry(14.07683, 3.5));
 
   // meters, RPM
   private static final InterpolatingDoubleTreeMap HUB_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
