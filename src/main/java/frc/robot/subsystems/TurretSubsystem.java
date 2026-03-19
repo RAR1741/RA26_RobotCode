@@ -54,15 +54,15 @@ public class TurretSubsystem extends SubsystemBase {
   // Profiled PID controller (operates in degrees)
   // Max velocity: NEO free speed (5676 RPM) / gear ratio => deg/s
   // Max acceleration: set to match velocity (tune as needed)
-  private static final double MAX_VELOCITY_DEG_PER_SEC = 2.0; // ~1362 deg/s
-  private static final double MAX_ACCEL_DEG_PER_SEC2 = MAX_VELOCITY_DEG_PER_SEC; // ~1362 deg/s^2
+  private static final double MAX_VELOCITY_ROT_PER_SEC = 2.5; // ~1362 deg/s
+  private static final double MAX_ACCEL_ROT_PER_SEC2 = MAX_VELOCITY_ROT_PER_SEC; // ~1362 deg/s^2
 
   // TODO: Tune PID gains
   private final ProfiledPIDController profiledPID = new ProfiledPIDController(
-      30.0, // kP (tune me)
+      40.0, // kP (tune me)
       0.5, // kI
       0.0, // kD
-      new TrapezoidProfile.Constraints(MAX_VELOCITY_DEG_PER_SEC, MAX_ACCEL_DEG_PER_SEC2));
+      new TrapezoidProfile.Constraints(MAX_VELOCITY_ROT_PER_SEC, MAX_ACCEL_ROT_PER_SEC2));
 
   // Feedforward (kS, kV, kA — in volts, volts*s/deg, volts*s^2/deg)
   // TODO: Tune feedforward gains via SysId
