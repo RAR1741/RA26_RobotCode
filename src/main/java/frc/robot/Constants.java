@@ -1,9 +1,9 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.RPM;
-
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Seconds;
 
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
@@ -17,6 +17,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class Constants {
@@ -62,6 +63,9 @@ public class Constants {
     // WARNING: make sure this doesn't loop over 0.0/1.0!
     // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
     public static final double k_pivotAbsEncoderOffset = 0.352112;
+
+    public static final Time k_feedUpTime = Seconds.of(2.0);
+    public static final Time k_feedDownTime = Seconds.of(2.0);
   }
 
   public static class HopperConstants {

@@ -120,7 +120,7 @@ public class ShootOnTheMoveCommand extends Command {
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
     latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
 
-    // FORE TESTING - DO NOT USE
+    // FOR TESTING - DO NOT USE
     // latestShootSpeed =
     // RPM.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
 
@@ -130,11 +130,14 @@ public class ShootOnTheMoveCommand extends Command {
     // latestHoodAngle = superstructure.getHoodAngle();
 
     // Smartdashboard testing:
-    if (SmartDashboard.getBoolean("SOTMOverride", false)) {
-      latestShootSpeed = RPM.of(SmartDashboard.getNumber("ShooterSpeedRPM", latestShootSpeed.in(RPM)));
-      latestTurretAngle = Degrees.of(SmartDashboard.getNumber("TurretAngleDeg", latestTurretAngle.in(Degrees)));
-      latestHoodAngle = Degrees.of(SmartDashboard.getNumber("HoodAngleDeg", latestHoodAngle.in(Degrees)));
-    }
+    // if (SmartDashboard.getBoolean("SOTMOverride", false)) {
+    // latestShootSpeed = RPM.of(SmartDashboard.getNumber("ShooterSpeedRPM",
+    // latestShootSpeed.in(RPM)));
+    // latestTurretAngle = Degrees.of(SmartDashboard.getNumber("TurretAngleDeg",
+    // latestTurretAngle.in(Degrees)));
+    // latestHoodAngle = Degrees.of(SmartDashboard.getNumber("HoodAngleDeg",
+    // latestHoodAngle.in(Degrees)));
+    // }
 
     superstructure.setShooterSetpoints(
         latestShootSpeed,

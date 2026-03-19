@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Seconds;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -17,6 +18,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,7 +40,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private static final AngularVelocity INTAKE_ROLLER_POWER = RPM.of(3500.0);
+  private static final AngularVelocity INTAKE_ROLLER_SPEED = RPM.of(3500.0);
 
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
   private SparkMax pivotSecondaySpark = new SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
@@ -82,8 +84,8 @@ public class IntakeSubsystem extends SubsystemBase {
       .withTelemetry("RollerMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(true)
-      .withIdleMode(MotorMode.COAST);
-  // .withStatorCurrentLimit(Amps.of(60));
+      .withIdleMode(MotorMode.COAST)
+      .withStatorCurrentLimit(Amps.of(40));
 
   private SmartMotorController rollerSmc = new SparkWrapper(rollerSpark, DCMotor.getNeoVortex(1), rollerSmcConfig);
 
@@ -120,7 +122,15 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeCommand() {
-    return roller.setSpeed(INTAKE_ROLLER_POWER).withName("Intake.IntakeCommand");
+    return roller.setSpeed(INTAKE_ROLLER_SPEED).withName("Intake.intakeCommand");
+  }
+
+  public Command feedCommand() {
+    return Commands.sequence(
+        roller.setSpeed(INTAKE_ROLLER_SPEED).withTimeout(IntakeConstants.k_feedUpTime),
+        roller.setSpeed(RPM.of(0)).withTimeout(IntakeConstants.k_feedDownTime))
+        .repeatedly()
+        .withName("Intake.feedCommand");
   }
 
   public Command stopCommand() {
@@ -128,7 +138,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command ejectCommand() {
-    return roller.setSpeed(INTAKE_ROLLER_POWER.unaryMinus()).withName("Intake.EjectCommand");
+    return roller.setSpeed(INTAKE_ROLLER_SPEED.unaryMinus()).withName("Intake.EjectCommand");
   }
 
   public Command setPivotAngle(Angle angle) {
