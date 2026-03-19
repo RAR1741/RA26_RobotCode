@@ -68,12 +68,12 @@
             "/Mechanisms/Kicker/KickerMotor/current",
             "/AdvantageKit/RealOutputs",
             "/Mechanisms",
-            "/Mechanisms/Hood",
-            "/Mechanisms/Hood/HoodMotor/rotor"
+            "/Mechanisms/Hood/HoodMotor/rotor",
+            "/Mechanisms/Kicker/KickerMotor/motor"
           ]
         },
         "tabs": {
-          "selected": 11,
+          "selected": 8,
           "tabs": [
             {
               "type": 0,
@@ -134,9 +134,9 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  5.876822047479088,
+                  5.876822047479103,
                   12.07421682338009,
-                  -0.45940392418931575
+                  -0.4594039241893158
                 ],
                 "cameraTarget": [
                   4.981492833508811,
@@ -358,12 +358,12 @@
             },
             {
               "type": 1,
-              "title": "Kicker",
+              "title": "Shooter",
               "controller": {
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/mechanism/velocity",
+                    "logKey": "NT:/Mechanisms/Shooter/ShooterMotor/closedloop/setpoint/velocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -373,7 +373,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/closedloop/setpoint/velocity",
+                    "logKey": "NT:/Mechanisms/Shooter/ShooterMotor/rotor/velocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -382,29 +382,8 @@
                     }
                   }
                 ],
-                "rightSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/current/stator",
-                    "logType": "Number",
-                    "visible": false,
-                    "options": {
-                      "color": "#80588e",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "discreteSources": [
-                  {
-                    "type": "stripes",
-                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/limits/temperature",
-                    "logType": "Boolean",
-                    "visible": true,
-                    "options": {
-                      "color": "#af2437"
-                    }
-                  }
-                ],
+                "rightSources": [],
+                "discreteSources": [],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -418,40 +397,18 @@
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "w5fy2hl1rp61xzmeo24fs7op42tvlm1u",
+              "controllerUUID": "ijo5j8yqsu3twbvh5qx6kxgorj77p4qj",
               "renderer": null,
               "controlsHeight": 200
             },
             {
               "type": 1,
-              "title": "Hopper",
+              "title": "Hood",
               "controller": {
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/mechanism/velocity",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#af2437",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/closedloop/setpoint/velocity",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#2b66a2",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "rightSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/current/stator",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hood/MechanismSetpoint",
                     "logType": "Number",
                     "visible": false,
                     "options": {
@@ -461,51 +418,29 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/motor/outputVoltage",
+                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/motor/outputVoltage",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/current/stator",
+                    "logType": "Number",
+                    "visible": false,
                     "options": {
                       "color": "#e48b32",
                       "size": "normal"
                     }
                   }
                 ],
-                "discreteSources": [
-                  {
-                    "type": "stripes",
-                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/limits/temperature",
-                    "logType": "Boolean",
-                    "visible": true,
-                    "options": {
-                      "color": "#80588e"
-                    }
-                  }
-                ],
-                "leftLockedRange": null,
-                "rightLockedRange": null,
-                "leftUnitConversion": {
-                  "autoTarget": null,
-                  "preset": null
-                },
-                "rightUnitConversion": {
-                  "autoTarget": null,
-                  "preset": null
-                },
-                "leftFilter": 0,
-                "rightFilter": 0
-              },
-              "controllerUUID": "pg9q4ytoyc18s41d9isz009koncpug5l",
-              "renderer": null,
-              "controlsHeight": 200
-            },
-            {
-              "type": 1,
-              "title": "Roller",
-              "controller": {
-                "leftSources": [
+                "rightSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/roller/RollerMotor/closedloop/setpoint/velocity",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hood/Angle",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -515,33 +450,21 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/roller/RollerMotor/mechanism/velocity",
+                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/closedloop/setpoint/position",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#af2437",
-                      "size": "normal"
-                    }
-                  }
-                ],
-                "rightSources": [
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/Mechanisms/roller/RollerMotor/motor/outputVoltage",
-                    "logType": "Number",
-                    "visible": true,
-                    "options": {
-                      "color": "#e5b31b",
+                      "color": "#80588e",
                       "size": "normal"
                     }
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/roller/RollerMotor/current/stator",
+                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/rotor/position",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#80588e",
+                      "color": "#c0b487",
                       "size": "normal"
                     }
                   }
@@ -554,13 +477,13 @@
                   "preset": null
                 },
                 "rightUnitConversion": {
-                  "autoTarget": null,
+                  "autoTarget": "degrees",
                   "preset": null
                 },
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "5qg66w8cjun4o4ymbs6esj7ky2ailzjh",
+              "controllerUUID": "lgvgmglr2llkccx8fwtq9pxr54gh1ajc",
               "renderer": null,
               "controlsHeight": 200
             },
@@ -722,12 +645,12 @@
             },
             {
               "type": 1,
-              "title": "Shooter",
+              "title": "Kicker",
               "controller": {
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Shooter/ShooterMotor/closedloop/setpoint/velocity",
+                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/mechanism/velocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -737,7 +660,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Shooter/ShooterMotor/rotor/velocity",
+                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/closedloop/setpoint/velocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -746,8 +669,39 @@
                     }
                   }
                 ],
-                "rightSources": [],
-                "discreteSources": [],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/current/stator",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/motor/outputVoltage",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/limits/temperature",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -761,18 +715,40 @@
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "ijo5j8yqsu3twbvh5qx6kxgorj77p4qj",
+              "controllerUUID": "w5fy2hl1rp61xzmeo24fs7op42tvlm1u",
               "renderer": null,
               "controlsHeight": 200
             },
             {
               "type": 1,
-              "title": "Hood",
+              "title": "Hopper",
               "controller": {
                 "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Hood/MechanismSetpoint",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/mechanism/velocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/closedloop/setpoint/velocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/current/stator",
                     "logType": "Number",
                     "visible": false,
                     "options": {
@@ -782,29 +758,51 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/motor/outputVoltage",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/motor/outputVoltage",
                     "logType": "Number",
-                    "visible": false,
-                    "options": {
-                      "color": "#af2437",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/current/stator",
-                    "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#e48b32",
                       "size": "normal"
                     }
                   }
                 ],
-                "rightSources": [
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/limits/temperature",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "pg9q4ytoyc18s41d9isz009koncpug5l",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "I-Roller",
+              "controller": {
+                "leftSources": [
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Hood/Angle",
+                    "logKey": "NT:/Mechanisms/roller/RollerMotor/closedloop/setpoint/velocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -814,21 +812,33 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/closedloop/setpoint/position",
+                    "logKey": "NT:/Mechanisms/roller/RollerMotor/mechanism/velocity",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#80588e",
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/roller/RollerMotor/motor/outputVoltage",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
                       "size": "normal"
                     }
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/rotor/position",
+                    "logKey": "NT:/Mechanisms/roller/RollerMotor/current/stator",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#c0b487",
+                      "color": "#80588e",
                       "size": "normal"
                     }
                   }
@@ -841,19 +851,19 @@
                   "preset": null
                 },
                 "rightUnitConversion": {
-                  "autoTarget": "degrees",
+                  "autoTarget": null,
                   "preset": null
                 },
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "lgvgmglr2llkccx8fwtq9pxr54gh1ajc",
+              "controllerUUID": "5qg66w8cjun4o4ymbs6esj7ky2ailzjh",
               "renderer": null,
               "controlsHeight": 200
             },
             {
               "type": 1,
-              "title": "IntakePivot",
+              "title": "I-Pivot",
               "controller": {
                 "leftSources": [
                   {
