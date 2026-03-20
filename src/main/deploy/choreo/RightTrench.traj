@@ -24,7 +24,6 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"TrenchStartRight.x", "val":4.412508964538574}, "y":{"exp":"TrenchStartRight.y", "val":0.6610009074211121}, "heading":{"exp":"TrenchStartRight.heading", "val":0.0}, "intervals":27, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"6.3088812828063965 m", "val":6.3088812828063965}, "y":{"exp":"0.6866330504417419 m", "val":0.6866330504417419}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":24, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"7.706241130828857 m", "val":7.706241130828857}, "y":{"exp":"1.0953845977783203 m", "val":1.0953845977783203}, "heading":{"exp":"1.563333866001125 rad", "val":1.563333866001125}, "intervals":69, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"7.7175211906433105 m", "val":7.7175211906433105}, "y":{"exp":"3.580214262008667 m", "val":3.580214262008667}, "heading":{"exp":"1.5848797334744038 rad", "val":1.5848797334744038}, "intervals":38, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
@@ -34,12 +33,11 @@
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"first", "to":"last", "data":{"type":"KeepInRectangle", "props":{"x":{"exp":"0 m", "val":0.0}, "y":{"exp":"0 m", "val":0.0}, "w":{"exp":"16.541 m", "val":16.541}, "h":{"exp":"8.0692 m", "val":8.0692}}}, "enabled":true},
-    {"from":2, "to":3, "data":{"type":"MaxVelocity", "props":{"max":{"exp":"0.75 m / s", "val":0.75}}}, "enabled":true},
-    {"from":2, "to":3, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.01 m", "val":0.01}}}, "enabled":true},
-    {"from":2, "to":3, "data":{"type":"PointAt", "props":{"x":{"exp":"7.7175211906433105 m", "val":7.7175211906433105}, "y":{"exp":"10 m", "val":10.0}, "tolerance":{"exp":"1 deg", "val":0.017453292519943295}, "flip":false}}, "enabled":true},
-    {"from":4, "to":5, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.01 m", "val":0.01}}}, "enabled":true},
+    {"from":1, "to":2, "data":{"type":"MaxVelocity", "props":{"max":{"exp":"0.75 m / s", "val":0.75}}}, "enabled":true},
+    {"from":1, "to":2, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.01 m", "val":0.01}}}, "enabled":true},
+    {"from":1, "to":2, "data":{"type":"PointAt", "props":{"x":{"exp":"7.7175211906433105 m", "val":7.7175211906433105}, "y":{"exp":"10 m", "val":10.0}, "tolerance":{"exp":"1 deg", "val":0.017453292519943295}, "flip":false}}, "enabled":true},
+    {"from":3, "to":4, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.01 m", "val":0.01}}}, "enabled":true},
     {"from":"first", "to":"last", "data":{"type":"MaxVelocity", "props":{"max":{"exp":"3 m / s", "val":3.0}}}, "enabled":true},
-    {"from":0, "to":1, "data":{"type":"KeepInLane", "props":{"tolerance":{"exp":"0.01 m", "val":0.01}}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true}],
   "targetDt":{
    "exp":"0.05 s",
@@ -290,8 +288,8 @@
   "splits":[0]
  },
  "events":[
-   {"name":"intakeDeployAndRun", "from":{"target":1, "targetTimestamp":0.79925, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intakeDeployAndRun"}}},
-   {"name":"intakeStopCommand", "from":{"target":3, "targetTimestamp":4.77077, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intakeStopCommand"}}},
-   {"name":"ShootOnTheMoveCommand", "from":{"target":5, "targetTimestamp":7.43734, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"ShootOnTheMoveCommand"}}},
-   {"name":"feedAllCommand", "from":{"target":6, "targetTimestamp":8.23423, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"feedAllCommand"}}}]
+   {"name":"intakeDeployAndRun", "from":{"target":0, "targetTimestamp":0.79925, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intakeDeployAndRun"}}},
+   {"name":"intakeStopCommand", "from":{"target":2, "targetTimestamp":4.77077, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intakeStopCommand"}}},
+   {"name":"ShootOnTheMoveCommand", "from":{"target":4, "targetTimestamp":7.43734, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"ShootOnTheMoveCommand"}}},
+   {"name":"feedAllCommand", "from":{"target":5, "targetTimestamp":8.23423, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"feedAllCommand"}}}]
 }

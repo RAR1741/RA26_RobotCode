@@ -38,6 +38,13 @@ public record ChoreoTraj(
         new Pose2d(2.40635, 1.66408, Rotation2d.fromRadians(0)),
         new Pose2d(2.40635, 1.66408, Rotation2d.fromRadians(0))
     );
+    public static final ChoreoTraj LeftTrench = new ChoreoTraj(
+        "LeftTrench",
+        OptionalInt.empty(),
+        8.82173,
+        new Pose2d(4.42112, 7.40523, Rotation2d.fromRadians(0)),
+        new Pose2d(1.3637, 5.94601, Rotation2d.fromRadians(-3.13384))
+    );
 
     /**
      * A map between trajectory names and their corresponding data.
@@ -45,7 +52,8 @@ public record ChoreoTraj(
      */
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
         Map.entry("RightTrench", RightTrench),
-        Map.entry("TestPath", TestPath)
+        Map.entry("TestPath", TestPath),
+        Map.entry("LeftTrench", LeftTrench)
     );
 
     /**
