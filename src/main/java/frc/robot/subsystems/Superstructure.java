@@ -61,13 +61,15 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command feedAllCommand() {
-    return Commands.either(
-        Commands.parallel(
-            // intake.feedCommand().asProxy(),
-            hopper.feedCommand().asProxy(),
-            kicker.feedCommand().asProxy()).withName("Superstructure.feedAll"),
-        Commands.print("NOT READY TO SHOOT!"),
-        isReadyToShoot);
+    return Commands.waitUntil(isReadyToShoot)
+        .andThen(
+            Commands.parallel(
+                // intake.feedCommand().asProxy(),
+                hopper.feedCommand().asProxy(),
+                kicker.feedCommand().asProxy())
+                .onlyWhile(isReadyToShoot))
+        .repeatedly()
+        .withName("Superstructure.feedAll");
   }
 
   public Command shootCommand() {
