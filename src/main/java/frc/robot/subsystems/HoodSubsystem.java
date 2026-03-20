@@ -57,7 +57,7 @@ public class HoodSubsystem extends SubsystemBase {
       .withMotorInverted(false)
       .withIdleMode(MotorMode.BRAKE)
       .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
-      .withStatorCurrentLimit(Amps.of(10.0))
+      .withStatorCurrentLimit(Amps.of(15.0))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
@@ -92,7 +92,7 @@ public class HoodSubsystem extends SubsystemBase {
    * Soft limits are temporarily disabled during homing.
    */
   public Command homeSequence() {
-    final double homingDutyCycle = 0.20;
+    final double homingDutyCycle = 0.10;
     final double stallVelocityThreshold = 0.01; // motor rot/s
 
     if (Robot.isSimulation()) {

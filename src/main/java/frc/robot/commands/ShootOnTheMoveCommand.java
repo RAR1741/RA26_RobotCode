@@ -121,8 +121,11 @@ public class ShootOnTheMoveCommand extends Command {
     latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
 
     // FOR TESTING - DO NOT USE
+    // var gameData = DriverStation.getGameSpecificMessage();
+    // if (gameData != null && !gameData.isEmpty()) {
     // latestShootSpeed =
-    // RPM.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
+    // RPM.of(Double.valueOf(DriverStation.getGameSpecificMessage()));
+    // }
 
     // latestShootSpeed = RPM.of(2400);
     // latestHoodAngle =
@@ -178,15 +181,14 @@ public class ShootOnTheMoveCommand extends Command {
   // meters, seconds
   private static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.0, 1.2),
-      Map.entry(5.208015, 1.2),
+      Map.entry(4.792132, 1.2),
       Map.entry(14.07683, 3.5));
 
   // meters, RPM
   private static final InterpolatingDoubleTreeMap HUB_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.2319, 2500.0), // HUB
-      Map.entry(3.319674, 2600.0), // TRENCH
-      Map.entry(5.208015, 2600.0), // OUTPOST
-      Map.entry(7.866163, 2600.0)); // Midfield
+      Map.entry(1.2319, 2350.0), // HUB
+      Map.entry(3.319674, 2350.0), // TRENCH
+      Map.entry(4.792132, 2350.0)); // OUTPOST
 
   // meters, RPM
   private static final InterpolatingDoubleTreeMap PASS_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap
@@ -200,6 +202,5 @@ public class ShootOnTheMoveCommand extends Command {
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.2319, 80.0), // HUB
       Map.entry(3.319674, 70.0), // TRENCH
-      Map.entry(5.208015, 55.0)); // OUTPOST
-
+      Map.entry(4.792132, 53.0)); // OUTPOST
 }

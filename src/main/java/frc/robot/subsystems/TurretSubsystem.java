@@ -52,7 +52,7 @@ public class TurretSubsystem extends SubsystemBase {
   // TODO: Tune PID gains
   private final ProfiledPIDController profiledPID = new ProfiledPIDController(
       45.0, // kP (tune me)
-      2.0, // kI
+      4.0, // kI
       0.0, // kD
       new TrapezoidProfile.Constraints(MAX_VELOCITY_ROT_PER_SEC, MAX_ACCEL_ROT_PER_SEC2));
 
