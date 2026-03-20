@@ -71,7 +71,8 @@ public class TurretSubsystem extends SubsystemBase {
   // public final Trigger isAtTarget = new Trigger(() -> profiledPID.atGoal());
 
   public final Trigger isAtTarget = new Trigger(
-      () -> Math.abs(profiledPID.getPositionError()) < SuperstructureConstants.k_hoodTolerance.in(Degrees));
+      () -> Math.abs(Rotations.of(turretEncoder.getPosition()
+          - profiledPID.getGoal().position).in(Degrees)) < SuperstructureConstants.k_turretTolerance.in(Degrees));
 
   public TurretSubsystem() {
     m12TAbsEncoder = new REVThroughBoreEncoder(1);
