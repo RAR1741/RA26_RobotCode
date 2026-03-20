@@ -40,11 +40,11 @@ public final class Simulation {
       GamePieceProjectile fuel = new RebuiltFuelOnFly(
           drivetrain.getState().Pose.getTranslation(),
           new Translation2d(
-              superstructure.turret.turretTranslation.getX() * -1,
-              superstructure.turret.turretTranslation.getY() * -1),
+              superstructure.turret.getTurretTranslation().getX() * -1,
+              superstructure.turret.getTurretTranslation().getY() * -1),
           drivetrain.getState().Speeds,
           drivetrain.getState().Pose.getRotation().rotateBy(superstructure.getAimRotation3d().toRotation2d()),
-          superstructure.turret.turretTranslation.getMeasureZ(),
+          superstructure.turret.getTurretTranslation().getMeasureZ(),
 
           // Full tangential velocity applied to the fuel as we shoot it
           // (this can be scaled down to simulate whatever spin we actually have)

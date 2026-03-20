@@ -28,21 +28,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.SuperstructureConstants;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 
 public class TurretSubsystem extends SubsystemBase {
-
-  private final double MAX_ONE_DIR_FOV = 90; // degrees
-
-  private static final double M12_OFFSET = 0.944253;
-  private static final double M13_OFFSET = 0.307141;
-
-  public final Translation3d turretTranslation = new Translation3d(
-      Inches.of(-6.25),
-      Inches.of(-6.75),
-      Inches.of(20.0));
-
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
   // Total reduction: 5 * 5 = 25:1
   public final double GEAR_RATIO = 1.0 / (5.0 * (60.0 / 12.0));
@@ -59,14 +51,14 @@ public class TurretSubsystem extends SubsystemBase {
 
   // TODO: Tune PID gains
   private final ProfiledPIDController profiledPID = new ProfiledPIDController(
-      40.0, // kP (tune me)
-      0.5, // kI
+      45.0, // kP (tune me)
+      4.0, // kI
       0.0, // kD
       new TrapezoidProfile.Constraints(MAX_VELOCITY_ROT_PER_SEC, MAX_ACCEL_ROT_PER_SEC2));
 
   // Feedforward (kS, kV, kA — in volts, volts*s/deg, volts*s^2/deg)
   // TODO: Tune feedforward gains via SysId
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 4.5, 0.0);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 3.5, 0.0);
 
   private boolean isRezeroed = false;
   private boolean isRezeroing = false;
@@ -75,6 +67,12 @@ public class TurretSubsystem extends SubsystemBase {
   // Absolute encoders
   private final REVThroughBoreEncoder m12TAbsEncoder;
   private final REVThroughBoreEncoder m13TAbsEncoder;
+
+  // public final Trigger isAtTarget = new Trigger(() -> profiledPID.atGoal());
+
+  public final Trigger isAtTarget = new Trigger(
+      () -> Math.abs(Rotations.of(turretEncoder.getPosition()
+          - profiledPID.getGoal().position).in(Degrees)) < SuperstructureConstants.k_turretTolerance.in(Degrees));
 
   public TurretSubsystem() {
     m12TAbsEncoder = new REVThroughBoreEncoder(1);
@@ -94,7 +92,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     turretSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    profiledPID.setTolerance(1.0 / 360.0); // 1 degree tolerance
+    profiledPID.setTolerance(SuperstructureConstants.k_turretTolerance.in(Degrees));
   }
 
   public Command rezero() {
@@ -136,12 +134,12 @@ public class TurretSubsystem extends SubsystemBase {
 
   @AutoLogOutput(key = "Turret/m12TAbsAngleWithOffset")
   private double getM12TAbsAngleWithOffset() {
-    return (getM12TAbsAngle() - M12_OFFSET + 1.0) % 1.0;
+    return (getM12TAbsAngle() - TurretConstants.M12_OFFSET + 1.0) % 1.0;
   }
 
   @AutoLogOutput(key = "Turret/m13TAbsAngleWithOffset")
   private double getM13TAbsAngleWithOffset() {
-    return (getM13TAbsAngle() - M13_OFFSET + 1.0) % 1.0;
+    return (getM13TAbsAngle() - TurretConstants.M13_OFFSET + 1.0) % 1.0;
   }
 
   @AutoLogOutput(key = "Turret/m12TAbsAngle")
@@ -176,18 +174,8 @@ public class TurretSubsystem extends SubsystemBase {
     return Degrees.of(turretAngleDeg);
   }
 
-  /**
-   * Returns the current turret position in degrees from the relative encoder.
-   */
-  private double getPositionDegrees() {
-    return Rotations.of(turretEncoder.getPosition()).in(Degrees);
-  }
-
-  /**
-   * Returns the current turret velocity in deg/s from the relative encoder.
-   */
-  private double getVelocityDegreesPerSec() {
-    return Rotations.of(turretEncoder.getVelocity()).in(Degrees);
+  public Translation3d getTurretTranslation() {
+    return TurretConstants.turretTranslation;
   }
 
   public Command setAngle(Angle angle) {
@@ -207,6 +195,8 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public Angle clampSafeAngle(Angle angle) {
+    double MAX_ONE_DIR_FOV = TurretConstants.MAX_ONE_DIR_FOV;
+
     if (angle.in(Degrees) > MAX_ONE_DIR_FOV) {
       return Degrees.of(MAX_ONE_DIR_FOV);
     } else if (angle.in(Degrees) < -MAX_ONE_DIR_FOV) {

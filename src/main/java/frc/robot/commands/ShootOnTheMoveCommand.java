@@ -31,24 +31,15 @@ public class ShootOnTheMoveCommand extends Command {
   private final Superstructure superstructure;
 
   private Supplier<Translation3d> aimPointSupplier; // The point to aim at
-  private AngularVelocity latestShootSpeed;
-  private Angle latestHoodAngle;
-  private Angle latestTurretAngle;
+  private AngularVelocity latestShootSpeed = RPM.of(0);
+  private Angle latestHoodAngle = Degrees.of(80.0);
+  private Angle latestTurretAngle = Degrees.of(0.0);
 
   public ShootOnTheMoveCommand(CommandSwerveDrivetrain drivetrain, Superstructure superstructure,
       Supplier<Translation3d> aimPointSupplier) {
     this.drivetrain = drivetrain;
     this.superstructure = superstructure;
     this.aimPointSupplier = aimPointSupplier;
-
-    // We use the drivetrain to determine linear velocity, but don't require it for
-    // control. We
-    // will be using the superstructure to control the shooting mechanism so it's a
-    // requirement.
-    // addRequirements(superstructure);
-
-    // TODO: figure out if the above is actually required. Right now, when you start
-    // some other command, the auto aim can't start back up again
   }
 
   @Override
@@ -58,13 +49,6 @@ public class ShootOnTheMoveCommand extends Command {
     latestHoodAngle = superstructure.getHoodAngle();
     latestTurretAngle = superstructure.getTurretAngle();
     latestShootSpeed = superstructure.getShooterSpeed();
-
-    // SmartDashboard.putNumber("ShootOnTheMove/ShooterSpeedRPM",
-    // latestShootSpeed.in(RPM));
-    // SmartDashboard.putNumber("ShootOnTheMove/TurretAngleDeg",
-    // latestTurretAngle.in(Degrees));
-    // SmartDashboard.putNumber("ShootOnTheMove/HoodAngleDeg",
-    // latestHoodAngle.in(Degrees));
 
     // TODO: when this current command ends, we should probably cancel the dynamic
     // aim command
@@ -136,9 +120,12 @@ public class ShootOnTheMoveCommand extends Command {
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
     latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
 
-    // FORE TESTING - DO NOT USE
+    // FOR TESTING - DO NOT USE
+    // var gameData = DriverStation.getGameSpecificMessage();
+    // if (gameData != null && !gameData.isEmpty()) {
     // latestShootSpeed =
-    // RPM.of(Double.parseDouble(DriverStation.getGameSpecificMessage()));
+    // RPM.of(Double.valueOf(DriverStation.getGameSpecificMessage()));
+    // }
 
     // latestShootSpeed = RPM.of(2400);
     // latestHoodAngle =
@@ -146,15 +133,14 @@ public class ShootOnTheMoveCommand extends Command {
     // latestHoodAngle = superstructure.getHoodAngle();
 
     // Smartdashboard testing:
-    // latestShootSpeed =
-    // RPM.of(SmartDashboard.getNumber("ShootOnTheMove/ShooterSpeedRPM",
+    // if (SmartDashboard.getBoolean("SOTMOverride", false)) {
+    // latestShootSpeed = RPM.of(SmartDashboard.getNumber("ShooterSpeedRPM",
     // latestShootSpeed.in(RPM)));
-    // latestTurretAngle = Degrees
-    // .of(SmartDashboard.getNumber("ShootOnTheMove/TurretAngleDeg",
+    // latestTurretAngle = Degrees.of(SmartDashboard.getNumber("TurretAngleDeg",
     // latestTurretAngle.in(Degrees)));
-    // latestHoodAngle =
-    // Degrees.of(SmartDashboard.getNumber("ShootOnTheMove/HoodAngleDeg",
+    // latestHoodAngle = Degrees.of(SmartDashboard.getNumber("HoodAngleDeg",
     // latestHoodAngle.in(Degrees)));
+    // }
 
     superstructure.setShooterSetpoints(
         latestShootSpeed,
@@ -195,15 +181,14 @@ public class ShootOnTheMoveCommand extends Command {
   // meters, seconds
   private static final InterpolatingDoubleTreeMap TIME_OF_FLIGHT_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.0, 1.2),
-      Map.entry(5.208015, 1.2),
+      Map.entry(4.792132, 1.2),
       Map.entry(14.07683, 3.5));
 
   // meters, RPM
   private static final InterpolatingDoubleTreeMap HUB_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.2319, 2500.0), // HUB
-      Map.entry(3.319674, 2600.0), // TRENCH
-      Map.entry(5.208015, 2600.0), // OUTPOST
-      Map.entry(7.866163, 2600.0)); // Midfield
+      Map.entry(1.2319, 2350.0), // HUB
+      Map.entry(3.319674, 2350.0), // TRENCH
+      Map.entry(4.792132, 2350.0)); // OUTPOST
 
   // meters, RPM
   private static final InterpolatingDoubleTreeMap PASS_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap
@@ -217,6 +202,5 @@ public class ShootOnTheMoveCommand extends Command {
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.2319, 80.0), // HUB
       Map.entry(3.319674, 70.0), // TRENCH
-      Map.entry(5.208015, 55.0)); // OUTPOST
-
+      Map.entry(4.792132, 53.0)); // OUTPOST
 }

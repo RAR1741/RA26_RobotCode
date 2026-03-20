@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Degrees;
 
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -13,6 +15,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 public class Superstructure extends SubsystemBase {
@@ -28,16 +31,14 @@ public class Superstructure extends SubsystemBase {
   public final LimeLightSubsystem limelight;
 
   @SuppressWarnings("unused")
-  private final boolean isShooter; // This will be used to determine if the shooter is at the correct speed for
-                                   // firing, can be used in an auto command to wait until the shooter is ready
-                                   // before firing
-
-  @SuppressWarnings("unused")
   private AngularVelocity targetShooterSpeed;
   @SuppressWarnings("unused")
   private Angle targetTurretAngle;
   @SuppressWarnings("unused")
   private Angle targetHoodAngle;
+
+  // Trigger for readiness checks
+  private final Trigger isReadyToShoot;
 
   // Default aim point is red hub
   private Translation3d aimPoint = Constants.AimPoints.RED_HUB.value;
@@ -55,14 +56,20 @@ public class Superstructure extends SubsystemBase {
 
     this.limelight = new LimeLightSubsystem(drivetrain);
 
-    this.isShooter = false;
+    // Create triggers for checking if mechanisms are at their targets
+    this.isReadyToShoot = shooter.isAtTarget.and(turret.isAtTarget).and(hood.isAtTarget);
   }
 
   public Command feedAllCommand() {
-    return Commands.parallel(
-        // intake.setIntakeFeed().asProxy(),
-        hopper.feedCommand().asProxy(),
-        kicker.feedCommand().asProxy()).withName("Superstructure.feedAll");
+    return Commands.waitUntil(isReadyToShoot)
+        .andThen(
+            Commands.parallel(
+                // intake.feedCommand().asProxy(),
+                hopper.feedCommand().asProxy(),
+                kicker.feedCommand().asProxy())
+                .onlyWhile(isReadyToShoot))
+        .repeatedly()
+        .withName("Superstructure.feedAll");
   }
 
   public Command shootCommand() {
@@ -71,6 +78,10 @@ public class Superstructure extends SubsystemBase {
 
   public Command intakeCommand() {
     return intake.intakeCommand().asProxy().withName("Superstructure.intake");
+  }
+
+  public Command intakeDeployAndRun() {
+    return intake.intakeDeployAndRun().asProxy().withName("Superstructure.intakeDeployAndRun");
   }
 
   public Command intakeStopCommand() {
@@ -164,7 +175,7 @@ public class Superstructure extends SubsystemBase {
   public Pose3d getShooterPose() {
     // Position of the shooter relative to the "front" of the robot. Rotation
     // element is based on hood and turret angles
-    return new Pose3d(turret.turretTranslation, getAimRotation3d());
+    return new Pose3d(turret.getTurretTranslation(), getAimRotation3d());
   }
 
   public Rotation3d getAimRotation3d() {
@@ -180,5 +191,14 @@ public class Superstructure extends SubsystemBase {
     targetShooterSpeed = shooterSpeed;
     targetTurretAngle = turretAngle;
     targetHoodAngle = hoodAngle;
+  }
+
+  @Override
+  public void periodic() {
+    // Log SOTM ready states
+    Logger.recordOutput("Superstructure/shooterReady", shooter.isAtTarget.getAsBoolean());
+    Logger.recordOutput("Superstructure/turretReady", turret.isAtTarget.getAsBoolean());
+    Logger.recordOutput("Superstructure/hoodReady", hood.isAtTarget.getAsBoolean());
+    Logger.recordOutput("Superstructure/isReadyToShoot", isReadyToShoot.getAsBoolean());
   }
 }

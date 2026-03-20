@@ -6,15 +6,12 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
-
-import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -26,7 +23,9 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.Robot;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -49,16 +48,16 @@ public class HoodSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(120.0, 0, 0,
-          DegreesPerSecond.of(80),
-          DegreesPerSecondPerSecond.of(160))
+      .withClosedLoopController(500.0, 0, 0,
+          DegreesPerSecond.of(120),
+          DegreesPerSecondPerSecond.of(240))
       .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
       .withTelemetry("HoodMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(false)
       .withIdleMode(MotorMode.BRAKE)
       .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
-      .withStatorCurrentLimit(Amps.of(10.0))
+      .withStatorCurrentLimit(Amps.of(15.0))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
@@ -71,6 +70,10 @@ public class HoodSubsystem extends SubsystemBase {
       .withTelemetry("Hood", TelemetryVerbosity.HIGH);
 
   private Pivot hood = new Pivot(hoodConfig);
+
+  public final Trigger isAtTarget = new Trigger(
+      () -> hood.getMechanismSetpoint().orElse(Degrees.of(-100)).minus(hood.getAngle())
+          .abs(Degrees) < SuperstructureConstants.k_hoodTolerance.in(Degrees));
 
   public HoodSubsystem() {
     // YAMS Pivot bug workaround: the Pivot constructor creates a new DCMotorSim
@@ -89,7 +92,7 @@ public class HoodSubsystem extends SubsystemBase {
    * Soft limits are temporarily disabled during homing.
    */
   public Command homeSequence() {
-    final double homingDutyCycle = 0.20;
+    final double homingDutyCycle = 0.10;
     final double stallVelocityThreshold = 0.01; // motor rot/s
 
     if (Robot.isSimulation()) {
