@@ -45,6 +45,10 @@ public class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
 
+    public static final double k_slowModeMin = 0.25; // Scales down max speed when slow mode is active
+    public static final double k_standardSpeed = 0.5; // Normal max speed
+    public static final double k_boostModeScaler = 1.0; // Scales up max speed when boost mode is active
+
     // Joystick Deadband
     public static final double k_DEADBAND = 0.1;
   }

@@ -33,7 +33,7 @@ import frc.robot.wrappers.REVThroughBoreEncoder;
 
 public class TurretSubsystem extends SubsystemBase {
 
-  private final double MAX_ONE_DIR_FOV = 90; // degrees
+  private final double MAX_ONE_DIR_FOV = 100; // degrees
 
   private static final double M12_OFFSET = 0.941502;
   private static final double M13_OFFSET = 0.819344;
