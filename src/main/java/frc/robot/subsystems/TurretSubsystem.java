@@ -28,7 +28,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 
@@ -66,6 +68,11 @@ public class TurretSubsystem extends SubsystemBase {
   private final REVThroughBoreEncoder m12TAbsEncoder;
   private final REVThroughBoreEncoder m13TAbsEncoder;
 
+  // public final Trigger isAtTarget = new Trigger(() -> profiledPID.atGoal());
+
+  public final Trigger isAtTarget = new Trigger(
+      () -> Math.abs(profiledPID.getPositionError()) < SuperstructureConstants.k_hoodTolerance.in(Degrees));
+
   public TurretSubsystem() {
     m12TAbsEncoder = new REVThroughBoreEncoder(1);
     m13TAbsEncoder = new REVThroughBoreEncoder(0);
@@ -84,7 +91,7 @@ public class TurretSubsystem extends SubsystemBase {
 
     turretSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    profiledPID.setTolerance(1.0 / 360.0); // 1 degree tolerance
+    profiledPID.setTolerance(SuperstructureConstants.k_turretTolerance.in(Degrees));
   }
 
   public Command rezero() {

@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -21,8 +23,9 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.SuperstructureConstants;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -66,6 +69,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final FlyWheel shooter = new FlyWheel(shooterConfig);
 
+  public final Trigger isAtTarget = new Trigger(
+      () -> shooter.getMechanismSetpointVelocity().orElse(RPM.of(-1000)).minus(shooter.getSpeed())
+          .abs(RPM) < SuperstructureConstants.k_shooterRPMTolerance.in(RPM));
+
   public ShooterSubsystem() {
     // this.setDefaultCommand(Commands.run(() -> shooter.setSpeed(RPM.of(0)),
     // this));
@@ -89,19 +96,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public AngularVelocity getSpeed() {
     return shooter.getSpeed();
-  }
-
-  public boolean isAtSpeed() {
-    return shooter.isNear(
-        shooter.getMechanismSetpointVelocity().get(),
-        ShooterConstants.k_shooterRPMTolerance)
-        .getAsBoolean();
-  }
-
-  public Command setSpeedWithToleranceCommand(AngularVelocity targetSpeed) {
-    return Commands.run(() -> setSpeed(targetSpeed))
-        .until(() -> isAtSpeed())
-        .withName("ShooterSystem.setSpeedWithToleranceCommand");
   }
 
   public LinearVelocity getTangentialVelocity() {
