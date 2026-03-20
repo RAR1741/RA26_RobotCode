@@ -73,6 +73,10 @@ public class Superstructure extends SubsystemBase {
     return intake.intakeCommand().asProxy().withName("Superstructure.intake");
   }
 
+  public Command intakeDeployAndRun() {
+    return intake.intakeDeployAndRun().asProxy().withName("Superstructure.intakeDeployAndRun");
+  }
+
   public Command intakeStopCommand() {
     return intake.stopCommand().asProxy().withName("Superstructure.intakeStop");
   }

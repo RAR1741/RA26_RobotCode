@@ -132,6 +132,13 @@ public class IntakeSubsystem extends SubsystemBase {
     return roller.setSpeed(INTAKE_ROLLER_SPEED).withName("Intake.intakeCommand");
   }
 
+  public Command intakeDeployAndRun() {
+    return Commands.parallel(
+        roller.setSpeed(INTAKE_ROLLER_SPEED).asProxy(),
+        setIntakeDeployed())
+        .withName("Intake.intakeDeployAndRun");
+  }
+
   public Command feedCommand() {
     return Commands.parallel(
         setIntakeFeedPivot().asProxy(),
