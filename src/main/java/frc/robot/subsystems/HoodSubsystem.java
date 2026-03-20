@@ -48,9 +48,9 @@ public class HoodSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(120.0, 0, 0,
-          DegreesPerSecond.of(80),
-          DegreesPerSecondPerSecond.of(160))
+      .withClosedLoopController(500.0, 0, 0,
+          DegreesPerSecond.of(120),
+          DegreesPerSecondPerSecond.of(240))
       .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
       .withTelemetry("HoodMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
