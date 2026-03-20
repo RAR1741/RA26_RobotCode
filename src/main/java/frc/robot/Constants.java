@@ -94,7 +94,7 @@ public class Constants {
   public static class TurretConstants {
     public static final int k_turretMotorId = 50;
 
-    public static final double MAX_ONE_DIR_FOV = 100; // degrees
+    public static final double MAX_ONE_DIR_FOV = 110; // degrees
 
     public static final double M12_OFFSET = 0.941502;
     public static final double M13_OFFSET = 0.819344;
