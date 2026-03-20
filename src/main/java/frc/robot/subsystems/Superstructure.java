@@ -168,7 +168,7 @@ public class Superstructure extends SubsystemBase {
   public Pose3d getShooterPose() {
     // Position of the shooter relative to the "front" of the robot. Rotation
     // element is based on hood and turret angles
-    return new Pose3d(turret.turretTranslation, getAimRotation3d());
+    return new Pose3d(turret.getTurretTranslation(), getAimRotation3d());
   }
 
   public Rotation3d getAimRotation3d() {

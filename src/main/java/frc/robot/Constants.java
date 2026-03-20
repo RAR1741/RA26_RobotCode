@@ -94,6 +94,16 @@ public class Constants {
   public static class TurretConstants {
     public static final int k_turretMotorId = 50;
 
+    public static final double MAX_ONE_DIR_FOV = 100; // degrees
+
+    public static final double M12_OFFSET = 0.941502;
+    public static final double M13_OFFSET = 0.819344;
+
+    public static final Translation3d turretTranslation = new Translation3d(
+        Inches.of(-6.25),
+        Inches.of(-6.75),
+        Inches.of(20.0));
+
     // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
     public static final double k_gravitationalAcceleration = 32.174;
     public static final double k_turretHeight = 2.0;
