@@ -23,7 +23,7 @@ public class DriverControls {
   // kSpeedAt12Volts desired top speed
   private static double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
 
-  private static double m_deadbandLimit = 0.1; // 10% deadband on joystick inputs
+  private static double m_deadbandLimit = 0.01; // 1% deadband on joystick inputs
 
   // 3/4 of a rotation per second max angular velocity
   private static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);

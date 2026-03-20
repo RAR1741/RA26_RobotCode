@@ -51,14 +51,14 @@ public class TurretSubsystem extends SubsystemBase {
 
   // TODO: Tune PID gains
   private final ProfiledPIDController profiledPID = new ProfiledPIDController(
-      40.0, // kP (tune me)
-      0.5, // kI
+      45.0, // kP (tune me)
+      2.0, // kI
       0.0, // kD
       new TrapezoidProfile.Constraints(MAX_VELOCITY_ROT_PER_SEC, MAX_ACCEL_ROT_PER_SEC2));
 
   // Feedforward (kS, kV, kA — in volts, volts*s/deg, volts*s^2/deg)
   // TODO: Tune feedforward gains via SysId
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 4.5, 0.0);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 3.5, 0.0);
 
   private boolean isRezeroed = false;
   private boolean isRezeroing = false;
