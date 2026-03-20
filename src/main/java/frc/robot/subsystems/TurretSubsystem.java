@@ -35,8 +35,8 @@ public class TurretSubsystem extends SubsystemBase {
 
   private final double MAX_ONE_DIR_FOV = 90; // degrees
 
-  private static final double M12_OFFSET = 0.944253;
-  private static final double M13_OFFSET = 0.307141;
+  private static final double M12_OFFSET = 0.941502;
+  private static final double M13_OFFSET = 0.819344;
 
   public final Translation3d turretTranslation = new Translation3d(
       Inches.of(-6.25),
