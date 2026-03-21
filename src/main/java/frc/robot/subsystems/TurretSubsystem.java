@@ -97,7 +97,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   public Command rezero() {
     final ArrayList<Double> samples = new ArrayList<>();
-    double averageTime = 3.0;
+    double averageTime = 1.0;
 
     return Commands.sequence(
         Commands.runOnce(() -> {
