@@ -108,7 +108,6 @@
   "splits":[0]
  },
  "events":[
-   {"name":"intakeDeployCommand", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intakeDeployCommand"}}},
    {"name":"ShootOnTheMoveCommand", "from":{"target":1, "targetTimestamp":2.47262, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"ShootOnTheMoveCommand"}}},
    {"name":"feedAllCommand", "from":{"target":1, "targetTimestamp":2.47262, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"feedAllCommand"}}}]
 }
