@@ -55,6 +55,7 @@ public class KickerSubsystem extends SubsystemBase {
 
   public KickerSubsystem() {
     this.setDefaultCommand(Commands.run(() -> smc.setDutyCycle(0), this));
+    //  this.setDefaultCommand(Commands.run(() -> kicker.setSpeed(RPM.of(0)), this));
   }
 
   public Command feedCommand() {

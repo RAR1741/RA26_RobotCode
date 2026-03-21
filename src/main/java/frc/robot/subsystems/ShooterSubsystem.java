@@ -74,8 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
           .abs(RPM) < SuperstructureConstants.k_shooterRPMTolerance.in(RPM));
 
   public ShooterSubsystem() {
-    // this.setDefaultCommand(Commands.run(() -> shooter.setSpeed(RPM.of(0)),
-    // this));
+    this.setDefaultCommand(Commands.run(() -> shooter.setSpeed(RPM.of(0)), this));
   }
 
   public Command shoot() {

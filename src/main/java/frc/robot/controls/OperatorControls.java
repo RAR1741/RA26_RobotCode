@@ -24,7 +24,7 @@ public class OperatorControls {
 
 
     // Comp controls
-    controller.povRight().onTrue(superstructure.turretCenterCommand());
+    controller.y().onTrue(superstructure.turretCenterCommand());
     controller.start().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
     

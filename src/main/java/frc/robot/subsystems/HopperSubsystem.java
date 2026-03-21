@@ -54,6 +54,7 @@ public class HopperSubsystem extends SubsystemBase {
 
   public HopperSubsystem() {
     this.setDefaultCommand(Commands.run(() -> smc.setDutyCycle(0), this));
+    //  this.setDefaultCommand(Commands.run(() -> hopper.setSpeed(RPM.of(0)), this));
   }
 
   public Command feedCommand() {

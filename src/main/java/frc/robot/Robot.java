@@ -9,7 +9,11 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.fasterxml.jackson.core.format.MatchStrength;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -76,7 +80,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());
+    if (DriverStation.getMatchType() == MatchType.None){
+      CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());    
+    }
   }
 
   @Override

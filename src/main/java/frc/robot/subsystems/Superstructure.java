@@ -65,19 +65,19 @@ public class Superstructure extends SubsystemBase {
         .andThen(
             Commands.parallel(
                 // intake.feedCommand().asProxy(),
-                hopper.feedCommand().asProxy(),
-                kicker.feedCommand().asProxy())
+                hopper.feedCommand(),
+                kicker.feedCommand())
                 .onlyWhile(isReadyToShoot))
         .repeatedly()
         .withName("Superstructure.feedAll");
   }
 
-  public Command shootCommand() {
-    return shooter.shoot().asProxy().withName("Superstructure.shoot");
-  }
+  // public Command shootCommand() {
+  //   return shooter.shoot().asProxy().withName("Superstructure.shoot");
+  // }
 
   public Command intakeCommand() {
-    return intake.intakeCommand().asProxy().withName("Superstructure.intake");
+    return intake.intakeCommand().withName("Superstructure.intake");
   }
 
   public Command intakeDeployAndRun() {
@@ -119,9 +119,9 @@ public class Superstructure extends SubsystemBase {
   public Command turretCenterCommand() {
     return 
     Commands.parallel(
-      shooter.stopCommand().asProxy(),
-      hood.setAngle(hood.MAX_ANGLE).asProxy(),
-      turret.setAngle(Degrees.of(0)).asProxy()
+      shooter.stopCommand(),
+      hood.setAngle(hood.MAX_ANGLE),
+      turret.setAngle(Degrees.of(0))
     ).withName("Superstructure.turretCenter");
   }
 
@@ -135,9 +135,9 @@ public class Superstructure extends SubsystemBase {
 
   public Command ejectAllFuel() {
     return Commands.parallel(
-        intake.ejectCommand().asProxy(),
-        hopper.ejectCommand().asProxy(),
-        kicker.ejectCommand().asProxy()).withName("Superstructure.ejectAllFuel");
+        intake.ejectCommand(),
+        hopper.ejectCommand(),
+        kicker.ejectCommand()).withName("Superstructure.ejectAllFuel");
   }
 
   public Command stopAllCommand() {
@@ -151,9 +151,9 @@ public class Superstructure extends SubsystemBase {
       Supplier<Angle> turretAngleSupplier,
       Supplier<Angle> hoodAngleSupplier) {
     return Commands.parallel(
-        shooter.setSpeedDynamic(shooterSpeedSupplier).asProxy(),
-        turret.setAngleDynamic(turretAngleSupplier).asProxy(),
-        hood.setAngleDynamic(hoodAngleSupplier).asProxy())
+        shooter.setSpeedDynamic(shooterSpeedSupplier),
+        turret.setAngleDynamic(turretAngleSupplier),
+        hood.setAngleDynamic(hoodAngleSupplier))
         .withName("Superstructure.aimDynamic");
   }
 

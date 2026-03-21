@@ -107,6 +107,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public IntakeSubsystem() {
     this.setDefaultCommand(Commands.runOnce(() -> rollerSmc.setDutyCycle(0), this));
+    // this.setDefaultCommand(Commands.run(() -> roller.setSpeed(RPM.of(0)), this));
 
     pivotAbsEncoder = new REVThroughBoreEncoder(2);
 

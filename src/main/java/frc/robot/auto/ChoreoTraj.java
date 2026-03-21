@@ -24,6 +24,13 @@ public record ChoreoTraj(
     Pose2d initialPoseBlue,
     Pose2d endPoseBlue
 ) {
+    public static final ChoreoTraj LeftBasic = new ChoreoTraj(
+        "LeftBasic",
+        OptionalInt.empty(),
+        2.47262,
+        new Pose2d(3.60111, 7.37503, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(1.2503, 7.20585, Rotation2d.fromRadians(3.12983))
+    );
     public static final ChoreoTraj LeftTrench = new ChoreoTraj(
         "LeftTrench",
         OptionalInt.empty(),
@@ -52,24 +59,17 @@ public record ChoreoTraj(
         new Pose2d(2.40635, 1.66408, Rotation2d.fromRadians(0)),
         new Pose2d(2.40635, 1.66408, Rotation2d.fromRadians(0))
     );
-    public static final ChoreoTraj LeftBasic = new ChoreoTraj(
-        "LeftBasic",
-        OptionalInt.empty(),
-        2.47262,
-        new Pose2d(3.60111, 7.37503, Rotation2d.fromRadians(3.14159)),
-        new Pose2d(1.2503, 7.20585, Rotation2d.fromRadians(3.12983))
-    );
 
     /**
      * A map between trajectory names and their corresponding data.
      * This allows for trajectory data to be looked up with strings during runtime.
      */
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
+        Map.entry("LeftBasic", LeftBasic),
         Map.entry("LeftTrench", LeftTrench),
         Map.entry("RightBasic", RightBasic),
         Map.entry("RightTrench", RightTrench),
-        Map.entry("TestPath", TestPath),
-        Map.entry("LeftBasic", LeftBasic)
+        Map.entry("TestPath", TestPath)
     );
 
     /**
