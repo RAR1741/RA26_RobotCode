@@ -39,8 +39,8 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.remote.TalonFXWrapper;
 
 public class HoodSubsystem extends SubsystemBase {
-  public Angle MIN_ANGLE = Degrees.of(45);
-  public Angle MAX_ANGLE = Degrees.of(73); // Should be 80, with a working bot
+  public Angle MIN_ANGLE = Degrees.of(40);
+  public Angle MAX_ANGLE = Degrees.of(80);
 
   private double GEAR_RATIO = 0.891 * 360.0; // output/input
 

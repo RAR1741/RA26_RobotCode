@@ -32,7 +32,7 @@ public class ShootOnTheMoveCommand extends Command {
 
   private Supplier<Translation3d> aimPointSupplier; // The point to aim at
   private AngularVelocity latestShootSpeed = RPM.of(0);
-  private Angle latestHoodAngle = Degrees.of(73.0);
+  private Angle latestHoodAngle = Degrees.of(80.0);
   private Angle latestTurretAngle = Degrees.of(0.0);
 
   public ShootOnTheMoveCommand(CommandSwerveDrivetrain drivetrain, Superstructure superstructure,
@@ -174,8 +174,8 @@ public class ShootOnTheMoveCommand extends Command {
     }
 
     // Default hood angle if we're not aiming at the hub
-    return Degrees.of(45.0);
-    // return Degrees.of(40.0);
+    // return Degrees.of(45.0);
+    return Degrees.of(40.0);
   }
 
   // meters, seconds
@@ -200,7 +200,7 @@ public class ShootOnTheMoveCommand extends Command {
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.2319, 73.0), // HUB (should be 80, with a working robot)
+      Map.entry(1.2319, 80.0), // HUB
       Map.entry(3.319674, 70.0), // TRENCH
       Map.entry(4.792132, 53.0)); // OUTPOST
 }
