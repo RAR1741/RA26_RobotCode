@@ -31,6 +31,13 @@ public record ChoreoTraj(
         new Pose2d(4.42112, 7.40523, Rotation2d.fromRadians(0)),
         new Pose2d(1.3637, 5.94601, Rotation2d.fromRadians(-3.13384))
     );
+    public static final ChoreoTraj RightBasic = new ChoreoTraj(
+        "RightBasic",
+        OptionalInt.empty(),
+        3.12472,
+        new Pose2d(3.64399, 0.63993, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
+    );
     public static final ChoreoTraj RightTrench = new ChoreoTraj(
         "RightTrench",
         OptionalInt.empty(),
@@ -45,12 +52,12 @@ public record ChoreoTraj(
         new Pose2d(2.40635, 1.66408, Rotation2d.fromRadians(0)),
         new Pose2d(2.40635, 1.66408, Rotation2d.fromRadians(0))
     );
-    public static final ChoreoTraj RightBasic = new ChoreoTraj(
-        "RightBasic",
+    public static final ChoreoTraj LeftBasic = new ChoreoTraj(
+        "LeftBasic",
         OptionalInt.empty(),
-        3.12472,
-        new Pose2d(3.64399, 0.63993, Rotation2d.fromRadians(3.14159)),
-        new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
+        2.47262,
+        new Pose2d(3.60111, 7.37503, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(1.2503, 7.20585, Rotation2d.fromRadians(3.12983))
     );
 
     /**
@@ -59,9 +66,10 @@ public record ChoreoTraj(
      */
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
         Map.entry("LeftTrench", LeftTrench),
+        Map.entry("RightBasic", RightBasic),
         Map.entry("RightTrench", RightTrench),
         Map.entry("TestPath", TestPath),
-        Map.entry("RightBasic", RightBasic)
+        Map.entry("LeftBasic", LeftBasic)
     );
 
     /**
