@@ -90,7 +90,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command stopCommand() {
-    return Commands.run(() -> setSpeed(RPM.of(0)));
+    return setSpeed(RPM.of(0));
   }
 
   public AngularVelocity getSpeed() {
