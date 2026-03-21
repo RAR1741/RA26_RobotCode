@@ -113,15 +113,20 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command turretLeftCommand() {
-    return turret.setAngle(Degrees.of(160)).asProxy().withName("Superstructure.turretLeft");
+    return turret.setAngle(Degrees.of(90)).asProxy().withName("Superstructure.turretLeft");
   }
 
   public Command turretCenterCommand() {
-    return turret.setAngle(Degrees.of(0)).asProxy().withName("Superstructure.turretCenter");
+    return 
+    Commands.parallel(
+      shooter.stopCommand().asProxy(),
+      hood.setAngle(hood.MAX_ANGLE).asProxy(),
+      turret.setAngle(Degrees.of(0)).asProxy()
+    ).withName("Superstructure.turretCenter");
   }
 
   public Command turretRightCommand() {
-    return turret.setAngle(Degrees.of(-160)).asProxy().withName("Superstructure.turretRight");
+    return turret.setAngle(Degrees.of(-90)).asProxy().withName("Superstructure.turretRight");
   }
 
   public Command turretRezeroCommand() {
