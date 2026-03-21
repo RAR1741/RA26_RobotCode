@@ -96,8 +96,8 @@ public class Constants {
 
     public static final double MAX_ONE_DIR_FOV = 110; // degrees
 
-    public static final double M12_OFFSET = 0.941502;
-    public static final double M13_OFFSET = 0.819344;
+    public static final double M12_OFFSET = 0.85376;
+    public static final double M13_OFFSET = 0.597265;
 
     public static final Translation3d turretTranslation = new Translation3d(
         Inches.of(-6.25),
