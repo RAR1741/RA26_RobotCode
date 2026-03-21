@@ -10,12 +10,16 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends LoggedRobot {
   private Simulation sim;
 
   private final RobotContainer m_robotContainer;
+
+  private final Field2d field = new Field2d();
 
   public Robot() {
     Logger.recordMetadata("ProjectName", "RA26_RobotCode");
@@ -28,11 +32,15 @@ public class Robot extends LoggedRobot {
     Logger.start();
 
     m_robotContainer = new RobotContainer();
+
+    SmartDashboard.putData(field);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    
+    field.setRobotPose(m_robotContainer.getSwerveSystem().getState().Pose);
   }
 
   @Override
