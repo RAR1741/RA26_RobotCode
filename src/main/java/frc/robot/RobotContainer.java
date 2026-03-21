@@ -108,6 +108,7 @@ public class RobotContainer {
   private AutoTrajectory addNamedEvents(AutoTrajectory traj) {
     // Intake
     traj.atTime("intakeCommand").onTrue(superstructure.intakeCommand());
+    traj.atTime("intakeDeployCommand").onTrue(superstructure.intakeDeployCommand());
     traj.atTime("intakeDeployAndRun").onTrue(superstructure.intakeDeployAndRun());
     traj.atTime("intakeStopCommand").onTrue(superstructure.intakeStopCommand());
 

@@ -57,6 +57,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
+    CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());
+
     // Auto is scheduled automatically by AutoChooser via RobotModeTriggers
     if (RobotBase.isSimulation()) {
       m_robotContainer.resetPoseToAutoStart();
