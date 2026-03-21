@@ -130,7 +130,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command ejectAllFuel() {
     return Commands.parallel(
-        // intake.ejectCommand().asProxy(),
+        intake.ejectCommand().asProxy(),
         hopper.ejectCommand().asProxy(),
         kicker.ejectCommand().asProxy()).withName("Superstructure.ejectAllFuel");
   }

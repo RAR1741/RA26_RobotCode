@@ -93,14 +93,15 @@ public class DriverControls {
 
     // controller.povLeft().onTrue(superstructure.turretLeftCommand());
     // controller.povRight().onTrue(superstructure.turretRightCommand());
-    controller.povUp().onTrue(superstructure.turretCenterCommand());
+    
+    // controller.povUp().onTrue(superstructure.turretCenterCommand());
 
-    controller.leftBumper().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
+    // controller.leftBumper().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
-    controller.rightBumper().toggleOnTrue(
-        new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
-            .ignoringDisable(true)
-            .withName("OperatorControls.aimCommand"));
+    // controller.rightBumper().toggleOnTrue(
+    //     new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
+    //         .ignoringDisable(true)
+    //         .withName("OperatorControls.aimCommand"));
 
     if (Robot.isSimulation()) {
       // Fire fuel 10 times per second while button is held
