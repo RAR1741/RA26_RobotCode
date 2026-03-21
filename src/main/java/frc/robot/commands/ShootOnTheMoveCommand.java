@@ -193,10 +193,10 @@ public class ShootOnTheMoveCommand extends Command {
   // meters, RPM
   private static final InterpolatingDoubleTreeMap PASS_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap
       .ofEntries(
-          Map.entry(5.281523, 1900.0), // Close bump
-          Map.entry(7.883727, 2500.0), // Midfield
-          Map.entry(10.29897, 3000.0), // Far bump
-          Map.entry(14.07683, 3500.0)); // Far wall
+          Map.entry(5.281523, 1700.0), // Close bump
+          Map.entry(7.883727, 2300.0), // Midfield
+          Map.entry(10.29897, 2800.0), // Far bump
+          Map.entry(14.07683, 3300.0)); // Far wall
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
