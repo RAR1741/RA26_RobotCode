@@ -58,8 +58,8 @@ public class IntakeSubsystem extends SubsystemBase {
       .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(PIVOT_GEAR_RATIO)))
       .withMotorInverted(false)
-      .withIdleMode(MotorMode.BRAKE)
-      .withStatorCurrentLimit(Amps.of(40.0));
+      .withIdleMode(MotorMode.BRAKE);
+      //.withStatorCurrentLimit(Amps.of(40.0));
 
   private final SmartMotorController pivotSmc = new SparkWrapper(
       pivotLeaderSpark,
