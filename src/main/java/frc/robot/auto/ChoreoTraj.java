@@ -45,10 +45,17 @@ public record ChoreoTraj(
         new Pose2d(3.64399, 0.63993, Rotation2d.fromRadians(3.14159)),
         new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
     );
+    public static final ChoreoTraj RightBasicNoIntake = new ChoreoTraj(
+        "RightBasicNoIntake",
+        OptionalInt.empty(),
+        3.12472,
+        new Pose2d(3.64399, 0.63993, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
+    );
     public static final ChoreoTraj RightTrench = new ChoreoTraj(
         "RightTrench",
         OptionalInt.empty(),
-        8.2377,
+        8.58753,
         new Pose2d(4.41034, 0.48382, Rotation2d.fromRadians(0)),
         new Pose2d(0.78979, 0.73477, Rotation2d.fromRadians(-3.13384))
     );
@@ -68,6 +75,7 @@ public record ChoreoTraj(
         Map.entry("LeftBasic", LeftBasic),
         Map.entry("LeftTrench", LeftTrench),
         Map.entry("RightBasic", RightBasic),
+        Map.entry("RightBasicNoIntake", RightBasicNoIntake),
         Map.entry("RightTrench", RightTrench),
         Map.entry("TestPath", TestPath)
     );
