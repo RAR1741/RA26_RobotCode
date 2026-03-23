@@ -11,4 +11,16 @@ public class REVThroughBoreEncoder extends DutyCycleEncoder {
     // - Ready: 973 ± 5
     setConnectedFrequencyThreshold(900);
   }
+
+  public REVThroughBoreEncoder(int channel, double expectedFrequency) {
+    super(channel);
+
+    // Based on logging:
+    // - Initializing: 764 ± 5
+    // - Ready: 973 ± 5
+    setConnectedFrequencyThreshold(900);
+
+    // Set correct frequency
+    setAssumedFrequency(expectedFrequency); // Hz
+  }
 }

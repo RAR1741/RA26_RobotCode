@@ -75,8 +75,8 @@ public class TurretSubsystem extends SubsystemBase {
           - profiledPID.getGoal().position).in(Degrees)) < SuperstructureConstants.k_turretTolerance.in(Degrees));
 
   public TurretSubsystem() {
-    m12TAbsEncoder = new REVThroughBoreEncoder(1);
-    m13TAbsEncoder = new REVThroughBoreEncoder(0);
+    m12TAbsEncoder = new REVThroughBoreEncoder(1, TurretConstants.m12Frequency);
+    m13TAbsEncoder = new REVThroughBoreEncoder(0, TurretConstants.m13Frequency);
 
     // Configure SparkMax
     SparkMaxConfig config = new SparkMaxConfig();
@@ -264,6 +264,9 @@ public class TurretSubsystem extends SubsystemBase {
     Logger.recordOutput("Turret/SetpointVelRotsPerSec", profiledPID.getSetpoint().velocity);
     Logger.recordOutput("Turret/AtGoal", profiledPID.atGoal());
     Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs());
+
+    Logger.recordOutput("Turret/frequency/m12", m12TAbsEncoder.getFrequency());
+    Logger.recordOutput("Turret/frequency/m13", m13TAbsEncoder.getFrequency());
   }
 
   @Override

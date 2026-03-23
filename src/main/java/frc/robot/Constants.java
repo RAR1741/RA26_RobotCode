@@ -99,6 +99,9 @@ public class Constants {
     public static final double M12_OFFSET = 0.85376;
     public static final double M13_OFFSET = 0.597265;
 
+    public static final double m12Frequency = 965.0; // Hz
+    public static final double m13Frequency = 978.0; // Hz
+
     public static final Translation3d turretTranslation = new Translation3d(
         Inches.of(-6.25),
         Inches.of(-6.75),
