@@ -72,7 +72,7 @@ public class Constants {
     public static final Time k_feedDownTime = Seconds.of(2.0);
 
     /** Current threshold (amps) to detect a stall when deploying. */
-    public static final double k_deployStallCurrentThreshold = 35.0;
+    public static final double k_deployStallCurrentThreshold = 30.0;
     /**
      * How long (seconds) current must stay above the threshold to count as a stall.
      */
