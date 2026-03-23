@@ -1,39 +1,317 @@
 {
   "hubs": [
     {
-      "x": 3007,
-      "y": 157,
-      "width": 1607,
-      "height": 808,
+      "x": -8,
+      "y": -8,
+      "width": 1680,
+      "height": 1077,
       "state": {
         "sidebar": {
-          "width": 300,
+          "width": 293,
           "expanded": [
-            "/SmartDashboard/Field/OdometryPose",
-            "/SmartDashboard/Field/Robot",
-            "/SmartDashboard/Field/XModules",
-            "/SmartDashboard/swerve/advantagescope",
-            "/SmartDashboard/MapleSim",
-            "/AdvantageKit/RealOutputs/Sim/RobotPose",
-            "/SmartDashboard/swerve"
+            "/Tuning/Shooter/ShooterMotor",
+            "/Tuning/Shooter/ShooterMotor/closedloop",
+            "/Mechanisms/Shooter/ShooterMotor",
+            "/Mechanisms/Shooter/ShooterMotor/motor",
+            "/Mechanisms/Shooter/ShooterMotor/rotor",
+            "/AdvantageKit/RealOutputs",
+            "/Mechanisms/Hood/HoodMotor",
+            "/Mechanisms/Hood/HoodMotor/motor",
+            "/Mechanisms/Hood/HoodMotor/closedloop/setpoint",
+            "/Mechanisms/Hood/HoodMotor/current",
+            "/Mechanisms/IntakePivot/PivotMotor",
+            "/Mechanisms/IntakePivot/PivotMotor/current",
+            "/Mechanisms/IntakePivot/PivotMotor/mechanism",
+            "/Mechanisms/IntakePivot/PivotMotor/motor",
+            "/Mechanisms/IntakePivot/PivotMotor/closedloop",
+            "/Mechanisms/IntakePivot/PivotMotor/closedloop/setpoint",
+            "/Mechanisms/IntakePivot/PivotMotor/rotor",
+            "/Mechanisms/Turret",
+            "/Mechanisms/Turret/TurretMotor",
+            "/Mechanisms/Turret/TurretMotor/closedloop",
+            "/Mechanisms/Turret/TurretMotor/closedloop/setpoint",
+            "/Mechanisms/Turret/TurretMotor/mechanism",
+            "/Mechanisms/Turret/TurretMotor/current",
+            "/Mechanisms/Turret/TurretMotor/motor",
+            "/AdvantageKit/RealOutputs/Turret/calculate",
+            "/Mechanisms/roller/RollerMotor",
+            "/Mechanisms/roller/RollerMotor/closedloop/setpoint",
+            "/Mechanisms/roller/RollerMotor/motor",
+            "/Mechanisms/roller/RollerMotor/rotor",
+            "/Mechanisms/roller/RollerMotor/mechanism",
+            "/Mechanisms/roller/RollerMotor/current",
+            "/Mechanisms/Shooter/ShooterMotor/closedloop",
+            "/Mechanisms/Shooter/ShooterMotor/closedloop/setpoint",
+            "/AdvantageKit/RealOutputs/ShootOnTheMove",
+            "/AdvantageKit/RealOutputs/ShootOnTheMove/RobotHeading",
+            "/Mechanisms/Hopper/HopperMotor",
+            "/Mechanisms/Hopper/HopperMotor/current",
+            "/AdvantageKit/RealOutputs/FieldSimulation/heading",
+            "/AdvantageKit/RealOutputs/FieldSimulation/heading/pigeon",
+            "/Mechanisms/Hopper/HopperMotor/closedloop",
+            "/Mechanisms/Hopper/HopperMotor/closedloop/setpoint",
+            "/Mechanisms/Hopper/HopperMotor/rotor",
+            "/Mechanisms/Hopper/HopperMotor/mechanism",
+            "/Mechanisms/Kicker/KickerMotor",
+            "/Mechanisms/Kicker/KickerMotor/closedloop/setpoint",
+            "/Mechanisms/Kicker/KickerMotor/mechanism",
+            "/Mechanisms/Kicker/KickerMotor/closedloop",
+            "/Mechanisms/Kicker/KickerMotor/limits",
+            "/Mechanisms/Hopper",
+            "/Mechanisms/Hopper/HopperMotor/limits",
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs/Auto",
+            "/AdvantageKit/RealOutputs/Choreo Alerts",
+            "/AdvantageKit/RealOutputs/Choreo Alerts/errors",
+            "/AdvantageKit/RealOutputs/Auto/chassisSpeeds",
+            "/AdvantageKit/RealOutputs/Auto/X"
           ]
         },
         "tabs": {
-          "selected": 3,
+          "selected": 4,
           "tabs": [
             {
               "type": 0,
               "title": "",
               "controller": null,
-              "controllerUUID": "loy0vs5fjh42ly5j6azpwuon54lsm5nf",
+              "controllerUUID": "g97xxwd6vw30pxjzv6epbgcnd9aosz5q",
               "renderer": "",
               "controlsHeight": 0
             },
             {
-              "type": 1,
-              "title": "Line Graph",
+              "type": 3,
+              "title": "Tele",
               "controller": {
-                "leftSources": [],
+                "sources": [
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/LLPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "model": "2026 KitBot",
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/DriveState/Pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "2026 KitBot"
+                    }
+                  },
+                  {
+                    "type": "gamePiece",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/AimTargetCorrected",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "variant": "Fuel"
+                    }
+                  }
+                ],
+                "game": "FRC:2026 Field"
+              },
+              "controllerUUID": "6r4q85ktvgadf32dgbfbx9grfeoqex98",
+              "renderer": {
+                "cameraIndex": -1,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  9.075786334418423,
+                  6.576799704224401,
+                  -4.683839188639608
+                ],
+                "cameraTarget": [
+                  4.983212838136752,
+                  1.1320301421474324,
+                  -2.0943584771004677
+                ]
+              },
+              "controlsHeight": 291
+            },
+            {
+              "type": 2,
+              "title": "Auto",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/LLPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/DriveState/Pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "bumpers": "#ff8c00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/SamplePose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/InitialPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/FinalPose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000"
+                    }
+                  }
+                ],
+                "field": "FRC:2026 Field",
+                "orientation": 0,
+                "size": "large"
+              },
+              "controllerUUID": "zpgkwpypm12mr2otpz4cws7pywe6cxgq",
+              "renderer": null,
+              "controlsHeight": 306
+            },
+            {
+              "type": 1,
+              "title": "AutoSpeeds",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/chassisSpeeds/vx",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "bold"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/commandedChassisSpeeds/vx",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#3b875a",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/chassisSpeeds/vy",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "bold"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/commandedChassisSpeeds/vy",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/chassisSpeeds/omega",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "bold"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/commandedChassisSpeeds/omega",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": "degrees/second",
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "aaqz6nikkhjs84i8lvgdq71e3y11eyed",
+              "renderer": null,
+              "controlsHeight": 254
+            },
+            {
+              "type": 1,
+              "title": "AutoX",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/X/sampleVX",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/X/sampleXCalc",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Auto/X/sampleXFinal",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
                 "rightSources": [],
                 "discreteSources": [],
                 "leftLockedRange": null,
@@ -49,116 +327,661 @@
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "v8eqw2uqjo9n76steymeyw5g88i3biae",
+              "controllerUUID": "5h5a2nv9quwkiltt4c6wnlct5yaw7ttb",
               "renderer": null,
               "controlsHeight": 200
             },
             {
-              "type": 2,
-              "title": "2D Field",
+              "type": 1,
+              "title": "Kicker",
               "controller": {
-                "sources": [],
-                "field": "FRC:2026 Field",
-                "orientation": 0,
-                "size": "large"
-              },
-              "controllerUUID": "dox8w70if5g8tlnoza04ddj3f0dbyo0y",
-              "renderer": null,
-              "controlsHeight": 200
-            },
-            {
-              "type": 3,
-              "title": "3D Field",
-              "controller": {
-                "sources": [
+                "leftSources": [
                   {
-                    "type": "robot",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Sim/RobotPose",
-                    "logType": "Pose2d",
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/mechanism/velocity",
+                    "logType": "Number",
                     "visible": true,
                     "options": {
-                      "model": "2026 KitBot"
+                      "color": "#2b66a2",
+                      "size": "normal"
                     }
                   },
                   {
-                    "type": "gamePiece",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/Fuel",
-                    "logType": "Pose3d[]",
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/closedloop/setpoint/velocity",
+                    "logType": "Number",
                     "visible": true,
                     "options": {
-                      "variant": "Fuel"
+                      "color": "#e5b31b",
+                      "size": "normal"
                     }
                   }
                 ],
-                "game": "FRC:2026 Field"
+                "rightSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/Mechanisms/Kicker/KickerMotor/limits/temperature",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
               },
-              "controllerUUID": "hqfgw1v7wxguag7mnwu6tr4abtw76zrj",
+              "controllerUUID": "w5fy2hl1rp61xzmeo24fs7op42tvlm1u",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Hopper",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/mechanism/velocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/closedloop/setpoint/velocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/current/stator",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/Mechanisms/Hopper/HopperMotor/limits/temperature",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "pg9q4ytoyc18s41d9isz009koncpug5l",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "AutoAim",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/ShootOnTheMove/DesiredTurretHeading",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/ShootOnTheMove/RobotHeading",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/hubDiff",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "xha3hjv27ldwfo0sgzpz5luyfqa4ipr6",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Rot Check",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/heading/pigeon",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/heading/pose",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/drivetrainAngularVelocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "bkcl7iknx68t7jmjdp203uhp66wnsj6e",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Turret",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/PositionRots",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/SetpointRots",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/GoalRots",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/m12TAbsAngleWithOffset",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/m13TAbsAngleWithOffset",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/m12TAbsAngle",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#5f4528",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/m13TAbsAngle",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/computeTurretAngleFromAbs",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/outputVolts",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/calculate/ffOutput",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#858584",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/calculate/outputVolts",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#3b875a",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/calculate/pidOutput",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#d993aa",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/closedLoopEnabled",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#c0b487"
+                    }
+                  }
+                ],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "crvn4hjla9h7q3p0zx5ez3end58bu0rc",
+              "renderer": null,
+              "controlsHeight": 306
+            },
+            {
+              "type": 1,
+              "title": "Roller",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/roller/RollerMotor/closedloop/setpoint/velocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/roller/RollerMotor/mechanism/velocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/roller/RollerMotor/motor/outputVoltage",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/roller/RollerMotor/current/stator",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "5qg66w8cjun4o4ymbs6esj7ky2ailzjh",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Shooter",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Shooter/ShooterMotor/closedloop/setpoint/velocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Shooter/ShooterMotor/rotor/velocity",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "ijo5j8yqsu3twbvh5qx6kxgorj77p4qj",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "Hood",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hood/MechanismSetpoint",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/motor/outputVoltage",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/current/stator",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Hood/Angle",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Hood/HoodMotor/closedloop/setpoint/position",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "lgvgmglr2llkccx8fwtq9pxr54gh1ajc",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "IntakePivot",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/IntakePivot/PivotMotor/motor/outputVoltage",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/IntakePivot/PivotMotor/current/stator",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/IntakePivot/PivotMotor/mechanism/position",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/IntakePivot/PivotMotor/closedloop/setpoint/position",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "8x2g1zv8vrtem3huf1hrjadh65sqpvlv",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 5,
+              "title": "Console",
+              "controller": "NT:/AdvantageKit/RealOutputs/Console",
+              "controllerUUID": "lmzmqroqb6yozlz0rzuxbnuchuaxis4n",
               "renderer": {
-                "cameraIndex": -1,
-                "orbitFov": 50,
-                "cameraPosition": [
-                  3.1633543281769336,
-                  6.109330082975031,
-                  -6.816309206052037
-                ],
-                "cameraTarget": [
-                  0,
-                  0.5,
-                  0
-                ]
+                "highlight": false
               },
-              "controlsHeight": 200
-            },
-            {
-              "type": 9,
-              "title": "Swerve",
-              "controller": {
-                "sources": [
-                  {
-                    "type": "states",
-                    "logKey": "NT:/SmartDashboard/swerve/advantagescope/currentStates",
-                    "logType": "SwerveModuleState[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#ff0000",
-                      "arrangement": "0,1,2,3"
-                    }
-                  },
-                  {
-                    "type": "states",
-                    "logKey": "NT:/SmartDashboard/swerve/advantagescope/desiredStates",
-                    "logType": "SwerveModuleState[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#0000ff",
-                      "arrangement": "0,1,2,3"
-                    }
-                  },
-                  {
-                    "type": "chassisSpeeds",
-                    "logKey": "NT:/SmartDashboard/swerve/advantagescope/desiredChassisSpeeds",
-                    "logType": "ChassisSpeeds",
-                    "visible": true,
-                    "options": {
-                      "color": "#0000ff"
-                    }
-                  },
-                  {
-                    "type": "rotation",
-                    "logKey": "NT:/SmartDashboard/swerve/advantagescope/robotRotation",
-                    "logType": "Rotation2d",
-                    "visible": true,
-                    "options": {}
-                  }
-                ],
-                "maxSpeed": 5,
-                "sizeX": 0.65,
-                "sizeY": 0.65,
-                "orientation": 1
-              },
-              "controllerUUID": "dlzbn4u6wah7cpafohlmyohrj3a5rozt",
-              "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 0
             }
           ]
         }

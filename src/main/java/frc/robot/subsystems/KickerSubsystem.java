@@ -8,8 +8,10 @@ import static edu.wpi.first.units.Units.RPM;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,12 +34,13 @@ public class KickerSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.0600, 0, 0)
+      .withClosedLoopController(0.0055, 0, 0)
+      .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
       .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(false)
-      .withIdleMode(MotorMode.BRAKE)
-      .withStatorCurrentLimit(Amps.of(40));
+      .withIdleMode(MotorMode.COAST);
+  // .withStatorCurrentLimit(Amps.of(40));
 
   private SmartMotorController smc = new SparkWrapper(kickerSpark, DCMotor.getNeoVortex(1), smcConfig);
 
@@ -51,11 +54,16 @@ public class KickerSubsystem extends SubsystemBase {
   private FlyWheel kicker = new FlyWheel(kickerConfig);
 
   public KickerSubsystem() {
-    this.setDefaultCommand(Commands.runOnce(() -> smc.setDutyCycle(0), this));
+    this.setDefaultCommand(Commands.run(() -> smc.setDutyCycle(0), this));
+    //  this.setDefaultCommand(Commands.run(() -> kicker.setSpeed(RPM.of(0)), this));
   }
 
   public Command feedCommand() {
     return kicker.setSpeed(KICKER_RPM).withName("Kicker.Feed");
+  }
+
+  public Command ejectCommand() {
+    return kicker.setSpeed(KICKER_RPM.unaryMinus()).withName("Kicker.Eject");
   }
 
   @Override
@@ -65,6 +73,8 @@ public class KickerSubsystem extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
+    double voltage = RoboRioSim.getVInVoltage();
     kicker.simIterate();
+    RoboRioSim.setVInVoltage(voltage);
   }
 }

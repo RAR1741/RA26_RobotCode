@@ -1,22 +1,11 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.wrappers.REVThroughBoreEncoder;
-
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -27,21 +16,25 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
+import frc.robot.Constants.SuperstructureConstants;
+import frc.robot.Constants.TurretConstants;
+import frc.robot.wrappers.REVThroughBoreEncoder;
 
 public class TurretSubsystem extends SubsystemBase {
-
-  private final double MAX_ONE_DIR_FOV = 90; // degrees
-
-  private static final double M12_OFFSET = 0.944253;
-  private static final double M13_OFFSET = 0.307141;
-
-  public final Translation3d turretTranslation = new Translation3d(
-      Inches.of(-6.25).in(Meters),
-      Inches.of(-6.75).in(Meters),
-      Inches.of(20.0).in(Meters));
-
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
   // Total reduction: 5 * 5 = 25:1
   public final double GEAR_RATIO = 1.0 / (5.0 * (60.0 / 12.0));
@@ -53,26 +46,33 @@ public class TurretSubsystem extends SubsystemBase {
   // Profiled PID controller (operates in degrees)
   // Max velocity: NEO free speed (5676 RPM) / gear ratio => deg/s
   // Max acceleration: set to match velocity (tune as needed)
-  private static final double MAX_VELOCITY_DEG_PER_SEC = 2.0; // ~1362 deg/s
-  private static final double MAX_ACCEL_DEG_PER_SEC2 = MAX_VELOCITY_DEG_PER_SEC; // ~1362 deg/s^2
+  private static final double MAX_VELOCITY_ROT_PER_SEC = 2.5; // ~1362 deg/s
+  private static final double MAX_ACCEL_ROT_PER_SEC2 = MAX_VELOCITY_ROT_PER_SEC; // ~1362 deg/s^2
 
   // TODO: Tune PID gains
   private final ProfiledPIDController profiledPID = new ProfiledPIDController(
-      30.0, // kP (tune me)
-      0.5, // kI
+      45.0, // kP (tune me)
+      4.0, // kI
       0.0, // kD
-      new TrapezoidProfile.Constraints(MAX_VELOCITY_DEG_PER_SEC, MAX_ACCEL_DEG_PER_SEC2));
+      new TrapezoidProfile.Constraints(MAX_VELOCITY_ROT_PER_SEC, MAX_ACCEL_ROT_PER_SEC2));
 
   // Feedforward (kS, kV, kA — in volts, volts*s/deg, volts*s^2/deg)
   // TODO: Tune feedforward gains via SysId
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 4.5, 0.0);
+  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 3.5, 0.0);
 
   private boolean isRezeroed = false;
+  private boolean isRezeroing = false;
   private boolean closedLoopEnabled = false;
 
   // Absolute encoders
   private final REVThroughBoreEncoder m12TAbsEncoder;
   private final REVThroughBoreEncoder m13TAbsEncoder;
+
+  // public final Trigger isAtTarget = new Trigger(() -> profiledPID.atGoal());
+
+  public final Trigger isAtTarget = new Trigger(
+      () -> Math.abs(Rotations.of(turretEncoder.getPosition()
+          - profiledPID.getGoal().position).in(Degrees)) < SuperstructureConstants.k_turretTolerance.in(Degrees));
 
   public TurretSubsystem() {
     m12TAbsEncoder = new REVThroughBoreEncoder(1);
@@ -92,37 +92,54 @@ public class TurretSubsystem extends SubsystemBase {
 
     turretSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    profiledPID.setTolerance(1.0 / 360.0); // 1 degree tolerance
+    profiledPID.setTolerance(SuperstructureConstants.k_turretTolerance.in(Degrees));
   }
 
   public Command rezero() {
-    return Commands.runOnce(() -> {
-      Angle turretAngle = computeTurretAngleFromAbs();
+    final ArrayList<Double> samples = new ArrayList<>();
+    double averageTime = 1.0;
 
-      System.out.println("==============================");
-      System.out.println("====== Rezeroing turret ======");
-      System.out.println("==============================");
-      System.out.println(
-          "Setting Offset: " + turretAngle.in(Degrees) + " deg (" + turretAngle.in(Rotations) + " rot)");
+    return Commands.sequence(
+        Commands.runOnce(() -> {
+          isRezeroing = true;
+          samples.clear();
+          System.out.println("==============================");
+          System.out.println("== Rezeroing turret (3s avg) =");
+          System.out.println("==============================");
+        }),
+        Commands.run(() -> {
+          samples.add(computeTurretAngleFromAbs().in(Rotations));
+        }, this).withTimeout(averageTime),
+        Commands.runOnce(() -> {
+          double avgRotations = samples.stream()
+              .mapToDouble(Double::doubleValue)
+              .average()
+              .orElse(0.0);
+          Angle turretAngle = Rotations.of(avgRotations);
 
-      // Set encoder position in degrees (conversion factor is already applied)
-      turretEncoder.setPosition(turretAngle.in(Rotations));
-      profiledPID.reset(turretAngle.in(Rotations));
+          System.out.println("Averaged " + samples.size() + " samples over 3 seconds");
+          System.out.println(
+              "Setting Offset: " + turretAngle.in(Degrees) + " deg (" + turretAngle.in(Rotations) + " rot)");
 
-      isRezeroed = true;
-    }, this)
+          // Set encoder position (conversion factor is already applied)
+          turretEncoder.setPosition(avgRotations);
+          profiledPID.reset(avgRotations);
+
+          isRezeroed = true;
+        }, this))
+        .finallyDo(() -> isRezeroing = false)
         .ignoringDisable(true)
         .withName("Turret.Rezero");
   }
 
   @AutoLogOutput(key = "Turret/m12TAbsAngleWithOffset")
   private double getM12TAbsAngleWithOffset() {
-    return (getM12TAbsAngle() - M12_OFFSET + 1.0) % 1.0;
+    return (getM12TAbsAngle() - TurretConstants.M12_OFFSET + 1.0) % 1.0;
   }
 
   @AutoLogOutput(key = "Turret/m13TAbsAngleWithOffset")
   private double getM13TAbsAngleWithOffset() {
-    return (getM13TAbsAngle() - M13_OFFSET + 1.0) % 1.0;
+    return (getM13TAbsAngle() - TurretConstants.M13_OFFSET + 1.0) % 1.0;
   }
 
   @AutoLogOutput(key = "Turret/m12TAbsAngle")
@@ -157,18 +174,8 @@ public class TurretSubsystem extends SubsystemBase {
     return Degrees.of(turretAngleDeg);
   }
 
-  /**
-   * Returns the current turret position in degrees from the relative encoder.
-   */
-  private double getPositionDegrees() {
-    return Rotations.of(turretEncoder.getPosition()).in(Degrees);
-  }
-
-  /**
-   * Returns the current turret velocity in deg/s from the relative encoder.
-   */
-  private double getVelocityDegreesPerSec() {
-    return Rotations.of(turretEncoder.getVelocity()).in(Degrees);
+  public Translation3d getTurretTranslation() {
+    return TurretConstants.turretTranslation;
   }
 
   public Command setAngle(Angle angle) {
@@ -188,6 +195,8 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public Angle clampSafeAngle(Angle angle) {
+    double MAX_ONE_DIR_FOV = TurretConstants.MAX_ONE_DIR_FOV;
+
     if (angle.in(Degrees) > MAX_ONE_DIR_FOV) {
       return Degrees.of(MAX_ONE_DIR_FOV);
     } else if (angle.in(Degrees) < -MAX_ONE_DIR_FOV) {
@@ -220,7 +229,7 @@ public class TurretSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Auto-rezero when absolute encoders become available
-    if (!isRezeroed && m12TAbsEncoder.isConnected() && m13TAbsEncoder.isConnected()) {
+    if (!isRezeroed && !isRezeroing && m12TAbsEncoder.isConnected() && m13TAbsEncoder.isConnected()) {
       CommandScheduler.getInstance().schedule(rezero());
     }
 

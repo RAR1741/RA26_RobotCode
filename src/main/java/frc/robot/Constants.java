@@ -1,9 +1,9 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.RPM;
-
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Seconds;
 
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
@@ -17,6 +17,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class Constants {
@@ -44,6 +45,10 @@ public class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
 
+    public static final double k_slowModeMin = 0.25; // Scales down max speed when slow mode is active
+    public static final double k_standardSpeed = 0.5; // Normal max speed
+    public static final double k_boostModeScaler = 1.0; // Scales up max speed when boost mode is active
+
     // Joystick Deadband
     public static final double k_DEADBAND = 0.1;
   }
@@ -54,10 +59,28 @@ public class Constants {
     public static final int k_rollerMotorId = 32;
 
     public static final Angle k_IntakeStow = Degrees.of(0);
-    // public static final Angle k_IntakeFeed = Degrees.of(59);
+    public static final Angle k_IntakeFeed = Degrees.of(80);
     // public static final Angle k_IntakeHold = Degrees.of(115);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
-    public static final Angle k_IntakeDeployed = Degrees.of(73);
+    public static final Angle k_IntakeDeployed = Degrees.of(110);
+
+    // WARNING: make sure this doesn't loop over 0.0/1.0!
+    // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
+    public static final double k_pivotAbsEncoderOffset = 0.352112;
+
+    public static final Time k_feedUpTime = Seconds.of(0.5);
+    public static final Time k_feedDownTime = Seconds.of(2.0);
+
+    /** Current threshold (amps) to detect a stall when deploying. */
+    public static final double k_deployStallCurrentThreshold = 30.0;
+    /**
+     * How long (seconds) current must stay above the threshold to count as a stall.
+     */
+    public static final double k_deployStallDebounce = 0.5;
+    /** How far to back off (in degrees) when a deploy stall is detected. */
+    public static final Angle k_deployBackoffAngle = Degrees.of(15);
+    /** How long to wait (seconds) after backing off before retrying deploy. */
+    public static final Time k_deployRetryDelay = Seconds.of(1.0);
   }
 
   public static class HopperConstants {
@@ -70,6 +93,16 @@ public class Constants {
 
   public static class TurretConstants {
     public static final int k_turretMotorId = 50;
+
+    public static final double MAX_ONE_DIR_FOV = 110; // degrees
+
+    public static final double M12_OFFSET = 0.85376;
+    public static final double M13_OFFSET = 0.597265;
+
+    public static final Translation3d turretTranslation = new Translation3d(
+        Inches.of(-6.25),
+        Inches.of(-6.75),
+        Inches.of(20.0));
 
     // feet (NOT INCHES), seconds, degrees, pounds (mass), pound*ft/s^2 (force)
     public static final double k_gravitationalAcceleration = 32.174;
@@ -94,13 +127,26 @@ public class Constants {
   }
 
   public static class SuperstructureConstants {
-    private final static AngularVelocity targetShooterSpeed = RPM.of(0);
-    private final static Angle targetTurretAngle = Degrees.of(0);
+    public static final AngularVelocity k_shooterRPMTolerance = RPM.of(100);
+    public static final Angle k_turretTolerance = Degrees.of(2);
+    public static final Angle k_hoodTolerance = Degrees.of(2);
   }
 
   public static class FieldConstants {
     public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
     public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
+  }
+
+  public static class VisionConstants {
+    public static final double xyStdDevCoefficient = 0.005;
+    public static final double thetaStdDevCoefficient = 0.01;
+    public static final double stdDevFactor = 0.5;
+    // public static final boolean useVisionRotation = false;
+
+    public static final int minTagCount = 1;
+    public static final double maxAvgDistance = 100.0;
+    public static final double autoStdDevScale = 0.0;
+    public static final double autoTranslationMax = 100.0;
   }
 
   /**
@@ -153,12 +199,12 @@ public class Constants {
 
   public static enum AimPoints {
     RED_HUB(new Translation3d(11.938, 4.034536, 1.5748)),
-    RED_OUTPOST(new Translation3d(15.75, 7.25, 0)),
-    RED_FAR_SIDE(new Translation3d(15.75, 0.75, 0)),
+    RED_OUTPOST(new Translation3d(16.0, 7.0, 0)),
+    RED_FAR_SIDE(new Translation3d(16.0, 1.0, 0)),
 
     BLUE_HUB(new Translation3d(4.5974, 4.034536, 1.5748)),
-    BLUE_OUTPOST(new Translation3d(0.75, 0.75, 0)),
-    BLUE_FAR_SIDE(new Translation3d(0.75, 7.25, 0));
+    BLUE_OUTPOST(new Translation3d(0.0, 1.0, 0)),
+    BLUE_FAR_SIDE(new Translation3d(0.0, 7.0, 0));
 
     public final Translation3d value;
 
