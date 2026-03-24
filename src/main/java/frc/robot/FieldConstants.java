@@ -24,15 +24,22 @@ import java.io.IOException;
  * from the
  * perspective of the blue alliance station
  */
-public class FieldConstants {
+public final class FieldConstants {
   // Change to the vision constant after merge
   public static AprilTagFieldLayout FIELD_LAYOUT;
 
   static {
     try {
+      System.out.println("===============================");
+      System.out.println("=   Loading field layout...   =");
+      System.out.println("===============================");
+
       FIELD_LAYOUT = AprilTagFieldLayout.loadFromResource("/frc/robot/2026AprilTag.json");
       FIELD_LAYOUT.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
     } catch (IOException e) {
+      System.out.println("===============================");
+      System.out.println("============ ERROR ============");
+      System.out.println("===============================");
       e.printStackTrace();
     }
   }
@@ -212,10 +219,12 @@ public class FieldConstants {
     // Relevant reference points on alliance side
     public static final Translation3d openingTopLeft = new Translation3d(LinesVertical.hubCenter, openingWidth,
         openingHeight);
-    public static final Translation3d openingTopRight = new Translation3d(LinesVertical.hubCenter, 0, openingHeight);
+    public static final Translation3d openingTopRight = new Translation3d(LinesVertical.hubCenter, 0,
+        openingHeight);
 
     // Relevant reference points on opposing side
-    public static final Translation3d oppOpeningTopLeft = new Translation3d(LinesVertical.oppHubCenter, openingWidth,
+    public static final Translation3d oppOpeningTopLeft = new Translation3d(LinesVertical.oppHubCenter,
+        openingWidth,
         openingHeight);
     public static final Translation3d oppOpeningTopRight = new Translation3d(LinesVertical.oppHubCenter, 0,
         openingHeight);

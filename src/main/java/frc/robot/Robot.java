@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.StateConstants;
 
 public class Robot extends LoggedRobot {
   private Simulation sim;
@@ -34,8 +35,7 @@ public class Robot extends LoggedRobot {
 
     Logger.start();
 
-    // Initialize state manager constants
-    Constants.StateConstants.initConstants();
+    StateConstants.initConstants();
 
     m_robotContainer = new RobotContainer();
 
