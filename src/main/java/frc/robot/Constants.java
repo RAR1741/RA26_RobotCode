@@ -102,8 +102,8 @@ public class Constants {
     // - Old m13: (0.593744 - 0.587949) 0.005795 * 360 = 2.0862 deg
     // - New m13: (0.649539 - 0.64658) 0.002959 * 360 = 1.06524 deg
 
-    public static final double M12_OFFSET = 0.85376;
-    public static final double M13_OFFSET = 0.597265;
+    public static final double M12_OFFSET = 0.687852;
+    public static final double M13_OFFSET = 0.628145;
 
     public static final double m12Frequency = 965.0; // Hz
     public static final double m13Frequency = 978.0; // Hz
