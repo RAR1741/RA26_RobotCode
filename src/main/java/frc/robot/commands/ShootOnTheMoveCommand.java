@@ -120,6 +120,10 @@ public class ShootOnTheMoveCommand extends Command {
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
     latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
 
+    // Kicker corrective bias based on how close to forward/0 we are
+    // latestTurretAngle =
+    // latestTurretAngle.times(Double.valueOf(DriverStation.getGameSpecificMessage()));
+
     // FOR TESTING - DO NOT USE
     // var gameData = DriverStation.getGameSpecificMessage();
     // if (gameData != null && !gameData.isEmpty()) {

@@ -96,6 +96,12 @@ public class Constants {
 
     public static final double MAX_ONE_DIR_FOV = 110; // degrees
 
+    // Mechanical lash:
+    // - Old m12: (0.935568 - 0.927775) 0.007793 * 360 = 2.80548 deg
+    // - New m12: (0.718129 - 0.712218) 0.005911 * 360 = 2.12796 deg
+    // - Old m13: (0.593744 - 0.587949) 0.005795 * 360 = 2.0862 deg
+    // - New m13: (0.649539 - 0.64658) 0.002959 * 360 = 1.06524 deg
+
     public static final double M12_OFFSET = 0.85376;
     public static final double M13_OFFSET = 0.597265;
 
