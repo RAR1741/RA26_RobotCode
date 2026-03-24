@@ -183,7 +183,8 @@ public class TurretSubsystem extends SubsystemBase {
       // Safety check: prevent commanding angles outside of physical limits (which
       // could cause damage)
       closedLoopEnabled = true;
-      profiledPID.setGoal(clampSafeAngle(angle).in(Rotations));
+      Angle adjustedAngle = angle.plus(getAngle().minus(computeTurretAngleFromAbs()));
+      profiledPID.setGoal(clampSafeAngle(adjustedAngle).in(Rotations));
     }).withName("Turret.SetAngle(" + angle.in(Degrees) + " deg)");
   }
 

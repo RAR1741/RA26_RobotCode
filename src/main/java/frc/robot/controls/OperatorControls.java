@@ -22,12 +22,10 @@ public class OperatorControls {
     // Intake Pivot Rezero (for testing, not intended for driver use)
     // controller.back().onTrue(superstructure.intakeRezero().ignoringDisable(true));
 
-
     // Comp controls
     controller.y().onTrue(superstructure.turretCenterCommand());
     controller.start().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
-    
     controller.a().toggleOnTrue(
         new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
             .ignoringDisable(true)

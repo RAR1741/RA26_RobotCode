@@ -137,6 +137,7 @@ public class LimeLightSubsystem extends SubsystemBase {
         * VisionConstants.stdDevFactor
         * (DriverStation.isAutonomous() ? VisionConstants.autoStdDevScale : 1.0);
 
+    // TODO: maybe don't throw out values when enabled, so we don't do a finals 2...
     double thetaStdDev = !DriverStation.isEnabled()
         ? VisionConstants.thetaStdDevCoefficient
             * Math.pow(avgDistance, 2.0)
