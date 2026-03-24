@@ -14,7 +14,6 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Robot;
 import frc.robot.Simulation;
 import frc.robot.Telemetry;
-import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
@@ -33,8 +32,10 @@ public class DriverControls {
       .withDeadband(MaxSpeed * m_deadbandLimit).withRotationalDeadband(MaxAngularRate * m_deadbandLimit)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-  private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private static final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  // private static final SwerveRequest.SwerveDriveBrake brake = new
+  // SwerveRequest.SwerveDriveBrake();
+  // private static final SwerveRequest.PointWheelsAt point = new
+  // SwerveRequest.PointWheelsAt();
 
   public static double scale(double input) {
     double numeratorFactor = (Math.abs(input) - m_deadbandLimit);
@@ -93,15 +94,16 @@ public class DriverControls {
 
     // controller.povLeft().onTrue(superstructure.turretLeftCommand());
     // controller.povRight().onTrue(superstructure.turretRightCommand());
-    
+
     // controller.povUp().onTrue(superstructure.turretCenterCommand());
 
     // controller.leftBumper().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
     // controller.rightBumper().toggleOnTrue(
-    //     new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
-    //         .ignoringDisable(true)
-    //         .withName("OperatorControls.aimCommand"));
+    // new ShootOnTheMoveCommand(drivetrain, superstructure, () ->
+    // superstructure.getAimPoint())
+    // .ignoringDisable(true)
+    // .withName("OperatorControls.aimCommand"));
 
     if (Robot.isSimulation()) {
       // Fire fuel 10 times per second while button is held
