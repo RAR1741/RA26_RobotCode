@@ -11,7 +11,7 @@
             "title": "limelight-front",
             "x": 0.0,
             "y": 0.0,
-            "width": 768.0,
+            "width": 384.0,
             "height": 384.0,
             "type": "Camera Stream",
             "properties": {
@@ -21,44 +21,10 @@
             }
           },
           {
-            "title": "Has Tele Tasks",
-            "x": 1024.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/TaskScheduler/hasAnyTasks",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "Entrance Laser",
-            "x": 1152.0,
-            "y": 256.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/LaserCans/Entrance/seesCoral",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
             "title": "Battery Volts",
             "x": 0.0,
             "y": 384.0,
-            "width": 640.0,
+            "width": 384.0,
             "height": 128.0,
             "type": "Number Bar",
             "properties": {
@@ -74,9 +40,9 @@
           },
           {
             "title": "MatchTime",
-            "x": 1024.0,
+            "x": 384.0,
             "y": 384.0,
-            "width": 512.0,
+            "width": 384.0,
             "height": 128.0,
             "type": "Match Time",
             "properties": {
@@ -90,7 +56,7 @@
           },
           {
             "title": "turretReady",
-            "x": 896.0,
+            "x": 768.0,
             "y": 0.0,
             "width": 128.0,
             "height": 128.0,
@@ -107,8 +73,8 @@
           },
           {
             "title": "hoodReady",
-            "x": 1024.0,
-            "y": 0.0,
+            "x": 768.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -124,8 +90,8 @@
           },
           {
             "title": "shooterReady",
-            "x": 1152.0,
-            "y": 0.0,
+            "x": 768.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -141,13 +107,43 @@
           },
           {
             "title": "isReadyToShoot",
-            "x": 1280.0,
-            "y": 0.0,
+            "x": 768.0,
+            "y": 384.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "/AdvantageKit/RealOutputs/Superstructure/isReadyToShoot",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "limelight-front",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-front",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "isActive",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/AdvantageKit/RealOutputs/MatchInfo/isActive",
               "period": 0.06,
               "data_type": "boolean",
               "true_color": 4283215696,
@@ -168,7 +164,7 @@
             "title": "Field",
             "x": 0.0,
             "y": 0.0,
-            "width": 896.0,
+            "width": 768.0,
             "height": 384.0,
             "type": "Field",
             "properties": {
@@ -213,6 +209,19 @@
               "topic": "/SmartDashboard/Auto Chooser",
               "period": 0.06,
               "sort_options": false
+            }
+          },
+          {
+            "title": "limelight-front",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-front",
+              "period": 0.06,
+              "rotation_turns": 0
             }
           }
         ]

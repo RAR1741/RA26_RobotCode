@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.format.MatchStrength;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,7 +44,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    
+
     field.setRobotPose(m_robotContainer.getSwerveSystem().getState().Pose);
   }
 
@@ -80,13 +81,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    if (DriverStation.getMatchType() == MatchType.None){
-      CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());    
+    if (DriverStation.getMatchType() == MatchType.None) {
+      CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());
     }
   }
 
   @Override
   public void teleopPeriodic() {
+    logMatchInformation();
   }
 
   @Override
@@ -104,6 +106,62 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void testExit() {
+  }
+
+  public void logMatchInformation() {
+    String gameData = DriverStation.getGameSpecificMessage();
+    double timeLeftinMatch = DriverStation.getMatchTime();
+    Alliance ourAlliance = DriverStation.getAlliance().orElse(null);
+    boolean isActive = false;
+
+    if (gameData.length() > 0) {
+      switch (gameData.charAt(0)) {
+        // Blue is inactive first
+        case 'B':
+          isActive = (ourAlliance != null && ourAlliance == Alliance.Red);
+          break;
+
+        // Red is inactive first
+        case 'R':
+          isActive = (ourAlliance != null && ourAlliance == Alliance.Blue);
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    String logKey = "MatchInfo/isActive";
+
+    // Transition Shift
+    if (timeLeftinMatch <= 140 && timeLeftinMatch > 130) {
+      Logger.recordOutput(logKey, true);
+    }
+
+    // Shift One
+    else if (timeLeftinMatch <= 130 && timeLeftinMatch > 105) {
+      Logger.recordOutput(logKey, isActive);
+    }
+
+    // Shift Two
+    else if (timeLeftinMatch <= 105 && timeLeftinMatch > 80) {
+      Logger.recordOutput(logKey, !isActive);
+    }
+
+    // Shift Three
+    else if (timeLeftinMatch <= 80 && timeLeftinMatch > 55) {
+      Logger.recordOutput(logKey, isActive);
+    }
+
+    // Shift Four
+    else if (timeLeftinMatch <= 55 && timeLeftinMatch > 30) {
+      Logger.recordOutput(logKey, !isActive);
+    }
+
+    // Endgame
+    else if (timeLeftinMatch <= 30) {
+      Logger.recordOutput(logKey, true);
+    }
   }
 
   @Override
