@@ -36,6 +36,8 @@ public class Superstructure extends SubsystemBase {
   private Angle targetTurretAngle;
   @SuppressWarnings("unused")
   private Angle targetHoodAngle;
+  @SuppressWarnings("unused")
+  private boolean validTrajectory;
 
   // Trigger for readiness checks
   private final Trigger isReadyToShoot;
@@ -57,7 +59,7 @@ public class Superstructure extends SubsystemBase {
     this.limelight = new LimeLightSubsystem(drivetrain);
 
     // Create triggers for checking if mechanisms are at their targets
-    this.isReadyToShoot = shooter.isAtTarget.and(turret.isAtTarget).and(hood.isAtTarget);
+    this.isReadyToShoot = shooter.isAtTarget.and(turret.isAtTarget).and(hood.isAtTarget).and(new Trigger(() -> validTrajectory));
   }
 
   public Command feedAllCommand() {
@@ -192,10 +194,11 @@ public class Superstructure extends SubsystemBase {
         turret.getRobotAdjustedAngle());
   }
 
-  public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle, Angle hoodAngle) {
+  public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle, Angle hoodAngle, boolean doShoot) {
     targetShooterSpeed = shooterSpeed;
     targetTurretAngle = turretAngle;
     targetHoodAngle = hoodAngle;
+    validTrajectory = doShoot;
   }
 
   @Override
