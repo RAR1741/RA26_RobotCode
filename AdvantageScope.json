@@ -1,10 +1,10 @@
 {
   "hubs": [
     {
-      "x": -8,
-      "y": -8,
-      "width": 1680,
-      "height": 1077,
+      "x": 303,
+      "y": -1088,
+      "width": 1936,
+      "height": 1048,
       "state": {
         "sidebar": {
           "width": 293,
@@ -69,17 +69,20 @@
             "/Mechanisms/Hood",
             "/Mechanisms/Hood/HoodMotor/closedloop",
             "/Mechanisms/Hood/HoodMotor/mechanism",
-            "/AdvantageKit/RealOutputs/Turret",
             "/AdvantageKit/RealOutputs/Turret/frequency",
             "/Mechanisms/Hood/HoodMotor/control/feedforward",
             "/DriveState",
             "/DriveState/Pose",
             "/DriveState/Pose/translation",
-            "/DriveState/Pose/rotation"
+            "/DriveState/Pose/rotation",
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs/MatchInfo",
+            "/AdvantageKit/RealOutputs/StateManager",
+            "/AdvantageKit/RealOutputs/StateManager/IsReady"
           ]
         },
         "tabs": {
-          "selected": 3,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,
@@ -116,7 +119,7 @@
                   {
                     "type": "vision",
                     "logKey": "NT:/AdvantageKit/RealOutputs/ShootOnTheMove/rawTarget",
-                    "logType": "Translation3d",
+                    "logType": "Translation2d",
                     "visible": true,
                     "options": {
                       "color": "#00ff00",
@@ -140,17 +143,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  5.664723860615202,
-                  9.482077620053728,
-                  -0.45963026669711815
+                  9.888775924831974,
+                  17.411811178834295,
+                  -1.3519544801074928
                 ],
                 "cameraTarget": [
-                  4.981492833508811,
-                  1.1320301421474324,
-                  -0.4603593828973565
+                  1.9756986390589875,
+                  2.0203440884248316,
+                  -0.19058137030907418
                 ]
               },
-              "controlsHeight": 291
+              "controlsHeight": 220
             },
             {
               "type": 2,
@@ -435,6 +438,15 @@
                     "visible": true,
                     "options": {
                       "color": "#858584"
+                    }
+                  },
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/StateManager/State",
+                    "logType": "String",
+                    "visible": true,
+                    "options": {
+                      "color": "#3b875a"
                     }
                   }
                 ],

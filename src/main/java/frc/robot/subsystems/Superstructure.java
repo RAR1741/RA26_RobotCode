@@ -58,7 +58,10 @@ public class Superstructure extends SubsystemBase {
     this.limelight = new LimeLightSubsystem(drivetrain);
 
     // Create triggers for checking if mechanisms are at their targets
-    this.isReadyToShoot = shooter.isAtTarget.and(turret.isAtTarget).and(hood.isAtTarget);
+    this.isReadyToShoot = stateManager.hasValidTarget
+        .and(shooter.isAtTarget)
+        .and(turret.isAtTarget)
+        .and(hood.isAtTarget);
   }
 
   public Command feedAllCommand() {

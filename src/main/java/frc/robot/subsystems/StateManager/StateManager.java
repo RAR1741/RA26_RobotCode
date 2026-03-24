@@ -9,8 +9,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.StateConstants;
+import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.util.Zone;
@@ -38,6 +40,8 @@ public class StateManager extends SubsystemBase {
   private Pose2d pose;
   private CommandSwerveDrivetrain drivetrain;
   private Superstructure superstructure;
+
+  public final Trigger hasValidTarget = new Trigger(() -> !state.equals(State.PASS_DEAD_ZONE));
 
   public static class OperationStates {
     public static boolean inDecapitationZone = false;
@@ -163,6 +167,8 @@ public class StateManager extends SubsystemBase {
     Logger.recordOutput("StateManager/State", state);
     Logger.recordOutput("StateManager/StateTargetPose", getTargetPose());
 
+    Logger.recordOutput(
+        "StateManager/IsReady/hasValidTarget", hasValidTarget.getAsBoolean());
     Logger.recordOutput(
         "StateManager/IsReady/Shooter", superstructure.shooter.isAtTarget.getAsBoolean());
     Logger.recordOutput(

@@ -68,6 +68,12 @@ public class ShootOnTheMoveCommand extends Command {
 
   @Override
   public void execute() {
+    // Don't even try to calculate if we're in the pass dead zone, just don't shoot
+    if (superstructure.stateManager.getState() == State.PASS_DEAD_ZONE) {
+      Logger.recordOutput("ShootOnTheMove/rawTarget", drivetrain.getState().Pose.getTranslation());
+      return;
+    }
+
     // Calculate trajectory to aimPoint
     var target = aimPointSupplier.get();
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
