@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RPM;
 
 import choreo.auto.AutoFactory;
@@ -13,15 +12,11 @@ import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoChooser;
 import frc.robot.auto.ChoreoTraj;
 import frc.robot.commands.ShootOnTheMoveCommand;
@@ -40,8 +35,6 @@ public class RobotContainer {
   private final AutoFactory autoFactory;
   private final AutoChooser autoChooser;
 
-  private Alliance currentAlliance = Alliance.Red;
-
   public RobotContainer() {
     autoFactory = new AutoFactory(
         () -> swerve.getState().Pose,
@@ -52,20 +45,6 @@ public class RobotContainer {
 
     configureBindings();
     setupSmartDashboard();
-
-    // Initialize alliance (default to red if not present)
-    onAllianceChanged(getAlliance());
-
-    // Set up trigger to detect alliance changes
-    new Trigger(() -> getAlliance() != currentAlliance)
-        .onTrue(Commands.runOnce(() -> onAllianceChanged(getAlliance())).ignoringDisable(true));
-
-    // Triggers for auto aim/pass poses
-    new Trigger(() -> isInAllianceZone())
-        .onChange(Commands.runOnce(() -> onZoneChanged()).ignoringDisable(true));
-
-    new Trigger(() -> isOnAllianceOutpostSide())
-        .onChange(Commands.runOnce(() -> onZoneChanged()).ignoringDisable(true));
 
     if (!Robot.isReal() || true) {
       DriverStation.silenceJoystickConnectionWarning(true);
@@ -167,61 +146,5 @@ public class RobotContainer {
       swerve.resetPose(startPose);
       System.out.println("[Sim] Reset pose to start of auto: " + selected);
     }
-  }
-
-  private Alliance getAlliance() {
-    return DriverStation.getAlliance().orElse(Alliance.Red);
-  }
-
-  private boolean isInAllianceZone() {
-    Alliance alliance = getAlliance();
-    Distance blueZone = Inches.of(182);
-    Distance redZone = Inches.of(469);
-
-    if (alliance == Alliance.Blue && swerve.getState().Pose.getMeasureX().lt(blueZone)) {
-      return true;
-    } else if (alliance == Alliance.Red && swerve.getState().Pose.getMeasureX().gt(redZone)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private boolean isOnAllianceOutpostSide() {
-    Alliance alliance = getAlliance();
-    Distance midLine = Inches.of(158.84375);
-
-    if (alliance == Alliance.Blue && swerve.getState().Pose.getMeasureY().lt(midLine)) {
-      return true;
-    } else if (alliance == Alliance.Red && swerve.getState().Pose.getMeasureY().gt(midLine)) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private void onZoneChanged() {
-    if (isInAllianceZone()) {
-      superstructure.setAimPoint(Constants.AimPoints.getAllianceHubPosition());
-    } else {
-      if (isOnAllianceOutpostSide()) {
-        superstructure.setAimPoint(Constants.AimPoints.getAllianceOutpostPosition());
-      } else {
-        superstructure.setAimPoint(Constants.AimPoints.getAllianceFarSidePosition());
-      }
-    }
-  }
-
-  private void onAllianceChanged(Alliance alliance) {
-    currentAlliance = alliance;
-
-    // Update aim point based on alliance
-    if (alliance == Alliance.Blue) {
-      superstructure.setAimPoint(Constants.AimPoints.BLUE_HUB.value);
-    } else {
-      superstructure.setAimPoint(Constants.AimPoints.RED_HUB.value);
-    }
-
-    System.out.println("Alliance changed to: " + alliance);
   }
 }

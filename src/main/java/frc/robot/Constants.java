@@ -5,11 +5,17 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.ArrayList;
+
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
 import com.ctre.phoenix6.CANBus;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -128,6 +134,10 @@ public class Constants {
 
   public static class HoodConstants {
     public static final int k_hoodMotorId = 51;
+
+    // TODO: Update this after testing
+    public static final double boxXMultiplier = 0.15;
+    public static final double boxYMultiplier = 0.05;
   }
 
   public static class ShooterConstants {
@@ -139,11 +149,6 @@ public class Constants {
     public static final AngularVelocity k_shooterRPMTolerance = RPM.of(100);
     public static final Angle k_turretTolerance = Degrees.of(2);
     public static final Angle k_hoodTolerance = Degrees.of(2);
-  }
-
-  public static class FieldConstants {
-    public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
-    public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
   }
 
   public static class VisionConstants {
@@ -206,31 +211,111 @@ public class Constants {
         .withBumperSize(Inches.of(28.5), Inches.of(33.5));
   }
 
-  public static enum AimPoints {
-    RED_HUB(new Translation3d(11.938, 4.034536, 1.5748)),
-    RED_OUTPOST(new Translation3d(16.0, 7.0, 0)),
-    RED_FAR_SIDE(new Translation3d(16.0, 1.0, 0)),
+  // public static enum AimPoints {
+  // RED_HUB(new Translation3d(11.938, 4.034536, 1.5748)),
+  // RED_OUTPOST(new Translation3d(16.0, 7.0, 0)),
+  // RED_FAR_SIDE(new Translation3d(16.0, 1.0, 0)),
 
-    BLUE_HUB(new Translation3d(4.5974, 4.034536, 1.5748)),
-    BLUE_OUTPOST(new Translation3d(0.0, 1.0, 0)),
-    BLUE_FAR_SIDE(new Translation3d(0.0, 7.0, 0));
+  // BLUE_HUB(new Translation3d(4.5974, 4.034536, 1.5748)),
+  // BLUE_OUTPOST(new Translation3d(0.0, 1.0, 0)),
+  // BLUE_FAR_SIDE(new Translation3d(0.0, 7.0, 0));
 
-    public final Translation3d value;
+  // public final Translation3d value;
 
-    private AimPoints(Translation3d value) {
-      this.value = value;
-    }
+  // private AimPoints(Translation3d value) {
+  // this.value = value;
+  // }
 
-    public static final Translation3d getAllianceHubPosition() {
-      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_HUB.value : BLUE_HUB.value;
-    }
+  // public static final Translation3d getAllianceHubPosition() {
+  // return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ?
+  // RED_HUB.value : BLUE_HUB.value;
+  // }
 
-    public static final Translation3d getAllianceOutpostPosition() {
-      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_OUTPOST.value : BLUE_OUTPOST.value;
-    }
+  // public static final Translation3d getAllianceOutpostPosition() {
+  // return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ?
+  // RED_OUTPOST.value : BLUE_OUTPOST.value;
+  // }
 
-    public static final Translation3d getAllianceFarSidePosition() {
-      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_FAR_SIDE.value : BLUE_FAR_SIDE.value;
+  // public static final Translation3d getAllianceFarSidePosition() {
+  // return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ?
+  // RED_FAR_SIDE.value : BLUE_FAR_SIDE.value;
+  // }
+  // }
+
+  public static class StateConstants {
+    public static Translation2d blueLeftTrench = FieldConstants.FIELD_LAYOUT.getTagPose(23).get().getTranslation()
+        .toTranslation2d();
+    public static Translation2d blueRightTrench = FieldConstants.FIELD_LAYOUT.getTagPose(28).get().getTranslation()
+        .toTranslation2d();
+    public static Translation2d redLeftTrench = FieldConstants.FIELD_LAYOUT.getTagPose(7).get().getTranslation()
+        .toTranslation2d();
+    public static Translation2d redRightTrench = FieldConstants.FIELD_LAYOUT.getTagPose(12).get().getTranslation()
+        .toTranslation2d();
+
+    public static double fieldLength = FieldConstants.FIELD_LAYOUT.getFieldLength();
+    public static double fieldWidth = FieldConstants.FIELD_LAYOUT.getFieldWidth();
+    public static double trenchWidth = Units.inchesToMeters(50);
+    public static Translation2d centerField = new Translation2d(fieldLength / 2.0, fieldWidth / 2.0);
+
+    public static ArrayList<Translation2d> trenchList = new ArrayList<Translation2d>();
+
+    public static Translation2d[] passZoneOne = new Translation2d[4];
+    public static Translation2d[] passZoneTwo = new Translation2d[4];
+    public static Translation2d[] passZoneThree = new Translation2d[4];
+    public static Translation2d[] passZoneFour = new Translation2d[4];
+    public static Translation2d[] passZoneFive = new Translation2d[4];
+
+    public static final Pose2d hub = new Pose2d(
+        FieldConstants.Hub.innerCenterPoint.toTranslation2d(),
+        new Rotation2d());
+
+    public static final Pose2d passLeftTarget = new Pose2d(
+        blueLeftTrench.getX() / 2.0,
+        FieldConstants.fieldWidth * 0.75,
+        new Rotation2d());
+
+    public static final Pose2d passRightTarget = new Pose2d(
+        blueRightTrench.getX() / 2.0,
+        FieldConstants.fieldWidth * 0.25,
+        new Rotation2d());
+
+    public static void initConstants() {
+      double centerFieldY = centerField.getY();
+
+      double passDeadzone = 0.5;
+
+      trenchList.add(redLeftTrench);
+      trenchList.add(redRightTrench);
+      trenchList.add(blueLeftTrench);
+      trenchList.add(blueRightTrench);
+
+      // Zone One (Mid right)
+      passZoneOne[0] = new Translation2d(blueLeftTrench.getX(), centerFieldY);
+      passZoneOne[1] = new Translation2d(redLeftTrench.getX(), centerFieldY);
+      passZoneOne[2] = new Translation2d(blueLeftTrench.getX(), 0);
+      passZoneOne[3] = new Translation2d(redLeftTrench.getX(), 0);
+
+      // Zone Two (Mid left)
+      for (int i = 0; i < 4; i++) {
+        passZoneTwo[i] = passZoneOne[i].plus(new Translation2d(0, centerFieldY));
+      }
+
+      // Zone Three (Far right)
+      passZoneThree[0] = new Translation2d(redLeftTrench.getX(), 0);
+      passZoneThree[1] = new Translation2d(fieldLength, 0);
+      passZoneThree[2] = new Translation2d(fieldLength, centerFieldY - passDeadzone);
+      passZoneThree[3] = new Translation2d(redLeftTrench.getX(), centerFieldY - passDeadzone);
+
+      // Zone Four (Far left)
+      for (int i = 0; i < 4; i++) {
+        passZoneFour[i] = passZoneThree[i].plus(new Translation2d(0, centerFieldY + passDeadzone));
+      }
+
+      // Zone Five (Far center)
+      passZoneFive[0] = new Translation2d(redLeftTrench.getX(), centerFieldY - passDeadzone);
+      passZoneFive[1] = new Translation2d(fieldLength, centerFieldY - passDeadzone);
+      passZoneFive[2] = new Translation2d(fieldLength, centerFieldY + passDeadzone);
+      passZoneFive[3] = new Translation2d(redLeftTrench.getX(), centerFieldY + passDeadzone);
     }
   }
 }

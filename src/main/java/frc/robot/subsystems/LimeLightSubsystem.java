@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.Constants;
+import frc.robot.FieldConstants;
 import frc.robot.Constants.VisionConstants;
 import limelight.Limelight;
 import limelight.networktables.AngularVelocity3d;
@@ -166,11 +167,11 @@ public class LimeLightSubsystem extends SubsystemBase {
       return false;
     }
 
-    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > Constants.FieldConstants.k_length) {
+    if (estimate.pose.getX() <= 0 || estimate.pose.getX() > FieldConstants.fieldLength) {
       return false;
     }
 
-    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > Constants.FieldConstants.k_width) {
+    if (estimate.pose.getY() <= 0 || estimate.pose.getY() > FieldConstants.fieldWidth) {
       return false;
     }
 
