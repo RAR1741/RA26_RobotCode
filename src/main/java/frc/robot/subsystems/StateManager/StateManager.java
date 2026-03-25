@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.StateConstants;
-import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.util.Zone;
@@ -42,6 +41,7 @@ public class StateManager extends SubsystemBase {
   private Superstructure superstructure;
 
   public final Trigger hasValidTarget = new Trigger(() -> !state.equals(State.PASS_DEAD_ZONE));
+  public final Trigger inDecapitationZone = new Trigger(() -> OperationStates.inDecapitationZone);
 
   public static class OperationStates {
     public static boolean inDecapitationZone = false;
@@ -75,11 +75,11 @@ public class StateManager extends SubsystemBase {
     this.passZoneFour = new Zone(passZoneFourTranslation);
     this.passZoneFive = new Zone(passZoneFiveTranslation);
 
-    passZoneOne.logPoints("pass Zone 1");
-    passZoneTwo.logPoints("pass Zone 2");
-    passZoneThree.logPoints("pass Zone 3");
-    passZoneFour.logPoints("pass Zone 4");
-    passZoneFive.logPoints("pass Zone 5");
+    passZoneOne.logPoints("passZone1");
+    passZoneTwo.logPoints("passZone2");
+    passZoneThree.logPoints("passZone3");
+    passZoneFour.logPoints("passZone4");
+    passZoneFive.logPoints("passZone5");
 
     this.state = State.SHOOTING;
   }
@@ -119,11 +119,11 @@ public class StateManager extends SubsystemBase {
         passZoneFour.updateZone(toRedAlliance(passZoneFourTranslation));
         passZoneFive.updateZone(toRedAlliance(passZoneFiveTranslation));
 
-        passZoneOne.logPoints("PassZone1");
-        passZoneTwo.logPoints("PassZone2");
-        passZoneThree.logPoints("PassZone3");
-        passZoneFour.logPoints("PassZone4");
-        passZoneFive.logPoints("PassZone5");
+        passZoneOne.logPoints("passZone1");
+        passZoneTwo.logPoints("passZone2");
+        passZoneThree.logPoints("passZone3");
+        passZoneFour.logPoints("passZone4");
+        passZoneFive.logPoints("passZone5");
       }
     }
 
@@ -149,6 +149,20 @@ public class StateManager extends SubsystemBase {
     } else {
       setState(State.SHOOTING);
     }
+
+    // Print out the current zone
+    if (OperationStates.inPassZone1)
+      passZoneOne.logPoints("currentZone");
+    else if (OperationStates.inPassZone2)
+      passZoneTwo.logPoints("currentZone");
+    else if (OperationStates.inPassZone3)
+      passZoneThree.logPoints("currentZone");
+    else if (OperationStates.inPassZone4)
+      passZoneFour.logPoints("currentZone");
+    else if (OperationStates.inPassZone5)
+      passZoneFive.logPoints("currentZone");
+    else
+      Logger.recordOutput("Zones/currentZone", new Pose2d[] { new Pose2d(), new Pose2d(), new Pose2d(), new Pose2d() });
 
     // Logging
     Logger.recordOutput(

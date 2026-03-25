@@ -1,13 +1,13 @@
 {
   "hubs": [
     {
-      "x": 303,
-      "y": -1088,
-      "width": 1936,
-      "height": 1048,
+      "x": -8,
+      "y": -8,
+      "width": 1680,
+      "height": 1077,
       "state": {
         "sidebar": {
-          "width": 293,
+          "width": 312,
           "expanded": [
             "/Tuning/Shooter/ShooterMotor",
             "/Tuning/Shooter/ShooterMotor/closedloop",
@@ -63,7 +63,6 @@
             "/Mechanisms/Hopper/HopperMotor/motor",
             "/limelight-front/robot_orientation_set",
             "/Mechanisms/Kicker/KickerMotor/current",
-            "/AdvantageKit/RealOutputs",
             "/Mechanisms/Hood/HoodMotor/rotor",
             "/Mechanisms/Kicker/KickerMotor/motor",
             "/Mechanisms/Hood",
@@ -71,18 +70,15 @@
             "/Mechanisms/Hood/HoodMotor/mechanism",
             "/AdvantageKit/RealOutputs/Turret/frequency",
             "/Mechanisms/Hood/HoodMotor/control/feedforward",
-            "/DriveState",
-            "/DriveState/Pose",
             "/DriveState/Pose/translation",
             "/DriveState/Pose/rotation",
             "/AdvantageKit",
-            "/AdvantageKit/RealOutputs/MatchInfo",
-            "/AdvantageKit/RealOutputs/StateManager",
-            "/AdvantageKit/RealOutputs/StateManager/IsReady"
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/RealOutputs/Zones"
           ]
         },
         "tabs": {
-          "selected": 1,
+          "selected": 2,
           "tabs": [
             {
               "type": 0,
@@ -119,7 +115,7 @@
                   {
                     "type": "vision",
                     "logKey": "NT:/AdvantageKit/RealOutputs/ShootOnTheMove/rawTarget",
-                    "logType": "Translation2d",
+                    "logType": "Translation3d",
                     "visible": true,
                     "options": {
                       "color": "#00ff00",
@@ -143,17 +139,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  9.888775924831974,
-                  17.411811178834295,
-                  -1.3519544801074928
+                  5.664723860615202,
+                  9.482077620053728,
+                  -0.45963026669711815
                 ],
                 "cameraTarget": [
-                  1.9756986390589875,
-                  2.0203440884248316,
-                  -0.19058137030907418
+                  4.981492833508811,
+                  1.1320301421474324,
+                  -0.4603593828973565
                 ]
               },
-              "controlsHeight": 220
+              "controlsHeight": 291
             },
             {
               "type": 2,
@@ -213,6 +209,76 @@
                     "options": {
                       "timeRange": "enabled"
                     }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/DecapitationZone",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone1",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone2",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone3",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone4",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone5",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/currentZone",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
                   }
                 ],
                 "field": "FRC:2026 Field",
@@ -221,7 +287,63 @@
               },
               "controllerUUID": "zpgkwpypm12mr2otpz4cws7pywe6cxgq",
               "renderer": null,
-              "controlsHeight": 306
+              "controlsHeight": 198
+            },
+            {
+              "type": 1,
+              "title": "RotCheck",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/heading/pigeon",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/heading/pose",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/DriveState/Pose/rotation/value",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": "degrees",
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "t1hldmls03perx1l102ap776q0f09m8p",
+              "renderer": null,
+              "controlsHeight": 200
             },
             {
               "type": 1,
@@ -438,15 +560,6 @@
                     "visible": true,
                     "options": {
                       "color": "#858584"
-                    }
-                  },
-                  {
-                    "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/StateManager/State",
-                    "logType": "String",
-                    "visible": true,
-                    "options": {
-                      "color": "#3b875a"
                     }
                   }
                 ],
