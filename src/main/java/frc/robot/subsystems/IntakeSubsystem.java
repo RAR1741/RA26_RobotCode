@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -76,15 +77,19 @@ public class IntakeSubsystem extends SubsystemBase {
 
   // Nova motor controller with NEO motor
   private SparkFlex rollerSpark = new SparkFlex(Constants.IntakeConstants.k_rollerMotorId, MotorType.kBrushless);
+  private SparkFlex rollerSecondarySpark = new SparkFlex(Constants.IntakeConstants.k_rollerMotorSecondaryId,
+      MotorType.kBrushless);
 
   private SmartMotorControllerConfig rollerSmcConfig = new SmartMotorControllerConfig(this)
+      .withFollowers(Pair.of(rollerSecondarySpark, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.0300, 0, 0)
+      .withClosedLoopController(0.0100, 0, 0)
+      .withFeedforward(new SimpleMotorFeedforward(0.191, 0.09558, 0.0))
       .withTelemetry("RollerMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(true)
-      .withIdleMode(MotorMode.COAST)
-      .withStatorCurrentLimit(Amps.of(40));
+      .withIdleMode(MotorMode.COAST);
+  // .withStatorCurrentLimit(Amps.of(40));
 
   private SmartMotorController rollerSmc = new SparkWrapper(rollerSpark, DCMotor.getNeoVortex(1), rollerSmcConfig);
 

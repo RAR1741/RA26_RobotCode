@@ -60,6 +60,7 @@ public class Constants {
     public static final int k_pivotPrimaryMotorId = 30;
     public static final int k_pivotSecondaryMotorId = 31;
     public static final int k_rollerMotorId = 32;
+    public static final int k_rollerMotorSecondaryId = 33;
 
     public static final Angle k_IntakeStow = Degrees.of(0);
     public static final Angle k_IntakeFeed = Degrees.of(80);
