@@ -46,18 +46,18 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private final REVThroughBoreEncoder pivotAbsEncoder;
 
-  private static final double PIVOT_GEAR_RATIO = 5 * (36.0 / 24.0);
+  private static final double PIVOT_GEAR_RATIO = 9.0 * (48.0 / 22.0);
 
   private final SmartMotorControllerConfig pivotSmcConfig = new SmartMotorControllerConfig(this)
       .withFollowers(Pair.of(pivotSecondaySpark, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(7.5, 0, 0)
+      .withClosedLoopController(2.0, 0, 0)
       // .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
       .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(PIVOT_GEAR_RATIO)))
       .withMotorInverted(false)
       .withIdleMode(MotorMode.BRAKE);
-      //.withStatorCurrentLimit(Amps.of(40.0));
+  // .withStatorCurrentLimit(Amps.of(40.0));
 
   private final SmartMotorController pivotSmc = new SparkWrapper(
       pivotLeaderSpark,
