@@ -22,6 +22,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +34,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.wrappers.REVThroughBoreEncoder;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class TurretSubsystem extends SubsystemBase {
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
@@ -269,5 +271,13 @@ public class TurretSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // No YAMS sim — add simulation model here if needed
+  }
+
+  public static Translation2d getTurretVelocity(ChassisSpeeds robot, double rot){
+    double rotVel = robot.omegaRadiansPerSecond;
+    return new Translation2d(
+      robot.vxMetersPerSecond + Math.cos(rot) * TurretConstants.k_turretDistToRobotCenter * rotVel,
+      robot.vyMetersPerSecond + Math.sin(rot) * TurretConstants.k_turretDistToRobotCenter * rotVel
+    );
   }
 }

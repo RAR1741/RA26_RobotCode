@@ -122,10 +122,10 @@ public class HoodSubsystem extends SubsystemBase {
           // TODO: Add this back... please
           // hoodKraken.getConfigurator().apply(
           // new SoftwareLimitSwitchConfigs()
-          // .withForwardSoftLimitEnable(true)
-          // .withForwardSoftLimitThreshold(getScaledLimit(MAX_ANGLE))
-          // .withReverseSoftLimitEnable(true)
-          // .withReverseSoftLimitThreshold(getScaledLimit(MIN_ANGLE)));
+          //   .withForwardSoftLimitEnable(true)
+          //   .withForwardSoftLimitThreshold(getScaledLimit(MAX_ANGLE))
+          //   .withReverseSoftLimitEnable(true)
+          //   .withReverseSoftLimitThreshold(getScaledLimit(MIN_ANGLE)));
         })).withName("Hood.Home");
   }
 

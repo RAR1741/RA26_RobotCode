@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.AimPoints;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.ShooterInstruction;
 
 public class ShootOnTheMoveCommand extends Command {
@@ -51,7 +52,7 @@ public class ShootOnTheMoveCommand extends Command {
     latestTurretAngle = superstructure.getTurretAngle();
     latestShootSpeed = superstructure.getShooterSpeed();
 
-    // TODO: when this current command ends, we should probably cancel the dynamic
+    // when this current command ends, we should probably cancel the dynamic
     // aim command
     CommandScheduler.getInstance().schedule(superstructure.aimDynamicCommand(
         () -> {
@@ -74,9 +75,10 @@ public class ShootOnTheMoveCommand extends Command {
   public void execute() {
     Translation2d turretPosition = drivetrain.getState().Pose.getTranslation()
                                      .plus(superstructure.getShooterPose().toPose2d().getTranslation());
-    Translation2d turretVelocity = null // bruh i need this pls where do i find it
+    Translation2d turretVelocity = TurretSubsystem.getTurretVelocity(ChassisSpeeds
+    .fromRobotRelativeSpeeds(drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation()), drivetrain.getState().Pose.getRotation().getRadians());
 
-    ShooterInstruction instruction = ShooterInstruction.generateInstructionBareMinimumFunctional(turretPosition, turretVelocity);
+    ShooterInstruction instruction = ShooterInstruction.generateInstructionBareMinimumFunctional(turretPosition, turretVelocity, superstructure.getAimRotation3d(), superstructure.getShooterSpeed());
     superstructure.setShooterSetpoints(instruction.targetVelocity, instruction.targetYaw, instruction.targetPitch, instruction.doShoot);
 
     /*
@@ -151,10 +153,6 @@ public class ShootOnTheMoveCommand extends Command {
     // latestHoodAngle.in(Degrees)));
     // }
     */
-    superstructure.setShooterSetpoints(
-      latestShootSpeed,
-      latestTurretAngle,
-      latestHoodAngle);
 
     // System.out.println("Shooting at distance: " + correctedDistance + " requires
     // speed: " + latestShootSpeed

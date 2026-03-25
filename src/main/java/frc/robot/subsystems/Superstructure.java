@@ -36,7 +36,6 @@ public class Superstructure extends SubsystemBase {
   private Angle targetTurretAngle;
   @SuppressWarnings("unused")
   private Angle targetHoodAngle;
-  @SuppressWarnings("unused")
   private boolean validTrajectory;
 
   // Trigger for readiness checks

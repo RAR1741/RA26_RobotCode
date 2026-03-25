@@ -106,6 +106,11 @@ public class ShooterSubsystem extends SubsystemBase {
             * Inches.of(2).in(Meters));
   }
 
+  public static AngularVelocity launchVelocityToAngular(double velocity){
+    //omega = velocity/radius
+    return AngularVelocity.ofBaseUnits(velocity / Constants.TurretConstants.k_wheelRadius, RadiansPerSecond);
+  }
+
   @Override
   public void periodic() {
     shooter.updateTelemetry();

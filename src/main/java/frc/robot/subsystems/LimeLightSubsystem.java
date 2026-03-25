@@ -48,13 +48,9 @@ public class LimeLightSubsystem extends SubsystemBase {
       limelight.getSettings()
           .withLimelightLEDMode(LEDMode.PipelineControl)
           .withCameraOffset(new Pose3d(
-              // TODO: THIS
-              // -2.75 in RIGHT
-              // -12.75 in FORWARD
-              // 20.375 in UP
-              Inches.of(-12.75).in(Meters), // -0.32385
-              Inches.of(-2.75).in(Meters), // -0.06985
-              Inches.of(20.375).in(Meters), // 0.517525
+              Inches.of(-12.75).in(Meters), // -0.32385, FORWARD
+              Inches.of(-2.75).in(Meters), // -0.06985, RIGHT
+              Inches.of(20.375).in(Meters), // 0.517525, UP
               new Rotation3d(0, Degrees.of(20).in(Radians), Degrees.of(180).in(Radians))))
           // new Rotation3d(0, 21, 180)))
           .withImuMode(ImuMode.InternalImuMT1Assist)

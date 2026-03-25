@@ -21,6 +21,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ShooterSubsystem;
 // import frc.robot.Telemetry;
 // import frc.robot.subsystems.SwerveSystem;
 
@@ -30,11 +31,6 @@ public class ShooterInstruction {
     public static Boolean isBlueTeam = k_alliance == "Blue";
     public static Boolean isRedTeam = k_alliance == "Red";
     public static Boolean wonAuto = false; // must be updated
-
-    public final Translation3d turretTranslation = new Translation3d(
-        TurretConstants.k_turretRelativeX, 
-        TurretConstants.k_turretRelativeY, 
-        TurretConstants.k_turretHeight);
 
     public boolean doShoot;
     public Angle targetYaw;
@@ -48,9 +44,10 @@ public class ShooterInstruction {
         this.targetVelocity = targetVelocity;
     }
 
-    static ShooterInstruction HoldStateDontShoot() {
-        return null; // definitely todo
+    public static ShooterInstruction HoldStateDontShoot(Rotation3d rot3d, AngularVelocity angVel) {
+        // return null; // definitely todo
         // and be sure that the angle goes above the minimum trench angle by default here
+        return new ShooterInstruction(false, rot3d.getMeasureZ(), rot3d.getMeasureY(), angVel);
     }
 
     public static boolean hubIsActive(double time) {
@@ -108,7 +105,8 @@ public class ShooterInstruction {
         // x = dx - v * t - a/2 * t^2 = 0
         // double availableTime = (Math.sqrt(vIntoTrench * vIntoTrench + 2.0 * maxAcceleration * trenchDistance) - vIntoTrench) / maxAcceleration;
         double availableTime = ParabolicTrajectory.qFormulaGreater(-maxAcceleration / 2.0, -vIntoTrench, trenchDistance);
-        return AngleChangerSystem.pitchMotorToLaunchPitch(TurretConstants.k_maxTrenchPitchMotorPos + availableTime * TurretConstants.k_maxPitchMotorSpeed);
+        return TurretConstants.k_minAngleUnderTrench - availableTime * TurretConstants.k_maxAngleChangingRate;
+        // AngleChangerSystem.pitchMotorToLaunchPitch(TurretConstants.k_maxTrenchPitchMotorPos + availableTime * TurretConstants.k_maxPitchMotorSpeed);
     }
 
     public static boolean activeHubOnShot(ParabolicTrajectory testTrajectory) {
@@ -116,11 +114,9 @@ public class ShooterInstruction {
     }
 
     // see if these parameters need to be listed as suppliers
-    public static ShooterInstruction generateInstruction(Supplier<Pose2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier) {
-        Pose2d turretPosition = turretPositionSupplier.get();
+    public static ShooterInstruction generateInstruction(Pose2d turretPosition, Translation2d turretVelocity, Rotation3d currentTurretRotation, AngularVelocity currentShooterVelocity) {
         double turretX = turretPosition.getX();
         double turretY = turretPosition.getY();
-        Translation2d turretVelocity = turretVelocitySupplier.get();
         double turretVX = turretVelocity.getX();
         double turretVY = turretVelocity.getY();
 
@@ -142,12 +138,12 @@ public class ShooterInstruction {
             testTrajectory = ParabolicTrajectory.toZoneFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
         }
         if (testTrajectory == null) {
-            return ShooterInstruction.HoldStateDontShoot();
+            return ShooterInstruction.HoldStateDontShoot(currentTurretRotation, currentShooterVelocity);
         }
         ShooterInstruction testInstruction = new ShooterInstruction(!underTrenchBar && (!aimingToHub || activeHubOnShot(testTrajectory)), 
             Degrees.of(testTrajectory.launchDirection), 
             Degrees.of(testTrajectory.launchAngle), 
-            ShooterSystem.launchVelocityToAngular(testTrajectory.launchVelocity));
+            ShooterSubsystem.launchVelocityToAngular(testTrajectory.launchVelocity));
 
         double minAllowedAngle = getMinAllowedAngleToHub(turretX, turretY, turretVX, turretVY);
         double maxAllowedAngle = 80.0; // getMaxAllowedAngleToHub(turretX, turretY, turretVX, turretVY);
@@ -155,12 +151,12 @@ public class ShooterInstruction {
             if (testTrajectory.launchAngle < minAllowedAngle) {
                 testTrajectory = ParabolicTrajectory.toHubFromAXYWhileDriving(minAllowedAngle, turretX, turretY, turretVX, turretVY);
                 if (testTrajectory == null) {
-                    return ShooterInstruction.HoldStateDontShoot();
+                    return ShooterInstruction.HoldStateDontShoot(currentTurretRotation, currentShooterVelocity);
                 }
                 testInstruction = new ShooterInstruction(!underTrenchBar && activeHubOnShot(testTrajectory), 
                     Degrees.of(testTrajectory.launchDirection), 
                     Degrees.of(minAllowedAngle), 
-                    ShooterSystem.launchVelocityToAngular(testTrajectory.launchVelocity));
+                    ShooterSubsystem.launchVelocityToAngular(testTrajectory.launchVelocity));
             } else if (testTrajectory.launchAngle > maxAllowedAngle) {
                 testInstruction.targetPitch = Degrees.of(maxAllowedAngle);
                 testInstruction.doShoot = false;
@@ -180,11 +176,9 @@ public class ShooterInstruction {
     }
 
     // 70 degree launch to hub
-    public static ShooterInstruction generateInstructionJordanMode(Supplier<Translation2d> turretPositionSupplier, Supplier<Translation2d> turretVelocitySupplier) {
-        Translation2d turretPosition = turretPositionSupplier.get();
+    public static ShooterInstruction generateInstructionJordanMode(Translation2d turretPosition, Translation2d turretVelocity, Rotation3d currentTurretRotation, AngularVelocity currentShooterVelocity) {
         double turretX = turretPosition.getX();
         double turretY = turretPosition.getY();
-        Translation2d turretVelocity = turretVelocitySupplier.get();
         double turretVX = turretVelocity.getX();
         double turretVY = turretVelocity.getY();
 
@@ -198,12 +192,12 @@ public class ShooterInstruction {
             testTrajectory = ParabolicTrajectory.toZoneFromXYWhileDriving(turretX, turretY, turretVX, turretVY);
         }
         if (testTrajectory == null) {
-            return ShooterInstruction.HoldStateDontShoot();
+            return ShooterInstruction.HoldStateDontShoot(currentTurretRotation, currentShooterVelocity);
         }
         ShooterInstruction testInstruction = new ShooterInstruction(!underTrenchBar && (!aimingToHub || activeHubOnShot(testTrajectory)), 
             Degrees.of(testTrajectory.launchDirection), 
             Degrees.of(testTrajectory.launchAngle), 
-            ShooterSystem.launchVelocityToAngular(testTrajectory.launchVelocity));
+            ShooterSubsystem.launchVelocityToAngular(testTrajectory.launchVelocity));
 
         double minAllowedAngle = getMinAllowedAngleToHub(turretX, turretY, turretVX, turretVY); // min allowed angle is always at or below 70 degrees
         if (testTrajectory.launchAngle < minAllowedAngle) {
@@ -216,7 +210,7 @@ public class ShooterInstruction {
         return testInstruction;
     }
 
-    public static ShooterInstruction generateInstructionBareMinimumFunctional(Translation2d turretPosition, Translation2d turretVelocity) {
+    public static ShooterInstruction generateInstructionBareMinimumFunctional(Translation2d turretPosition, Translation2d turretVelocity, Rotation3d currentTurretRotation, AngularVelocity currentShooterVelocity) {
         double turretX = turretPosition.getX();
         double turretY = turretPosition.getY();
         double turretVX = turretVelocity.getX();
@@ -230,12 +224,12 @@ public class ShooterInstruction {
             testTrajectory = ParabolicTrajectory.toHubFromAXYWhileDriving(70.0, turretX, turretY, turretVX, turretVY);
         }
         if (testTrajectory == null) {
-            return HoldStateDontShoot();
+            return HoldStateDontShoot(currentTurretRotation, currentShooterVelocity);
         }
         ShooterInstruction testInstruction = new ShooterInstruction(!underTrenchBar && (!aimingToHub || activeHubOnShot(testTrajectory)), 
             Degrees.of(testTrajectory.launchDirection), 
             Degrees.of(testTrajectory.launchAngle), 
-            ShooterSystem.launchVelocityToAngular(testTrajectory.launchVelocity));
+            ShooterSubsystem.launchVelocityToAngular(testTrajectory.launchVelocity));
 
         if (!testTrajectory.testValid()) {
             testInstruction.doShoot = false;

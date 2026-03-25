@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.SuperstructureConstants;
+
+import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -27,9 +30,8 @@ public class ParabolicTrajectory {
                                           Double.NaN;
     public static double k_hubY = FieldConstants.k_hubY;
     public static double k_fuelRadius = FieldConstants.k_fuelRadius;
-    public static double k_launchDirectionTolerance = TurretConstants.k_launchDirectionTolerance;
-    public static double k_launchAngleTolerance = TurretConstants.k_launchAngleTolerance;
-    public static double k_launchVelocityTolerance = TurretConstants.k_launchVelocityTolerance;
+    public static double k_launchDirectionTolerance = Degrees.of(SuperstructureConstants.k_turretTolerance.magnitude()).baseUnitMagnitude();
+    public static double k_launchAngleTolerance = Degrees.of(SuperstructureConstants.k_hoodTolerance.magnitude()).baseUnitMagnitude();
     public static double k_maxLaunchVelocity = TurretConstants.k_maxLaunchVelocity;
 
     public static double targetLaunchVY = TurretConstants.k_targetLaunchVY;
@@ -170,12 +172,12 @@ public class ParabolicTrajectory {
 
     public static ParabolicTrajectory toZoneFromXYWhileDriving(double launchX, double launchY, double turretVX, double turretVY) {
         double targetX;
-        double targetY;
         double targetDirection;
         boolean doShoot = true;
         boolean topHalf = launchY > k_hubY;
         double extraYOffset = FieldConstants.k_hubNetOverhang + k_fuelRadius;
-        
+        double targetY = 0;
+
         if (isBlueTeam) {
             if (launchX > FieldConstants.k_redHubX && Math.abs(launchY - k_hubY) < k_hubBodyWidth / 2.0 + FieldConstants.k_hubNetOverhang + k_fuelRadius) {
                 targetX = k_allianceZoneDepth;
