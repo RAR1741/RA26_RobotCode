@@ -40,7 +40,7 @@ public class Constants {
 
     public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
 
-    public static final double k_maxAcceleration = 8.2; // TODO
+    public static final double k_maxAcceleration = 8.2; // 2.5 m/s^2 -> 8.2 ft/s^2. This may be increased to a more aggresive assumption for more safety
   }
 
   public static class ControllerConstants {
@@ -115,7 +115,7 @@ public class Constants {
     public static final double k_extraTimeToPassSensor = 1.5; // FIRST gave a shot distribution for this but it has a wide spread, so we should decide either more or less
     public static final double k_targetLaunchVY = 20.0;
     public static final double k_maxRPM = 6000.0; 
-    public static final double k_maxLaunchVelocity = 50.0; //TODO: TEST VALUES FOR THIS
+    public static final double k_maxLaunchVelocity = 40.0; // TODO: test values for this. 37 ft/s is the minimum according to parabolic calculations
     public static final double k_minLaunchAngle = 45.0; 
     public static final double k_maxLaunchAngle = 80.0;
     public static final double k_maxHubLaunchDistance = Math.hypot(FieldConstants.k_allianceZoneDepth, FieldConstants.k_hubY);
@@ -154,7 +154,7 @@ public static class FieldConstants { // feet (NOT INCHES)
     public static final double k_fuelRadius = 5.91 / 2.0 / 12.0;
     public static final double k_fuelMass = 0.474; // average
     public static final double k_ceilingHeight = 15.0; // estimated
-} // check and adjust constants
+} // always todo: check and adjust constants
 
   public static class HoodConstants {
     public static final int k_hoodMotorId = 51;

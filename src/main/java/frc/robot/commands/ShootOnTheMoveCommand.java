@@ -74,12 +74,25 @@ public class ShootOnTheMoveCommand extends Command {
   @Override
   public void execute() {
     Translation2d turretPosition = drivetrain.getState().Pose.getTranslation()
-                                     .plus(superstructure.getShooterPose().toPose2d().getTranslation());
-    Translation2d turretVelocity = TurretSubsystem.getTurretVelocity(ChassisSpeeds
-    .fromRobotRelativeSpeeds(drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation()), drivetrain.getState().Pose.getRotation().getRadians());
+      .plus(superstructure.getShooterPose().toPose2d().getTranslation());
 
-    ShooterInstruction instruction = ShooterInstruction.generateInstructionBareMinimumFunctional(turretPosition, turretVelocity, superstructure.getAimRotation3d(), superstructure.getShooterSpeed());
-    superstructure.setShooterSetpoints(instruction.targetVelocity, instruction.targetYaw, instruction.targetPitch, instruction.doShoot);
+    Translation2d turretVelocity = TurretSubsystem.getTurretVelocity(
+      ChassisSpeeds.fromRobotRelativeSpeeds(
+        drivetrain.getState().Speeds, 
+        drivetrain.getState().Pose.getRotation()), 
+      drivetrain.getState().Pose.getRotation());
+
+    ShooterInstruction instruction = ShooterInstruction.generateInstructionBareMinimumFunctional(
+      turretPosition, 
+      turretVelocity, 
+      superstructure.getAimRotation3d(), 
+      superstructure.getShooterSpeed());
+
+    superstructure.setShooterSetpoints(
+      instruction.targetVelocity, 
+      instruction.targetYaw, 
+      instruction.targetPitch, 
+      instruction.doShoot);
 
     /*
     // Calculate trajectory to aimPoint

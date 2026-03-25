@@ -47,7 +47,7 @@ public class ShooterInstruction {
     public static ShooterInstruction HoldStateDontShoot(Rotation3d rot3d, AngularVelocity angVel) {
         // return null; // definitely todo
         // and be sure that the angle goes above the minimum trench angle by default here
-        return new ShooterInstruction(false, rot3d.getMeasureZ(), rot3d.getMeasureY(), angVel);
+        return new ShooterInstruction(false, rot3d.getMeasureZ(), Degrees.of(90.0).minus(rot3d.getMeasureY()), angVel);
     }
 
     public static boolean hubIsActive(double time) {
@@ -78,11 +78,14 @@ public class ShooterInstruction {
             (FieldConstants.k_neutralZoneDepth + FieldConstants.k_hubZoneDepth) * 
                 ((robotX > FieldConstants.k_fieldLength / 2.0)? 1.0 : -1.0)) / 2.0)
              - FieldConstants.k_hubZoneDepth / 2.0 - TurretConstants.k_turretDistToRobotCenter;
+
         if (!yInTrench) {
             trenchDistance = Math.hypot(trenchDistance, 
                 FieldConstants.k_fieldWidth / 2.0 - FieldConstants.k_trenchWidth - 
                     Math.abs(robotY - FieldConstants.k_hubY));
-        } else if (trenchDistance < 0.0) {return TurretConstants.k_minAngleUnderTrench;}
+        } else if (trenchDistance < 0.0) {
+            return TurretConstants.k_minAngleUnderTrench;
+        }
 
         double trenchDistanceGradientX; // :)  :D  :P  we love gradients  :>  C:  'v'  yaaaay  :]  :3  'u'
         double trenchDistanceGradientY;

@@ -40,38 +40,38 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 public class ShooterSubsystem extends SubsystemBase {
 
   private final TalonFX leaderTalon = new TalonFX(
-      Constants.ShooterConstants.k_leaderMotorId,
-      Constants.ctreCANBus);
+    Constants.ShooterConstants.k_leaderMotorId,
+    Constants.ctreCANBus);
 
   private final TalonFX followerTalon = new TalonFX(
-      Constants.ShooterConstants.k_followerMotorId,
-      Constants.ctreCANBus);
+    Constants.ShooterConstants.k_followerMotorId,
+    Constants.ctreCANBus);
 
   private final SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-      .withFollowers(Pair.of(followerTalon, true))
-      .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.00936, 0, 0)
-      .withFeedforward(new SimpleMotorFeedforward(0.191, 0.1156, 0.0))
-      .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-      .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
-      .withMotorInverted(true)
-      .withIdleMode(MotorMode.COAST)
-      .withStatorCurrentLimit(Amps.of(40));
+    .withFollowers(Pair.of(followerTalon, true))
+    .withControlMode(ControlMode.CLOSED_LOOP)
+    .withClosedLoopController(0.00936, 0, 0)
+    .withFeedforward(new SimpleMotorFeedforward(0.191, 0.1156, 0.0))
+    .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
+    .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))
+    .withMotorInverted(true)
+    .withIdleMode(MotorMode.COAST)
+    .withStatorCurrentLimit(Amps.of(40));
 
   private final SmartMotorController smc = new TalonFXWrapper(leaderTalon, DCMotor.getKrakenX60(2), smcConfig);
 
   private final FlyWheelConfig shooterConfig = new FlyWheelConfig(smc)
-      .withDiameter(Inches.of(4))
-      .withMass(Pounds.of(1))
-      .withUpperSoftLimit(RPM.of(6000))
-      .withLowerSoftLimit(RPM.of(0))
-      .withTelemetry("Shooter", TelemetryVerbosity.HIGH);
+    .withDiameter(Inches.of(4))
+    .withMass(Pounds.of(1))
+    .withUpperSoftLimit(RPM.of(6000))
+    .withLowerSoftLimit(RPM.of(0))
+    .withTelemetry("Shooter", TelemetryVerbosity.HIGH);
 
   private final FlyWheel shooter = new FlyWheel(shooterConfig);
 
   public final Trigger isAtTarget = new Trigger(
-      () -> shooter.getMechanismSetpointVelocity().orElse(RPM.of(-1000)).minus(shooter.getSpeed())
-          .abs(RPM) < SuperstructureConstants.k_shooterRPMTolerance.in(RPM));
+    () -> shooter.getMechanismSetpointVelocity().orElse(RPM.of(-1000)).minus(shooter.getSpeed())
+            .abs(RPM) < SuperstructureConstants.k_shooterRPMTolerance.in(RPM));
 
   public ShooterSubsystem() {
     this.setDefaultCommand(Commands.run(() -> shooter.setSpeed(RPM.of(0)), this));
@@ -102,13 +102,14 @@ public class ShooterSubsystem extends SubsystemBase {
     // LinearVelocity
 
     return MetersPerSecond.of(
-        getSpeed().in(RadiansPerSecond)
-            * Inches.of(2).in(Meters));
+      getSpeed().in(RadiansPerSecond)
+        * Inches.of(2).in(Meters));
   }
 
   public static AngularVelocity launchVelocityToAngular(double velocity){
     //omega = velocity/radius
-    return AngularVelocity.ofBaseUnits(velocity / Constants.TurretConstants.k_wheelRadius, RadiansPerSecond);
+    return AngularVelocity.ofBaseUnits(velocity / Constants.TurretConstants.k_wheelRadius, RadiansPerSecond)
+            .div(TurretConstants.k_shootingVelocityTransferEfficiency);
   }
 
   @Override
