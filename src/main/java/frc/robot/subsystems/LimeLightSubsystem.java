@@ -137,14 +137,13 @@ public class LimeLightSubsystem extends SubsystemBase {
         * VisionConstants.stdDevFactor
         * (DriverStation.isAutonomous() ? VisionConstants.autoStdDevScale : 1.0);
 
-    // TODO: maybe don't throw out values when enabled, so we don't do a finals 2...
-    double thetaStdDev = !DriverStation.isEnabled()
-        ? VisionConstants.thetaStdDevCoefficient
+    // If enabled, don't trust. If disbled, trust but with a large std dev
+    double thetaStdDev = DriverStation.isEnabled()
+        ? Double.POSITIVE_INFINITY
+        : VisionConstants.thetaStdDevCoefficient
             * Math.pow(avgDistance, 2.0)
             / estimate.tagCount
-            * VisionConstants.stdDevFactor
-            * (DriverStation.isAutonomous() ? VisionConstants.autoStdDevScale : 1.0)
-        : Double.POSITIVE_INFINITY;
+            * VisionConstants.stdDevFactor;
 
     // Add it to the pose estimator.
     drivetrain.addVisionMeasurement(
