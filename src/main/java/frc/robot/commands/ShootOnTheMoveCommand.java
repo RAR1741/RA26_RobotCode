@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -191,8 +192,8 @@ public class ShootOnTheMoveCommand extends Command {
 
   // meters, RPM
   private static final InterpolatingDoubleTreeMap HUB_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.2319, 2350.0), // HUB
-      Map.entry(3.319674, 2350.0), // TRENCH
+      Map.entry(1.554228, 1900.0), // HUB
+      Map.entry(3.153828, 2100.0), // TRENCH
       Map.entry(4.792132, 2350.0)); // OUTPOST
 
   // meters, RPM
@@ -205,7 +206,7 @@ public class ShootOnTheMoveCommand extends Command {
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.2319, 80.0), // HUB
-      Map.entry(3.319674, 70.0), // TRENCH
-      Map.entry(4.792132, 53.0)); // OUTPOST
+      Map.entry(1.554228, 73.0), // HUB
+      Map.entry(3.153828, 54.5), // TRENCH
+      Map.entry(4.792132, 51.5)); // OUTPOST
 }

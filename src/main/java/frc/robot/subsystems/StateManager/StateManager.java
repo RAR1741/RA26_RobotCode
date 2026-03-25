@@ -202,7 +202,7 @@ public class StateManager extends SubsystemBase {
     var fieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(
         drivetrain.getState().Speeds, robotPose.getRotation());
 
-    // dimensions of no auto score zone
+    // Dimensions of no auto score zone
     double boxXDim = 1 + HoodConstants.boxXMultiplier * Math.abs(fieldRelative.vxMetersPerSecond);
     double boxYDim = StateConstants.trenchWidth
         + HoodConstants.boxYMultiplier * Math.abs(fieldRelative.vyMetersPerSecond);
