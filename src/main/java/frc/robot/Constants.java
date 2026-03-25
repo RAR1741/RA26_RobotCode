@@ -40,7 +40,7 @@ public class Constants {
 
     public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
 
-    public static final double k_maxAcceleration = 999999999.0; // TODO
+    public static final double k_maxAcceleration = 8.2; // TODO
   }
 
   public static class ControllerConstants {
