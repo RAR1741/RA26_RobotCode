@@ -27,7 +27,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class KickerSubsystem extends SubsystemBase {
-  private static final AngularVelocity KICKER_RPM = RPM.of(4000);
+  private static final AngularVelocity KICKER_RPM = RPM.of(1000);
 
   private SparkFlex kickerSpark = new SparkFlex(Constants.KickerConstants.kKickerMotorId, MotorType.kBrushless);
 

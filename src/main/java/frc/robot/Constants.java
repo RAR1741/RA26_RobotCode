@@ -134,7 +134,7 @@ public class Constants {
     public static final int k_hoodMotorId = 51;
 
     // TODO: Update this after testing
-    public static final double boxXMultiplier = 0.15;
+    public static final double boxXMultiplier = 0.25;
     public static final double boxYMultiplier = 0.05;
   }
 

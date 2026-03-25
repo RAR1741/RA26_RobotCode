@@ -52,7 +52,7 @@ public class Superstructure extends SubsystemBase {
     this.hopper = new HopperSubsystem();
     this.kicker = new KickerSubsystem();
     this.turret = new TurretSubsystem();
-    this.hood = new HoodSubsystem();
+    this.hood = new HoodSubsystem(stateManager);
     this.shooter = new ShooterSubsystem();
 
     this.limelight = new LimeLightSubsystem(drivetrain);

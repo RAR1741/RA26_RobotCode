@@ -41,7 +41,7 @@ public class StateManager extends SubsystemBase {
   private Superstructure superstructure;
 
   public final Trigger hasValidTarget = new Trigger(() -> !state.equals(State.PASS_DEAD_ZONE));
-  public final Trigger inDecapitationZone = new Trigger(() -> OperationStates.inDecapitationZone);
+  public final Trigger inDecapitationZoneTrigger = new Trigger(() -> OperationStates.inDecapitationZone);
 
   public static class OperationStates {
     public static boolean inDecapitationZone = false;

@@ -78,7 +78,13 @@ public class HoodSubsystem extends SubsystemBase {
       () -> hood.getMechanismSetpoint().orElse(Degrees.of(-100)).minus(hood.getAngle())
           .abs(Degrees) < SuperstructureConstants.k_hoodTolerance.in(Degrees));
 
-  public HoodSubsystem() {
+  private StateManager stateManager;
+
+  public HoodSubsystem(StateManager stateManager) {
+    this.stateManager = stateManager;
+
+    stateManager.inDecapitationZoneTrigger.onTrue(setAngle(MIN_SAFE_ANGLE));
+
     // YAMS Pivot bug workaround: the Pivot constructor creates a new DCMotorSim
     // at 0 radians and overwrites the SimSupplier, but never initializes the
     // DCMotorSim position to match withStartingPosition(). This causes the sim
@@ -137,7 +143,7 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   public Command setAngle(Angle angle) {
-    if (StateManager.OperationStates.inDecapitationZone && angle.lt(MIN_SAFE_ANGLE)) {
+    if (stateManager.inDecapitationZoneTrigger.getAsBoolean() && angle.lt(MIN_SAFE_ANGLE)) {
       angle = MIN_SAFE_ANGLE;
     }
     return hood.setAngle(angle);
