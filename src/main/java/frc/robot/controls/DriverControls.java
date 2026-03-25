@@ -32,8 +32,8 @@ public class DriverControls {
       .withDeadband(MaxSpeed * m_deadbandLimit).withRotationalDeadband(MaxAngularRate * m_deadbandLimit)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-  // private static final SwerveRequest.SwerveDriveBrake brake = new
-  // SwerveRequest.SwerveDriveBrake();
+  private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+
   // private static final SwerveRequest.PointWheelsAt point = new
   // SwerveRequest.PointWheelsAt();
 
@@ -75,7 +75,7 @@ public class DriverControls {
     RobotModeTriggers.disabled().whileTrue(
         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-    // controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    controller.x().whileTrue(drivetrain.applyRequest(() -> brake));
     // controller.b().whileTrue(drivetrain.applyRequest(
     // () -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(),
     // -controller.getLeftX()))));
