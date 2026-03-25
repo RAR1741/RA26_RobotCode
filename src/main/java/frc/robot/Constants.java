@@ -48,12 +48,16 @@ public class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
 
-    public static final double k_slowModeMin = 0.25; // Scales down max speed when slow mode is active
+    public static final double k_slowSpeed = 0.25; // Scales down max speed when slow mode is active
     public static final double k_standardSpeed = 0.5; // Normal max speed
-    public static final double k_boostModeScaler = 1.0; // Scales up max speed when boost mode is active
+    public static final double k_boostSpeed = 1.0; // Scales up max speed when boost mode is active
+
+    public static final double k_slowRot = 0.25;
+    public static final double k_standardRot = 0.75;
+    public static final double k_boostRot = 0.75;
 
     // Joystick Deadband
-    public static final double k_DEADBAND = 0.1;
+    public static final double k_DEADBAND = 0.01;
   }
 
   public static class IntakeConstants {
@@ -208,37 +212,6 @@ public class Constants {
             3))
         .withBumperSize(Inches.of(28.5), Inches.of(33.5));
   }
-
-  // public static enum AimPoints {
-  // RED_HUB(new Translation3d(11.938, 4.034536, 1.5748)),
-  // RED_OUTPOST(new Translation3d(16.0, 7.0, 0)),
-  // RED_FAR_SIDE(new Translation3d(16.0, 1.0, 0)),
-
-  // BLUE_HUB(new Translation3d(4.5974, 4.034536, 1.5748)),
-  // BLUE_OUTPOST(new Translation3d(0.0, 1.0, 0)),
-  // BLUE_FAR_SIDE(new Translation3d(0.0, 7.0, 0));
-
-  // public final Translation3d value;
-
-  // private AimPoints(Translation3d value) {
-  // this.value = value;
-  // }
-
-  // public static final Translation3d getAllianceHubPosition() {
-  // return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ?
-  // RED_HUB.value : BLUE_HUB.value;
-  // }
-
-  // public static final Translation3d getAllianceOutpostPosition() {
-  // return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ?
-  // RED_OUTPOST.value : BLUE_OUTPOST.value;
-  // }
-
-  // public static final Translation3d getAllianceFarSidePosition() {
-  // return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ?
-  // RED_FAR_SIDE.value : BLUE_FAR_SIDE.value;
-  // }
-  // }
 
   public static class StateConstants {
     public static Translation2d blueLeftTrench = FieldConstants.FIELD_LAYOUT.getTagPose(23).get().getTranslation()
