@@ -61,7 +61,7 @@
             "/AdvantageKit/RealOutputs/Auto/chassisSpeeds",
             "/AdvantageKit/RealOutputs/Auto/X",
             "/Mechanisms/Hopper/HopperMotor/motor",
-            "/limelight-front/robot_orientation_set",
+            "/limelight-up/robot_orientation_set",
             "/Mechanisms/Kicker/KickerMotor/current",
             "/Mechanisms/Hood/HoodMotor/rotor",
             "/Mechanisms/Kicker/KickerMotor/motor",
