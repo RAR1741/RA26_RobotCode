@@ -64,7 +64,7 @@ public class Constants {
 
     public static final Angle k_IntakeStow = Degrees.of(0);
     public static final Angle k_IntakeFeed = Degrees.of(80);
-    // public static final Angle k_IntakeHold = Degrees.of(115);
+    public static final Angle k_IntakeMaxWhileRoller = Degrees.of(103.5);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
     public static final Angle k_IntakeDeployed = Degrees.of(110);
 

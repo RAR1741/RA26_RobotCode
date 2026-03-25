@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
@@ -53,7 +54,7 @@ public class IntakeSubsystem extends SubsystemBase {
       .withFollowers(Pair.of(pivotSecondaySpark, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withClosedLoopController(2.0, 0, 0)
-      // .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
+      // .withFeedforward(new ArmFeedforward(0.191, 0.11858, 0.0))
       .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(PIVOT_GEAR_RATIO)))
       .withMotorInverted(false)
@@ -144,13 +145,14 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command feedCommand() {
-    return Commands.parallel(
-        setIntakeFeedPivot().asProxy(),
-        Commands.sequence(
-            roller.setSpeed(INTAKE_ROLLER_SPEED).withTimeout(IntakeConstants.k_feedUpTime),
-            roller.setSpeed(RPM.of(0)).withTimeout(IntakeConstants.k_feedDownTime))
-            .repeatedly())
-        .withName("Intake.feedCommand");
+    return setIntakeFeedPivot();
+    // return Commands.parallel(
+    // setIntakeFeedPivot().asProxy(),
+    // Commands.sequence(
+    // roller.setSpeed(INTAKE_ROLLER_SPEED).withTimeout(IntakeConstants.k_feedUpTime),
+    // roller.setSpeed(RPM.of(0)).withTimeout(IntakeConstants.k_feedDownTime))
+    // .repeatedly())
+    // .withName("Intake.feedCommand");
   }
 
   public Command stopCommand() {
@@ -175,7 +177,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command setIntakeFeedPivot() {
-    return intakePivot.setAngle(IntakeConstants.k_IntakeFeed);
+    return intakePivot.setAngle(IntakeConstants.k_IntakeMaxWhileRoller);
   }
 
   public Command setIntakeDeployed() {

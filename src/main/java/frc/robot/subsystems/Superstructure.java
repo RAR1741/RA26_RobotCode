@@ -68,7 +68,7 @@ public class Superstructure extends SubsystemBase {
     return Commands.waitUntil(isReadyToShoot)
         .andThen(
             Commands.parallel(
-                // intake.feedCommand().asProxy(),
+                // intake.feedCommand(),
                 hopper.feedCommand(),
                 kicker.feedCommand())
                 .onlyWhile(isReadyToShoot))
