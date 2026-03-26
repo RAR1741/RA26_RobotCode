@@ -7,7 +7,7 @@
       "height": 1077,
       "state": {
         "sidebar": {
-          "width": 312,
+          "width": 370,
           "expanded": [
             "/Tuning/Shooter/ShooterMotor",
             "/Tuning/Shooter/ShooterMotor/closedloop",
@@ -61,7 +61,7 @@
             "/AdvantageKit/RealOutputs/Auto/chassisSpeeds",
             "/AdvantageKit/RealOutputs/Auto/X",
             "/Mechanisms/Hopper/HopperMotor/motor",
-            "/limelight-up/robot_orientation_set",
+            "/limelight-front/robot_orientation_set",
             "/Mechanisms/Kicker/KickerMotor/current",
             "/Mechanisms/Hood/HoodMotor/rotor",
             "/Mechanisms/Kicker/KickerMotor/motor",
@@ -74,11 +74,13 @@
             "/DriveState/Pose/rotation",
             "/AdvantageKit",
             "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/RealOutputs/Zones"
+            "/AdvantageKit/RealOutputs/Limelight",
+            "/AdvantageKit/RealOutputs/Limelight/limelight-up",
+            "/AdvantageKit/RealOutputs/Limelight/limelight-down"
           ]
         },
         "tabs": {
-          "selected": 2,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,
@@ -93,16 +95,6 @@
               "title": "Tele",
               "controller": {
                 "sources": [
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/LLPose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {
-                      "model": "2026 KitBot",
-                      "color": "#00ff00"
-                    }
-                  },
                   {
                     "type": "robot",
                     "logKey": "NT:/DriveState/Pose",
@@ -130,6 +122,26 @@
                     "options": {
                       "variant": "Fuel"
                     }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Limelight/limelight-up/LLPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "model": "2026 KitBot",
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Limelight/limelight-down/LLPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "model": "2026 KitBot",
+                      "color": "#ff00ff"
+                    }
                   }
                 ],
                 "game": "FRC:2026 Field"
@@ -139,17 +151,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  5.664723860615202,
-                  9.482077620053728,
-                  -0.45963026669711815
+                  10.736770756021873,
+                  6.428151479223557,
+                  -6.628073042214669
                 ],
                 "cameraTarget": [
-                  4.981492833508811,
-                  1.1320301421474324,
-                  -0.4603593828973565
+                  4.950103591462153,
+                  -2.9184698579717754,
+                  -1.098298625425689
                 ]
               },
-              "controlsHeight": 291
+              "controlsHeight": 256
             },
             {
               "type": 2,
@@ -158,11 +170,20 @@
                 "sources": [
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/LLPose",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Limelight/limelight-up/LLPose",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
                       "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Limelight/limelight-down/LLPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff"
                     }
                   },
                   {
@@ -222,6 +243,16 @@
                   },
                   {
                     "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/currentZone",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone1",
                     "logType": "Pose2d[]",
                     "visible": true,
@@ -269,16 +300,6 @@
                       "color": "#ff00ff",
                       "size": "normal"
                     }
-                  },
-                  {
-                    "type": "trajectory",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/currentZone",
-                    "logType": "Pose2d[]",
-                    "visible": true,
-                    "options": {
-                      "color": "#00ff00",
-                      "size": "normal"
-                    }
                   }
                 ],
                 "field": "FRC:2026 Field",
@@ -287,7 +308,7 @@
               },
               "controllerUUID": "zpgkwpypm12mr2otpz4cws7pywe6cxgq",
               "renderer": null,
-              "controlsHeight": 198
+              "controlsHeight": 260
             },
             {
               "type": 1,
@@ -1005,7 +1026,7 @@
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "autoTarget": null,
+                  "autoTarget": "rotations/minute",
                   "preset": null
                 },
                 "rightUnitConversion": {
@@ -1050,7 +1071,7 @@
                     "type": "stepped",
                     "logKey": "NT:/Mechanisms/roller/RollerMotor/motor/outputVoltage",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e5b31b",
                       "size": "normal"
@@ -1071,7 +1092,7 @@
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "autoTarget": null,
+                  "autoTarget": "rotations/minute",
                   "preset": null
                 },
                 "rightUnitConversion": {
