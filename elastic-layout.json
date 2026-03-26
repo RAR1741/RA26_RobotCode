@@ -123,14 +123,14 @@
             }
           },
           {
-            "title": "limelight-up",
+            "title": "limelight-down",
             "x": 512.0,
             "y": 0.0,
             "width": 512.0,
             "height": 384.0,
             "type": "Camera Stream",
             "properties": {
-              "topic": "/CameraPublisher/limelight-up",
+              "topic": "/CameraPublisher/limelight-down",
               "period": 0.06,
               "rotation_turns": 0
             }
@@ -237,6 +237,19 @@
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/limelight-up",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "limelight-down",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-down",
               "period": 0.06,
               "rotation_turns": 0
             }
