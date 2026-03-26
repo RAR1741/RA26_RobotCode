@@ -44,14 +44,15 @@ public class IntakeSubsystem extends SubsystemBase {
   private static final AngularVelocity INTAKE_ROLLER_SPEED = RPM.of(3000.0);
 
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
-  private SparkMax pivotSecondaySpark = new SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
+  // private SparkMax pivotSecondaySpark = new
+  // SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
 
   private final REVThroughBoreEncoder pivotAbsEncoder;
 
   private static final double PIVOT_GEAR_RATIO = 9.0 * (48.0 / 22.0);
 
   private final SmartMotorControllerConfig pivotSmcConfig = new SmartMotorControllerConfig(this)
-      .withFollowers(Pair.of(pivotSecondaySpark, true))
+      // .withFollowers(Pair.of(pivotSecondaySpark, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
       .withClosedLoopController(2.0, 0, 0)
       // .withFeedforward(new ArmFeedforward(0.191, 0.11858, 0.0))
