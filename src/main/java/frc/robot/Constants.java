@@ -2,7 +2,9 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.ArrayList;
@@ -13,7 +15,9 @@ import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import com.ctre.phoenix6.CANBus;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -25,6 +29,30 @@ import edu.wpi.first.units.measure.Time;
 
 public class Constants {
   public static final CANBus ctreCANBus = new CANBus("Drivetrain");
+
+  public static class LimelightConstants {
+    public static final boolean IS_LIMELIGHT_ENABLED = true;
+
+    public static final String upName = "limelight-up";
+    public static final Pose3d upCameraOffset = new Pose3d(
+        Inches.of(-12.75).in(Meters), // FORWARD
+        Inches.of(-2.75).in(Meters), // RIGHT
+        Inches.of(20.25).in(Meters), // UP
+        new Rotation3d(
+            0,
+            Degrees.of(20).in(Radians),
+            Degrees.of(180).in(Radians)));
+
+    public static final String downName = "limelight-down";
+    public static final Pose3d downCameraOffset = new Pose3d(
+        Inches.of(-12.75).in(Meters), // FORWARD
+        Inches.of(-5.878).in(Meters), // RIGHT
+        Inches.of(16.875).in(Meters), // UP
+        new Rotation3d(
+            0,
+            Degrees.of(0).in(Radians),
+            Degrees.of(180).in(Radians)));
+  }
 
   public static class SwerveDriveConstants {
     private final static Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);

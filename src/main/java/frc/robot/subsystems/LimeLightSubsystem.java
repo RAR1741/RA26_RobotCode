@@ -1,10 +1,6 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import java.util.Optional;
@@ -35,34 +31,26 @@ public class LimeLightSubsystem extends SubsystemBase {
   private Limelight limelight;
   private LimelightPoseEstimator poseEstimator;
 
-  private final CommandSwerveDrivetrain drivetrain;
+  private CommandSwerveDrivetrain drivetrain;
 
-  private final boolean IS_LIMELIGHT_ENABLED = true;
+  private boolean IS_LIMELIGHT_ENABLED = true;
 
-  public LimeLightSubsystem(CommandSwerveDrivetrain drivetrain) {
+  public LimeLightSubsystem(CommandSwerveDrivetrain drivetrain, String name, Pose3d cameraOffset) {
     this.drivetrain = drivetrain;
 
     if (IS_LIMELIGHT_ENABLED) {
-      limelight = new Limelight("limelight-front");
+      limelight = new Limelight(name);
 
       limelight.getSettings()
           .withLimelightLEDMode(LEDMode.PipelineControl)
-          .withCameraOffset(new Pose3d(
-              // TODO: THIS
-              // -2.75 in RIGHT
-              // -12.75 in FORWARD
-              // 20.375 in UP
-              Inches.of(-12.75).in(Meters), // -0.32385
-              Inches.of(-2.75).in(Meters), // -0.06985
-              Inches.of(20.375).in(Meters), // 0.517525
-              new Rotation3d(0, Degrees.of(20).in(Radians), Degrees.of(180).in(Radians))))
+          .withCameraOffset(cameraOffset)
           // new Rotation3d(0, 21, 180)))
           .withImuMode(ImuMode.InternalImuMT1Assist)
           .withImuAssistAlpha(0.01)
           .save();
 
       RobotModeTriggers.disabled().onTrue(Commands.runOnce(() -> {
-        System.out.println("Setting LL IMU Assist Alpha to 0.01");
+        System.out.println("Setting LL (" + limelight.limelightName + ") IMU Assist Alpha to 0.01");
 
         limelight.getSettings()
             .withImuMode(ImuMode.InternalImuMT1Assist)
@@ -71,7 +59,7 @@ public class LimeLightSubsystem extends SubsystemBase {
       }).ignoringDisable(true));
 
       Command onEnable = Commands.runOnce(() -> {
-        System.out.println("Setting LL IMU Assist Alpha to 0.000001");
+        System.out.println("Setting LL (" + limelight.limelightName + ") IMU Assist Alpha to 0.000001");
 
         limelight.getSettings()
             .withImuMode(ImuMode.ExternalImu)
@@ -90,23 +78,24 @@ public class LimeLightSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     if (IS_LIMELIGHT_ENABLED) {
-      if (DriverStation.isEnabled()) {
-        AngularVelocity3d angularVel = new AngularVelocity3d(
-            DegreesPerSecond.of(0),
-            DegreesPerSecond.of(0),
-            RadiansPerSecond.of(drivetrain.getState().Speeds.omegaRadiansPerSecond));
+      // TODO: this might be needed?
+      // if (DriverStation.isEnabled()) {
+      AngularVelocity3d angularVel = new AngularVelocity3d(
+          DegreesPerSecond.of(0),
+          DegreesPerSecond.of(0),
+          RadiansPerSecond.of(drivetrain.getState().Speeds.omegaRadiansPerSecond));
 
-        Rotation3d robotRotation = new Rotation3d(
-            0,
-            0,
-            drivetrain.getState().Pose.getRotation().getRadians());
+      Rotation3d robotRotation = new Rotation3d(
+          0,
+          0,
+          drivetrain.getState().Pose.getRotation().getRadians());
 
-        // Required for megatag2 in periodic() function before fetching pose.
-        limelight.getSettings()
-            .withImuMode(ImuMode.ExternalImu)
-            .withRobotOrientation(new Orientation3d(robotRotation, angularVel))
-            .save();
-      }
+      // Required for megatag2 in periodic() function before fetching pose.
+      limelight.getSettings()
+          .withImuMode(ImuMode.ExternalImu)
+          .withRobotOrientation(new Orientation3d(robotRotation, angularVel))
+          .save();
+      // }
 
       // Get MegaTag2 pose
       Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate();
@@ -116,8 +105,8 @@ public class LimeLightSubsystem extends SubsystemBase {
 
       // If the pose is present
       visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-        Logger.recordOutput("Limelight/Megatag2Count", poseEstimate.tagCount);
-        Logger.recordOutput("FieldSimulation/LLPose", poseEstimate.pose);
+        Logger.recordOutput("Limelight/" + limelight.limelightName + "/Megatag2Count", poseEstimate.tagCount);
+        Logger.recordOutput("Limelight/" + limelight.limelightName + "/LLPose", poseEstimate.pose);
 
         if (checkPose(poseEstimate)) {
           updatePoseWithStdDev(poseEstimate);

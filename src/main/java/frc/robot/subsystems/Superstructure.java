@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.StateManager.StateManager;
 
 public class Superstructure extends SubsystemBase {
@@ -28,7 +29,8 @@ public class Superstructure extends SubsystemBase {
 
   public final CommandSwerveDrivetrain drivetrain;
 
-  public final LimeLightSubsystem limelight;
+  public final LimeLightSubsystem limelightUp;
+  public final LimeLightSubsystem limelightDown;
 
   @SuppressWarnings("unused")
   private AngularVelocity targetShooterSpeed;
@@ -55,7 +57,13 @@ public class Superstructure extends SubsystemBase {
     this.hood = new HoodSubsystem(stateManager);
     this.shooter = new ShooterSubsystem();
 
-    this.limelight = new LimeLightSubsystem(drivetrain);
+    this.limelightUp = new LimeLightSubsystem(drivetrain,
+        LimelightConstants.upName,
+        LimelightConstants.upCameraOffset);
+
+    this.limelightDown = new LimeLightSubsystem(drivetrain,
+        LimelightConstants.downName,
+        LimelightConstants.downCameraOffset);
 
     // Create triggers for checking if mechanisms are at their targets
     this.isReadyToShoot = stateManager.hasValidTarget
