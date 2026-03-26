@@ -14,7 +14,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
@@ -139,9 +138,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeDeployAndRun() {
-    return Commands.parallel(
-        roller.setSpeed(INTAKE_ROLLER_SPEED).asProxy(),
-        setIntakeDeployed())
+    return Commands.sequence(
+        intakePivot.setAngle(IntakeConstants.k_IntakeDeployed)
+            .until(intakePivot.isNear(IntakeConstants.k_IntakeDeployed, Degrees.of(3))),
+        roller.setSpeed(INTAKE_ROLLER_SPEED))
         .withName("Intake.intakeDeployAndRun");
   }
 
