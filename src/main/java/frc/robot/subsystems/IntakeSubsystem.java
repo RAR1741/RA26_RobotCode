@@ -40,7 +40,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private static final AngularVelocity INTAKE_ROLLER_SPEED = RPM.of(3000.0);
+  private static final AngularVelocity INTAKE_ROLLER_SPEED = RPM.of(2000.0);
 
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
   // private SparkMax pivotSecondaySpark = new
@@ -58,8 +58,8 @@ public class IntakeSubsystem extends SubsystemBase {
       .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(PIVOT_GEAR_RATIO)))
       .withMotorInverted(false)
-      .withIdleMode(MotorMode.BRAKE);
-  // .withStatorCurrentLimit(Amps.of(40.0));
+      .withIdleMode(MotorMode.BRAKE)
+      .withStatorCurrentLimit(Amps.of(80.0));
 
   private final SmartMotorController pivotSmc = new SparkWrapper(
       pivotLeaderSpark,
