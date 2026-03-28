@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,6 +46,8 @@ public class LimeLightSubsystem extends SubsystemBase {
   private int initRetryCount = 0;
   private boolean initialized = false;
   private Timer retryTimer = new Timer();
+
+  private boolean hasEnabled = false;
 
   public LimeLightSubsystem(CommandSwerveDrivetrain drivetrain, String name, Pose3d cameraOffset) {
     this.drivetrain = drivetrain;
@@ -108,6 +111,10 @@ public class LimeLightSubsystem extends SubsystemBase {
     RobotModeTriggers.disabled().onTrue(Commands.runOnce(() -> {
       if (limelight == null)
         return;
+
+      if (DriverStation.getMatchType() != MatchType.None)
+        return;
+
       System.out.println("Setting LL (" + limelight.limelightName + ") IMU Assist Alpha to 0.01");
 
       limelight.getSettings()
@@ -117,6 +124,8 @@ public class LimeLightSubsystem extends SubsystemBase {
     }).ignoringDisable(true));
 
     Command onEnable = Commands.runOnce(() -> {
+      hasEnabled = true;
+      
       if (limelight == null)
         return;
       System.out.println("Setting LL (" + limelight.limelightName + ") IMU Assist Alpha to 0.000001");
