@@ -33,6 +33,8 @@ public class ShootOnTheMoveCommand extends Command {
   private Angle latestHoodAngle = Degrees.of(80.0);
   private Angle latestTurretAngle = Degrees.of(0.0);
 
+  private boolean isRunning = false;
+
   public ShootOnTheMoveCommand(CommandSwerveDrivetrain drivetrain, Superstructure superstructure,
       Supplier<Translation2d> aimPointSupplier) {
     this.drivetrain = drivetrain;
@@ -60,11 +62,19 @@ public class ShootOnTheMoveCommand extends Command {
         () -> {
           return this.latestHoodAngle;
         }));
+    
+    isRunning = true;
   }
 
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  @Override
+  public void end(boolean inturupted){
+    isRunning = false;
+    Logger.recordOutput("ShootOnTheMove/Running", isRunning);
   }
 
   @Override
@@ -117,6 +127,7 @@ public class ShootOnTheMoveCommand extends Command {
     Logger.recordOutput("ShootOnTheMove/RobotHeading", drivetrain.getState().Pose.getRotation().getDegrees());
     Logger.recordOutput("ShootOnTheMove/DesiredTurretHeading", calculatedHeading.in(Degrees));
     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
+    Logger.recordOutput("ShootOnTheMove/Running", isRunning);
 
     latestTurretAngle = calculatedHeading;
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
