@@ -53,6 +53,11 @@ public class Constants {
     public static final double k_DEADBAND = 0.1;
   }
 
+  public static class LEDConstants {
+    public static final int k_port = 0; //TODO: CHANGE
+    public static final int k_length = 0; //TODO: CHANGE
+  }
+
   public static class IntakeConstants {
     public static final int k_pivotPrimaryMotorId = 30;
     public static final int k_pivotSecondaryMotorId = 31;

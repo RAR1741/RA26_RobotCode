@@ -330,4 +330,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     ApplyRobotSpeeds drive = new SwerveRequest.ApplyRobotSpeeds();
     this.setControl(drive.withSpeeds(speed));
   }
+
+  public void goToPose(Pose2d pose) {
+    Pose2d currentPose = this.getState().Pose;
+  
+    ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(
+        xController.calculate(currentPose.getX(), pose.getX()),  // TODO do we need to tune these PID controllers differently for more accuracy?
+        yController.calculate(currentPose.getY(), pose.getY()),
+        headingController.calculate(currentPose.getRotation().getRadians(), pose.getRotation().getRadians()),
+        currentPose.getRotation()); //look out cus i dont think this is angular vel
+
+    Logger.recordOutput("Auto/TargetPose", pose);
+    Logger.recordOutput("Auto/CurrentPose", currentPose);
+
+    Logger.recordOutput("Auto/chassisSpeeds", this.getState().Speeds);
+    Logger.recordOutput("Auto/commandedChassisSpeeds", speed);
+
+    ApplyRobotSpeeds drive = new SwerveRequest.ApplyRobotSpeeds();
+    this.setControl(drive.withSpeeds(speed));
+  }
 }
