@@ -7,7 +7,7 @@
       "height": 1077,
       "state": {
         "sidebar": {
-          "width": 293,
+          "width": 370,
           "expanded": [
             "/Tuning/Shooter/ShooterMotor",
             "/Tuning/Shooter/ShooterMotor/closedloop",
@@ -63,18 +63,24 @@
             "/Mechanisms/Hopper/HopperMotor/motor",
             "/limelight-front/robot_orientation_set",
             "/Mechanisms/Kicker/KickerMotor/current",
-            "/AdvantageKit/RealOutputs",
             "/Mechanisms/Hood/HoodMotor/rotor",
             "/Mechanisms/Kicker/KickerMotor/motor",
-            "/AdvantageKit/RealOutputs/Superstructure",
-            "/Mechanisms",
             "/Mechanisms/Hood",
             "/Mechanisms/Hood/HoodMotor/closedloop",
-            "/Mechanisms/Hood/HoodMotor/mechanism"
+            "/Mechanisms/Hood/HoodMotor/mechanism",
+            "/AdvantageKit/RealOutputs/Turret/frequency",
+            "/Mechanisms/Hood/HoodMotor/control/feedforward",
+            "/DriveState/Pose/translation",
+            "/DriveState/Pose/rotation",
+            "/AdvantageKit",
+            "/AdvantageKit/RealOutputs",
+            "/AdvantageKit/RealOutputs/Limelight",
+            "/AdvantageKit/RealOutputs/Limelight/limelight-up",
+            "/AdvantageKit/RealOutputs/Limelight/limelight-down"
           ]
         },
         "tabs": {
-          "selected": 6,
+          "selected": 1,
           "tabs": [
             {
               "type": 0,
@@ -89,16 +95,6 @@
               "title": "Tele",
               "controller": {
                 "sources": [
-                  {
-                    "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/LLPose",
-                    "logType": "Pose3d",
-                    "visible": true,
-                    "options": {
-                      "model": "2026 KitBot",
-                      "color": "#00ff00"
-                    }
-                  },
                   {
                     "type": "robot",
                     "logKey": "NT:/DriveState/Pose",
@@ -126,6 +122,26 @@
                     "options": {
                       "variant": "Fuel"
                     }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Limelight/limelight-up/LLPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "model": "2026 KitBot",
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Limelight/limelight-down/LLPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "model": "2026 KitBot",
+                      "color": "#ff00ff"
+                    }
                   }
                 ],
                 "game": "FRC:2026 Field"
@@ -135,17 +151,17 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  5.876822047479103,
-                  12.07421682338009,
-                  -0.4594039241893158
+                  10.736770756021873,
+                  6.428151479223557,
+                  -6.628073042214669
                 ],
                 "cameraTarget": [
-                  4.981492833508811,
-                  1.1320301421474324,
-                  -0.4603593828973565
+                  4.950103591462153,
+                  -2.9184698579717754,
+                  -1.098298625425689
                 ]
               },
-              "controlsHeight": 291
+              "controlsHeight": 256
             },
             {
               "type": 2,
@@ -154,11 +170,20 @@
                 "sources": [
                   {
                     "type": "ghost",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/LLPose",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Limelight/limelight-up/LLPose",
                     "logType": "Pose3d",
                     "visible": true,
                     "options": {
                       "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Limelight/limelight-down/LLPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff"
                     }
                   },
                   {
@@ -205,6 +230,76 @@
                     "options": {
                       "timeRange": "enabled"
                     }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/DecapitationZone",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff0000",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/currentZone",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone1",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone2",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone3",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone4",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "trajectory",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Zones/passZone5",
+                    "logType": "Pose2d[]",
+                    "visible": true,
+                    "options": {
+                      "color": "#ff00ff",
+                      "size": "normal"
+                    }
                   }
                 ],
                 "field": "FRC:2026 Field",
@@ -213,7 +308,119 @@
               },
               "controllerUUID": "zpgkwpypm12mr2otpz4cws7pywe6cxgq",
               "renderer": null,
-              "controlsHeight": 306
+              "controlsHeight": 260
+            },
+            {
+              "type": 1,
+              "title": "RotCheck",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/heading/pigeon",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/heading/pose",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/DriveState/Pose/rotation/value",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": "degrees",
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "t1hldmls03perx1l102ap776q0f09m8p",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 1,
+              "title": "LLPose",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/DriveState/Pose/translation/x",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/DriveState/Pose/translation/y",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/DriveState/Pose/rotation/value",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": "degrees",
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "sja531v3qm53tw882y75lf1yrbqj47fk",
+              "renderer": null,
+              "controlsHeight": 200
             },
             {
               "type": 1,
@@ -513,7 +720,7 @@
               },
               "controllerUUID": "lgvgmglr2llkccx8fwtq9pxr54gh1ajc",
               "renderer": null,
-              "controlsHeight": 200
+              "controlsHeight": 307
             },
             {
               "type": 1,
@@ -589,6 +796,26 @@
                       "color": "#2b66a2",
                       "size": "normal"
                     }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/frequency/m12",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/frequency/m13",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
                   }
                 ],
                 "rightSources": [
@@ -596,7 +823,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/computeTurretAngleFromAbs",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
@@ -659,7 +886,7 @@
               },
               "controllerUUID": "crvn4hjla9h7q3p0zx5ez3end58bu0rc",
               "renderer": null,
-              "controlsHeight": 306
+              "controlsHeight": 373
             },
             {
               "type": 1,
@@ -799,7 +1026,7 @@
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "autoTarget": null,
+                  "autoTarget": "rotations/minute",
                   "preset": null
                 },
                 "rightUnitConversion": {
@@ -844,7 +1071,7 @@
                     "type": "stepped",
                     "logKey": "NT:/Mechanisms/roller/RollerMotor/motor/outputVoltage",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e5b31b",
                       "size": "normal"
@@ -865,7 +1092,7 @@
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "autoTarget": null,
+                  "autoTarget": "rotations/minute",
                   "preset": null
                 },
                 "rightUnitConversion": {
@@ -974,16 +1201,6 @@
               "controllerUUID": "8x2g1zv8vrtem3huf1hrjadh65sqpvlv",
               "renderer": null,
               "controlsHeight": 296
-            },
-            {
-              "type": 5,
-              "title": "Console",
-              "controller": "NT:/AdvantageKit/RealOutputs/Console",
-              "controllerUUID": "aqkr3ay2z789a06wh426rekbxua98aqn",
-              "renderer": {
-                "highlight": true
-              },
-              "controlsHeight": 0
             }
           ]
         }

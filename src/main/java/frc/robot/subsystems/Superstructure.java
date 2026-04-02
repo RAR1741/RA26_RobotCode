@@ -9,14 +9,15 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants;
+import frc.robot.Constants.LimelightConstants;
+import frc.robot.subsystems.StateManager.StateManager;
 
 public class Superstructure extends SubsystemBase {
   public final IntakeSubsystem intake;
@@ -28,7 +29,8 @@ public class Superstructure extends SubsystemBase {
 
   public final CommandSwerveDrivetrain drivetrain;
 
-  public final LimeLightSubsystem limelight;
+  public final LimeLightSubsystem limelightUp;
+  public final LimeLightSubsystem limelightDown;
 
   @SuppressWarnings("unused")
   private AngularVelocity targetShooterSpeed;
@@ -40,10 +42,11 @@ public class Superstructure extends SubsystemBase {
   // Trigger for readiness checks
   private final Trigger isReadyToShoot;
 
-  // Default aim point is red hub
-  private Translation3d aimPoint = Constants.AimPoints.RED_HUB.value;
+  public final StateManager stateManager;
 
   public Superstructure(CommandSwerveDrivetrain swerve) {
+    stateManager = StateManager.initalize(swerve, this);
+
     this.drivetrain = swerve;
 
     // Initialize subsystems here if needed
@@ -51,20 +54,29 @@ public class Superstructure extends SubsystemBase {
     this.hopper = new HopperSubsystem();
     this.kicker = new KickerSubsystem();
     this.turret = new TurretSubsystem();
-    this.hood = new HoodSubsystem();
+    this.hood = new HoodSubsystem(stateManager);
     this.shooter = new ShooterSubsystem();
 
-    this.limelight = new LimeLightSubsystem(drivetrain);
+    this.limelightUp = new LimeLightSubsystem(drivetrain,
+        LimelightConstants.upName,
+        LimelightConstants.upCameraOffset);
+
+    this.limelightDown = new LimeLightSubsystem(drivetrain,
+        LimelightConstants.downName,
+        LimelightConstants.downCameraOffset);
 
     // Create triggers for checking if mechanisms are at their targets
-    this.isReadyToShoot = shooter.isAtTarget.and(turret.isAtTarget).and(hood.isAtTarget);
+    this.isReadyToShoot = stateManager.hasValidTarget
+        .and(shooter.isAtTarget)
+        .and(turret.isAtTarget)
+        .and(hood.isAtTarget);
   }
 
   public Command feedAllCommand() {
     return Commands.waitUntil(isReadyToShoot)
         .andThen(
             Commands.parallel(
-                // intake.feedCommand().asProxy(),
+                // intake.feedCommand(),
                 hopper.feedCommand(),
                 kicker.feedCommand())
                 .onlyWhile(isReadyToShoot))
@@ -73,7 +85,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   // public Command shootCommand() {
-  //   return shooter.shoot().asProxy().withName("Superstructure.shoot");
+  // return shooter.shoot().asProxy().withName("Superstructure.shoot");
   // }
 
   public Command intakeCommand() {
@@ -117,12 +129,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command turretCenterCommand() {
-    return 
-    Commands.parallel(
-      shooter.stopCommand(),
-      hood.setAngle(hood.MAX_ANGLE),
-      turret.setAngle(Degrees.of(0))
-    ).withName("Superstructure.turretCenter");
+    return Commands.parallel(
+        shooter.stopCommand(),
+        hood.setAngle(hood.MAX_ANGLE),
+        turret.setAngle(Degrees.of(0))).withName("Superstructure.turretCenter");
   }
 
   public Command turretRightCommand() {
@@ -157,12 +167,8 @@ public class Superstructure extends SubsystemBase {
         .withName("Superstructure.aimDynamic");
   }
 
-  public Translation3d getAimPoint() {
-    return aimPoint;
-  }
-
-  public void setAimPoint(Translation3d newAimPoint) {
-    this.aimPoint = newAimPoint;
+  public Translation2d getAimPoint() {
+    return stateManager.getTargetPose().getTranslation();
   }
 
   public Angle getHoodAngle() {

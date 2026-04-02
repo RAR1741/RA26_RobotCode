@@ -9,34 +9,34 @@ import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Constants.AimPoints;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.StateManager.State;
 
 public class ShootOnTheMoveCommand extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final Superstructure superstructure;
 
-  private Supplier<Translation3d> aimPointSupplier; // The point to aim at
+  private Supplier<Translation2d> aimPointSupplier; // The point to aim at
   private AngularVelocity latestShootSpeed = RPM.of(0);
   private Angle latestHoodAngle = Degrees.of(80.0);
   private Angle latestTurretAngle = Degrees.of(0.0);
 
+  private boolean isRunning = false;
+
   public ShootOnTheMoveCommand(CommandSwerveDrivetrain drivetrain, Superstructure superstructure,
-      Supplier<Translation3d> aimPointSupplier) {
+      Supplier<Translation2d> aimPointSupplier) {
     this.drivetrain = drivetrain;
     this.superstructure = superstructure;
     this.aimPointSupplier = aimPointSupplier;
@@ -62,6 +62,8 @@ public class ShootOnTheMoveCommand extends Command {
         () -> {
           return this.latestHoodAngle;
         }));
+    
+    isRunning = true;
   }
 
   @Override
@@ -70,7 +72,19 @@ public class ShootOnTheMoveCommand extends Command {
   }
 
   @Override
+  public void end(boolean inturupted){
+    isRunning = false;
+    Logger.recordOutput("ShootOnTheMove/Running", isRunning);
+  }
+
+  @Override
   public void execute() {
+    // Don't even try to calculate if we're in the pass dead zone, just don't shoot
+    if (superstructure.stateManager.getState() == State.PASS_DEAD_ZONE) {
+      Logger.recordOutput("ShootOnTheMove/rawTarget", drivetrain.getState().Pose.getTranslation());
+      return;
+    }
+
     // Calculate trajectory to aimPoint
     var target = aimPointSupplier.get();
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
@@ -81,9 +95,8 @@ public class ShootOnTheMoveCommand extends Command {
     // Ignore this parameter for now, the range tables will account for it :/
     // var deltaH = target.getMeasureZ().minus(shooterLocation.getMeasureZ());
     var shooterOnGround = new Translation2d(shooterLocation.getX(), shooterLocation.getY());
-    var targetOnGround = new Translation2d(target.getX(), target.getY());
 
-    var distanceToTarget = Meters.of(shooterOnGround.getDistance(targetOnGround));
+    var distanceToTarget = Meters.of(shooterOnGround.getDistance(target));
 
     // Get time of flight. We could try to do this analytically but for now it's
     // easier and more realistic
@@ -99,12 +112,11 @@ public class ShootOnTheMoveCommand extends Command {
         .times(timeOfFlight);
     var correctiveVector = new Translation2d(updatedPosition.vxMetersPerSecond, updatedPosition.vyMetersPerSecond)
         .unaryMinus();
-    var correctiveVector3d = new Translation3d(correctiveVector.getX(), correctiveVector.getY(), 0);
 
     Logger.recordOutput("FieldSimulation/AimTargetCorrected",
-        new Pose3d(target.plus(correctiveVector3d), Rotation3d.kZero));
+        new Pose2d(target.plus(correctiveVector), Rotation2d.kZero));
 
-    var correctedTarget = targetOnGround.plus(correctiveVector);
+    var correctedTarget = target.plus(correctiveVector);
     var vectorToTarget = shooterLocation.minus(correctedTarget);
 
     var correctedDistance = Meters.of(vectorToTarget.getNorm());
@@ -115,10 +127,15 @@ public class ShootOnTheMoveCommand extends Command {
     Logger.recordOutput("ShootOnTheMove/RobotHeading", drivetrain.getState().Pose.getRotation().getDegrees());
     Logger.recordOutput("ShootOnTheMove/DesiredTurretHeading", calculatedHeading.in(Degrees));
     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
+    Logger.recordOutput("ShootOnTheMove/Running", isRunning);
 
     latestTurretAngle = calculatedHeading;
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
     latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
+
+    // Kicker corrective bias based on how close to forward/0 we are
+    // latestTurretAngle =
+    // latestTurretAngle.times(Double.valueOf(DriverStation.getGameSpecificMessage()));
 
     // FOR TESTING - DO NOT USE
     // var gameData = DriverStation.getGameSpecificMessage();
@@ -160,7 +177,7 @@ public class ShootOnTheMoveCommand extends Command {
 
   private AngularVelocity calculateRequiredShooterSpeed(Distance distanceToTarget) {
     // If we're firing at the hub, use the distance to determine the hood angle
-    if (superstructure.getAimPoint() == AimPoints.getAllianceHubPosition()) {
+    if (superstructure.stateManager.getState() == State.SHOOTING) {
       return RPM.of(HUB_SHOOTING_SPEED_BY_DISTANCE.get(distanceToTarget.in(Meters)));
     }
 
@@ -169,7 +186,7 @@ public class ShootOnTheMoveCommand extends Command {
 
   private Angle calculateRequiredHoodAngle(Distance distanceToTarget) {
     // If we're firing at the hub, use the distance to determine the hood angle
-    if (superstructure.getAimPoint() == AimPoints.getAllianceHubPosition()) {
+    if (superstructure.stateManager.getState() == State.SHOOTING) {
       return Degrees.of(HOOD_ANGLE_BY_DISTANCE.get(distanceToTarget.in(Meters)));
     }
 
@@ -186,8 +203,8 @@ public class ShootOnTheMoveCommand extends Command {
 
   // meters, RPM
   private static final InterpolatingDoubleTreeMap HUB_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.2319, 2350.0), // HUB
-      Map.entry(3.319674, 2350.0), // TRENCH
+      Map.entry(1.554228, 1900.0), // HUB
+      Map.entry(3.153828, 2100.0), // TRENCH
       Map.entry(4.792132, 2350.0)); // OUTPOST
 
   // meters, RPM
@@ -200,7 +217,7 @@ public class ShootOnTheMoveCommand extends Command {
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
-      Map.entry(1.2319, 80.0), // HUB
-      Map.entry(3.319674, 70.0), // TRENCH
-      Map.entry(4.792132, 53.0)); // OUTPOST
+      Map.entry(1.554228, 73.0), // HUB
+      Map.entry(3.153828, 54.5), // TRENCH
+      Map.entry(4.792132, 51.5)); // OUTPOST
 }

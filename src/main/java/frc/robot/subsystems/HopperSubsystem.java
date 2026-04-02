@@ -27,7 +27,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class HopperSubsystem extends SubsystemBase {
 
-  private static final AngularVelocity HOPPER_RPM = RPM.of(1000);
+  private static final AngularVelocity HOPPER_RPM = RPM.of(4000);
 
   // Nova motor controller with NEO motor
   private SparkMax hopperSpark = new SparkMax(Constants.HopperConstants.kHopperMotorId, MotorType.kBrushless);
@@ -54,7 +54,7 @@ public class HopperSubsystem extends SubsystemBase {
 
   public HopperSubsystem() {
     this.setDefaultCommand(Commands.run(() -> smc.setDutyCycle(0), this));
-    //  this.setDefaultCommand(Commands.run(() -> hopper.setSpeed(RPM.of(0)), this));
+    // this.setDefaultCommand(Commands.run(() -> hopper.setSpeed(RPM.of(0)), this));
   }
 
   public Command feedCommand() {

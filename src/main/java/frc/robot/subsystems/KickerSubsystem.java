@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
@@ -28,7 +27,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
 public class KickerSubsystem extends SubsystemBase {
-  private static final AngularVelocity KICKER_RPM = RPM.of(4000);
+  private static final AngularVelocity KICKER_RPM = RPM.of(1000);
 
   private SparkFlex kickerSpark = new SparkFlex(Constants.KickerConstants.kKickerMotorId, MotorType.kBrushless);
 
@@ -55,7 +54,7 @@ public class KickerSubsystem extends SubsystemBase {
 
   public KickerSubsystem() {
     this.setDefaultCommand(Commands.run(() -> smc.setDutyCycle(0), this));
-    //  this.setDefaultCommand(Commands.run(() -> kicker.setSpeed(RPM.of(0)), this));
+    // this.setDefaultCommand(Commands.run(() -> kicker.setSpeed(RPM.of(0)), this));
   }
 
   public Command feedCommand() {

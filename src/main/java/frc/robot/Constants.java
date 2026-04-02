@@ -2,14 +2,22 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Seconds;
+
+import java.util.ArrayList;
 
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
 import com.ctre.phoenix6.CANBus;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -18,10 +26,33 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class Constants {
   public static final CANBus ctreCANBus = new CANBus("Drivetrain");
+
+  public static class LimelightConstants {
+    public static final boolean IS_LIMELIGHT_ENABLED = true;
+
+    public static final String upName = "limelight-up";
+    public static final Pose3d upCameraOffset = new Pose3d(
+        Inches.of(-12.75).in(Meters), // FORWARD
+        Inches.of(-2.75).in(Meters), // RIGHT
+        Inches.of(20.25).in(Meters), // UP
+        new Rotation3d(
+            0,
+            Degrees.of(20).in(Radians),
+            Degrees.of(180).in(Radians)));
+
+    public static final String downName = "limelight-down";
+    public static final Pose3d downCameraOffset = new Pose3d(
+        Inches.of(-12.75).in(Meters), // FORWARD
+        Inches.of(-5.878).in(Meters), // RIGHT
+        Inches.of(16.875).in(Meters), // UP
+        new Rotation3d(
+            0,
+            Degrees.of(0).in(Radians),
+            Degrees.of(180).in(Radians)));
+  }
 
   public static class SwerveDriveConstants {
     private final static Translation2d m_frontLeftLocation = new Translation2d(0.381, 0.381);
@@ -45,22 +76,27 @@ public class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
 
-    public static final double k_slowModeMin = 0.25; // Scales down max speed when slow mode is active
+    public static final double k_slowSpeed = 0.25; // Scales down max speed when slow mode is active
     public static final double k_standardSpeed = 0.5; // Normal max speed
-    public static final double k_boostModeScaler = 1.0; // Scales up max speed when boost mode is active
+    public static final double k_boostSpeed = 1.0; // Scales up max speed when boost mode is active
+
+    public static final double k_slowRot = 0.25;
+    public static final double k_standardRot = 0.75;
+    public static final double k_boostRot = 0.75;
 
     // Joystick Deadband
-    public static final double k_DEADBAND = 0.1;
+    public static final double k_DEADBAND = 0.01;
   }
 
   public static class IntakeConstants {
     public static final int k_pivotPrimaryMotorId = 30;
     public static final int k_pivotSecondaryMotorId = 31;
     public static final int k_rollerMotorId = 32;
+    public static final int k_rollerMotorSecondaryId = 33;
 
     public static final Angle k_IntakeStow = Degrees.of(0);
     public static final Angle k_IntakeFeed = Degrees.of(80);
-    // public static final Angle k_IntakeHold = Degrees.of(115);
+    public static final Angle k_IntakeMaxWhileRoller = Degrees.of(103.5);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
     public static final Angle k_IntakeDeployed = Degrees.of(110);
 
@@ -96,8 +132,17 @@ public class Constants {
 
     public static final double MAX_ONE_DIR_FOV = 110; // degrees
 
-    public static final double M12_OFFSET = 0.85376;
-    public static final double M13_OFFSET = 0.597265;
+    // Mechanical lash:
+    // - Old m12: (0.935568 - 0.927775) 0.007793 * 360 = 2.80548 deg
+    // - New m12: (0.718129 - 0.712218) 0.005911 * 360 = 2.12796 deg
+    // - Old m13: (0.593744 - 0.587949) 0.005795 * 360 = 2.0862 deg
+    // - New m13: (0.649539 - 0.64658) 0.002959 * 360 = 1.06524 deg
+
+    public static final double M12_OFFSET = 0.687852;
+    public static final double M13_OFFSET = 0.628145;
+
+    public static final double m12Frequency = 965.0; // Hz
+    public static final double m13Frequency = 978.0; // Hz
 
     public static final Translation3d turretTranslation = new Translation3d(
         Inches.of(-6.25),
@@ -119,6 +164,10 @@ public class Constants {
 
   public static class HoodConstants {
     public static final int k_hoodMotorId = 51;
+
+    // TODO: Update this after testing
+    public static final double boxXMultiplier = 0.25;
+    public static final double boxYMultiplier = 0.075;
   }
 
   public static class ShooterConstants {
@@ -132,11 +181,6 @@ public class Constants {
     public static final Angle k_hoodTolerance = Degrees.of(2);
   }
 
-  public static class FieldConstants {
-    public final static double k_width = Units.feetToMeters(26.0) + Units.inchesToMeters(5);
-    public final static double k_length = Units.feetToMeters(57.0) + Units.inchesToMeters(6.0 + (7.0 / 8.0));
-  }
-
   public static class VisionConstants {
     public static final double xyStdDevCoefficient = 0.005;
     public static final double thetaStdDevCoefficient = 0.01;
@@ -145,7 +189,7 @@ public class Constants {
 
     public static final int minTagCount = 1;
     public static final double maxAvgDistance = 100.0;
-    public static final double autoStdDevScale = 0.0;
+    public static final double autoStdDevScale = 1.0; // TODO: maybe make this bigger, for less trust
     public static final double autoTranslationMax = 100.0;
   }
 
@@ -197,31 +241,80 @@ public class Constants {
         .withBumperSize(Inches.of(28.5), Inches.of(33.5));
   }
 
-  public static enum AimPoints {
-    RED_HUB(new Translation3d(11.938, 4.034536, 1.5748)),
-    RED_OUTPOST(new Translation3d(16.0, 7.0, 0)),
-    RED_FAR_SIDE(new Translation3d(16.0, 1.0, 0)),
+  public static class StateConstants {
+    public static Translation2d blueLeftTrench = FieldConstants.FIELD_LAYOUT.getTagPose(23).get().getTranslation()
+        .toTranslation2d();
+    public static Translation2d blueRightTrench = FieldConstants.FIELD_LAYOUT.getTagPose(28).get().getTranslation()
+        .toTranslation2d();
+    public static Translation2d redLeftTrench = FieldConstants.FIELD_LAYOUT.getTagPose(7).get().getTranslation()
+        .toTranslation2d();
+    public static Translation2d redRightTrench = FieldConstants.FIELD_LAYOUT.getTagPose(12).get().getTranslation()
+        .toTranslation2d();
 
-    BLUE_HUB(new Translation3d(4.5974, 4.034536, 1.5748)),
-    BLUE_OUTPOST(new Translation3d(0.0, 1.0, 0)),
-    BLUE_FAR_SIDE(new Translation3d(0.0, 7.0, 0));
+    public static double fieldLength = FieldConstants.FIELD_LAYOUT.getFieldLength();
+    public static double fieldWidth = FieldConstants.FIELD_LAYOUT.getFieldWidth();
+    public static double trenchWidth = Units.inchesToMeters(50);
+    public static Translation2d centerField = new Translation2d(fieldLength / 2.0, fieldWidth / 2.0);
 
-    public final Translation3d value;
+    public static ArrayList<Translation2d> trenchList = new ArrayList<Translation2d>();
 
-    private AimPoints(Translation3d value) {
-      this.value = value;
-    }
+    public static Translation2d[] passZoneOne = new Translation2d[4];
+    public static Translation2d[] passZoneTwo = new Translation2d[4];
+    public static Translation2d[] passZoneThree = new Translation2d[4];
+    public static Translation2d[] passZoneFour = new Translation2d[4];
+    public static Translation2d[] passZoneFive = new Translation2d[4];
 
-    public static final Translation3d getAllianceHubPosition() {
-      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_HUB.value : BLUE_HUB.value;
-    }
+    public static final Pose2d hub = new Pose2d(
+        FieldConstants.Hub.innerCenterPoint.toTranslation2d(),
+        new Rotation2d());
 
-    public static final Translation3d getAllianceOutpostPosition() {
-      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_OUTPOST.value : BLUE_OUTPOST.value;
-    }
+    public static final Pose2d passLeftTarget = new Pose2d(
+        blueLeftTrench.getX() / 2.0,
+        FieldConstants.fieldWidth * 0.75,
+        new Rotation2d());
 
-    public static final Translation3d getAllianceFarSidePosition() {
-      return DriverStation.getAlliance().get() == DriverStation.Alliance.Red ? RED_FAR_SIDE.value : BLUE_FAR_SIDE.value;
+    public static final Pose2d passRightTarget = new Pose2d(
+        blueRightTrench.getX() / 2.0,
+        FieldConstants.fieldWidth * 0.25,
+        new Rotation2d());
+
+    public static void initConstants() {
+      double centerFieldY = centerField.getY();
+
+      double passDeadzone = 0.5;
+
+      trenchList.add(redLeftTrench);
+      trenchList.add(redRightTrench);
+      trenchList.add(blueLeftTrench);
+      trenchList.add(blueRightTrench);
+
+      // Zone One (Mid right)
+      passZoneOne[0] = new Translation2d(blueLeftTrench.getX(), centerFieldY);
+      passZoneOne[1] = new Translation2d(redLeftTrench.getX(), centerFieldY);
+      passZoneOne[2] = new Translation2d(blueLeftTrench.getX(), 0);
+      passZoneOne[3] = new Translation2d(redLeftTrench.getX(), 0);
+
+      // Zone Two (Mid left)
+      for (int i = 0; i < 4; i++) {
+        passZoneTwo[i] = passZoneOne[i].plus(new Translation2d(0, centerFieldY));
+      }
+
+      // Zone Three (Far right)
+      passZoneThree[0] = new Translation2d(redLeftTrench.getX(), 0);
+      passZoneThree[1] = new Translation2d(fieldLength, 0);
+      passZoneThree[2] = new Translation2d(fieldLength, centerFieldY - passDeadzone);
+      passZoneThree[3] = new Translation2d(redLeftTrench.getX(), centerFieldY - passDeadzone);
+
+      // Zone Four (Far left)
+      for (int i = 0; i < 4; i++) {
+        passZoneFour[i] = passZoneThree[i].plus(new Translation2d(0, centerFieldY + passDeadzone));
+      }
+
+      // Zone Five (Far center)
+      passZoneFive[0] = new Translation2d(redLeftTrench.getX(), centerFieldY - passDeadzone);
+      passZoneFive[1] = new Translation2d(fieldLength, centerFieldY - passDeadzone);
+      passZoneFive[2] = new Translation2d(fieldLength, centerFieldY + passDeadzone);
+      passZoneFive[3] = new Translation2d(redLeftTrench.getX(), centerFieldY + passDeadzone);
     }
   }
 }
