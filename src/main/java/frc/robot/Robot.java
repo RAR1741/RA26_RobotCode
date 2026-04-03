@@ -9,14 +9,14 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import com.fasterxml.jackson.core.format.MatchStrength;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class Robot extends LoggedRobot {
   private Simulation sim;
@@ -24,6 +24,8 @@ public class Robot extends LoggedRobot {
   private final RobotContainer m_robotContainer;
 
   private final Field2d field = new Field2d();
+
+  private final LEDSubsystem led = new LEDSubsystem();
 
   public Robot() {
     Logger.recordMetadata("ProjectName", "RA26_RobotCode");
@@ -49,6 +51,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
+    CommandScheduler.getInstance().schedule(led.setAllLEDsSolidColor(Color.kRed));
   }
 
   @Override

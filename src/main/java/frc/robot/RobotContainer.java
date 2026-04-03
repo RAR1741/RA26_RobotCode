@@ -13,7 +13,6 @@ import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -30,6 +29,7 @@ import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
+
 
 public class RobotContainer {
   private final Telemetry logger = new Telemetry();
@@ -170,6 +170,11 @@ public class RobotContainer {
   }
 
   private Alliance getAlliance() {
+    return DriverStation.getAlliance().orElse(Alliance.Red);
+  }
+
+  //what is this bro
+  public static Alliance retrieveAlliance() {
     return DriverStation.getAlliance().orElse(Alliance.Red);
   }
 

@@ -54,8 +54,8 @@ public class Constants {
   }
 
   public static class LEDConstants {
-    public static final int k_port = 0; //TODO: CHANGE
-    public static final int k_length = 0; //TODO: CHANGE
+    public static final int k_port = 2; //TODO: CHANGE
+    public static final int k_length = 17; //TODO: CHANGE
   }
 
   public static class IntakeConstants {
