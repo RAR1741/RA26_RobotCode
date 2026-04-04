@@ -335,7 +335,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     Pose2d currentPose = this.getState().Pose;
   
     ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(
-        xController.calculate(currentPose.getX(), pose.getX()),  // TODO do we need to tune these PID controllers differently for more accuracy?
+        xController.calculate(currentPose.getX(), pose.getX()),
         yController.calculate(currentPose.getY(), pose.getY()),
         headingController.calculate(currentPose.getRotation().getRadians(), pose.getRotation().getRadians()),
         currentPose.getRotation()); //look out cus i dont think this is angular vel
