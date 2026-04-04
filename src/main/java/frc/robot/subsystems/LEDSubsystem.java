@@ -17,8 +17,7 @@ public class LEDSubsystem extends SubsystemBase {
     private AddressableLEDBuffer buffer;
     private int length;
 
-    @SuppressWarnings("unused")
-    private LEDModeArgs allLEDs;
+    private LEDBufferView allLEDs;
     
     public LEDSubsystem() {
         led = new AddressableLEDSim();
@@ -26,7 +25,7 @@ public class LEDSubsystem extends SubsystemBase {
         buffer = new AddressableLEDBuffer(LEDConstants.k_length);
         length = buffer.getLength();
 
-        allLEDs = new LEDModeArgs(0, length, buffer);
+        allLEDs = new LEDBufferView(buffer, 0, length - 1);
     
         led.setLength(length);
 
@@ -63,7 +62,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public Command setAllLEDsBlinking(Color color, long ms){
-        return Commands.run(() -> blinking.apply(new LEDModeArgs(0, length, buffer, color, ms)));
+        return Commands.run(() -> blinking.apply(new LEDModeArgs(color, ms)));
     }
 
     public Command setAllLEDsOff() {
@@ -83,70 +82,121 @@ public class LEDSubsystem extends SubsystemBase {
     // }
 
     public Command setAllLEDsColorChase(Color color, long ms) {
-        return Commands.run(() -> colorChase.apply(new LEDModeArgs(0, length, buffer, color, ms)));
+        return Commands.run(() -> colorChase.apply(new LEDModeArgs(color, ms)));
     }
 
     public Command setAllLEDsRainbowChase(long ms) {
-        return Commands.run(() -> rainbowChase.apply(new LEDModeArgs(0, length, buffer, ms)));
+        return Commands.run(() -> rainbowChase.apply(new LEDModeArgs(ms)));
     }
 
     public Function<LEDModeArgs, AddressableLEDBuffer> colorChase = (LEDModeArgs args) -> {
-        for (int i = args.start; i < args.start + args.length; i++) {
-            buffer.setLED(i, Color.lerpRGB(args.color, Color.kBlack, ((i + System.currentTimeMillis()) % args.ms) / (double) args.ms));
+
+        for (int i = 0; i < args.view.getLength(); i++) {
+            double t = ((i + System.currentTimeMillis()) % args.ms) / (double) args.ms;
+            Color color = Color.lerpRGB(args.color, Color.kBlack, t);
+            args.view.setLED(i, color);
         }
-        return args.buffer;
+
+        return args.view.buffer;
     };
 
     public Function<LEDModeArgs, AddressableLEDBuffer> rainbowChase = (LEDModeArgs args) -> {
         int firstPixelHue = (int) ((System.currentTimeMillis() / 1000.0 * args.ms) % 180);
-        for (int i = args.start; i < (args.start + args.length); i++) {
-          buffer.setHSV(i, firstPixelHue, 255, 64);
+
+        for (int i = 0; i < args.view.getLength(); i++) {
+          args.view.setHSV(i, firstPixelHue, 255, 64);
         }
-        return args.buffer;
+
+        return args.view.buffer;
     };
 
     public Function<LEDModeArgs, AddressableLEDBuffer> blinking = (LEDModeArgs args) -> {
-        for (int i = args.start; i < args.start + args.length; i++) {
-            args.buffer.setLED(i, (System.currentTimeMillis() % (args.ms) < args.ms / 2.0) ? args.color : Color.kBlack);
+        for (int i = 0; i < args.view.getLength(); i++) {
+            Color color = (System.currentTimeMillis() % args.ms < args.ms / 2) ? args.color : Color.kBlack;
+            args.view.setLED(i, color);
         }
-        return args.buffer;
+        return args.view.buffer;
     };
 
-    private class LEDModeArgs { // all of the cursedness of last year's code was offloaded here
-        public int start;
-        public int length;
+    private class LEDBufferView {
         public AddressableLEDBuffer buffer;
+        public int start;
+        public int end;
+        public boolean reversed;
+
+        public LEDBufferView(AddressableLEDBuffer buffer, int start, int end) {
+            if (end == start) {
+                throw new Exception("end cannot be same as start");
+            } else if (end < start) {
+                int t = end;
+                end = start;
+                start = t;
+                this.reversed = true;
+            } else {
+                this.reversed = false;
+            }
+            this.buffer = buffer;
+            this.start = start;
+            this.end = end;
+            this.reversed = false;
+        }
+
+        public void setLED(int i, Color color) {
+            buffer.setLED(i + start, color); // make sure not off by one
+        }
+
+        public int getLength() {
+            return Math.abs(end - start) + 1;
+        }
+    }
+
+    private class LEDModeArgs { // all of the cursedness of last year's code was offloaded here
+        public LEDBufferView view;
         public Color color;
-        public long ms;
+        public int ms;
+        public int offset;
 
         // something JavaScript could do in a couple characters btw 
-        public LEDModeArgs(int start, int length, AddressableLEDBuffer buffer) {
-            this.start = start;
-            this.length = length;
-            this.buffer = buffer;
+        public LEDModeArgs() {
+            this.view = LEDSubsystem.allLEDs;
         }
 
-        @SuppressWarnings("unused")
-        public LEDModeArgs(int start, int length, AddressableLEDBuffer buffer, Color color) {
-            this.start = start;
-            this.length = length;
-            this.buffer = buffer; // istg JAAAAAVAAAAAAAA AAAAAAAAAAAAAAAAAAAAAAAA WHY CANT IT DO ANYTHING
-            this.color = color;   // why are we still here? just to suffer?
+        public LEDModeArgs(Color color) {
+            this.view = LEDSubsystem.allLEDs;
+            this.color = color;
         }
 
-        public LEDModeArgs(int start, int length, AddressableLEDBuffer buffer, long ms) {
-            this.start = start;
-            this.length = length;
-            this.buffer = buffer;
+        public LEDModeArgs(int ms) {
+            this.view = LEDSubsystem.allLEDs;
             this.ms = ms;
+            this.offset = 0;
         }
 
-        public LEDModeArgs(int start, int length, AddressableLEDBuffer buffer, Color color, long ms) {
-            this.start = start;
-            this.length = length;
-            this.buffer = buffer;
+        public LEDModeArgs(Color color, int ms) {
+            this.view = LEDSubsystem.allLEDs;
             this.color = color;
             this.ms = ms;
+            this.offset = 0;
+        }
+
+        public LEDModeArgs(int ms, int offset) {
+            this.view = LEDSubsystem.allLEDs;
+            this.ms = ms;
+            this.offset = offset;
+        }
+
+        public LEDModeArgs(Color color, int ms, int offset) {
+            this.view = LEDSubsystem.allLEDs;
+            this.color = color;
+            this.ms = ms;
+            this.offset = offset;
+        }
+
+        public LEDModeArgs(AddressableLEDBufferView view, Color color, int ms, int offset) {
+            this.view = view;
+            this.color = color;
+            this.ms = ms;
+            this.offset = offset;
         }
     }
 }
