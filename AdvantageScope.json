@@ -7,7 +7,7 @@
       "height": 1077,
       "state": {
         "sidebar": {
-          "width": 370,
+          "width": 297,
           "expanded": [
             "/Tuning/Shooter/ShooterMotor",
             "/Tuning/Shooter/ShooterMotor/closedloop",
@@ -65,22 +65,22 @@
             "/Mechanisms/Kicker/KickerMotor/current",
             "/Mechanisms/Hood/HoodMotor/rotor",
             "/Mechanisms/Kicker/KickerMotor/motor",
-            "/Mechanisms/Hood",
             "/Mechanisms/Hood/HoodMotor/closedloop",
             "/Mechanisms/Hood/HoodMotor/mechanism",
             "/AdvantageKit/RealOutputs/Turret/frequency",
             "/Mechanisms/Hood/HoodMotor/control/feedforward",
             "/DriveState/Pose/translation",
             "/DriveState/Pose/rotation",
-            "/AdvantageKit",
             "/AdvantageKit/RealOutputs",
             "/AdvantageKit/RealOutputs/Limelight",
             "/AdvantageKit/RealOutputs/Limelight/limelight-up",
-            "/AdvantageKit/RealOutputs/Limelight/limelight-down"
+            "/AdvantageKit/RealOutputs/Limelight/limelight-down",
+            "/Mechanisms",
+            "/Mechanisms/Turret/TurretMotor/rotor"
           ]
         },
         "tabs": {
-          "selected": 1,
+          "selected": 9,
           "tabs": [
             {
               "type": 0,
@@ -151,14 +151,14 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  10.736770756021873,
-                  6.428151479223557,
-                  -6.628073042214669
+                  10.25776886767913,
+                  6.871763769133985,
+                  -3.4161375622583203
                 ],
                 "cameraTarget": [
-                  4.950103591462153,
-                  -2.9184698579717754,
-                  -1.098298625425689
+                  3.135445888543555,
+                  -0.32446985821019403,
+                  -2.3534902487436535
                 ]
               },
               "controlsHeight": 256
@@ -201,7 +201,7 @@
                     "logType": "Pose2d",
                     "visible": true,
                     "options": {
-                      "color": "#ff00ff"
+                      "color": "#00ffff"
                     }
                   },
                   {
@@ -539,7 +539,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/ShootOnTheMove/distanceToTarget",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#80588e",
                       "size": "normal"
@@ -551,7 +551,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/hoodReady",
                     "logType": "Boolean",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#2b66a2"
                     }
@@ -560,7 +560,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/turretReady",
                     "logType": "Boolean",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e48b32"
                     }
@@ -569,7 +569,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/shooterReady",
                     "logType": "Boolean",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#c0b487"
                     }
@@ -578,7 +578,7 @@
                     "type": "stripes",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Superstructure/isReadyToShoot",
                     "logType": "Boolean",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#858584"
                     }
@@ -591,7 +591,7 @@
                   "preset": null
                 },
                 "rightUnitConversion": {
-                  "autoTarget": "meters",
+                  "autoTarget": "degrees",
                   "preset": null
                 },
                 "leftFilter": 0,
@@ -823,7 +823,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/computeTurretAngleFromAbs",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
