@@ -8,7 +8,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -46,18 +48,17 @@ import yams.motorcontrollers.local.SparkWrapper;
 public class TurretSubsystem extends SubsystemBase {
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
   // Total reduction: 5 * 5 = 25:1
-  public final double GEAR_RATIO = 5.0 * (60.0 / 12.0);
+  public final double GEAR_RATIO = (5.0 * (60.0 / 12.0));
 
   public final double MAX_ANGLE = TurretConstants.MAX_ONE_DIR_FOV;
   public final double MIN_ANGLE = -TurretConstants.MAX_ONE_DIR_FOV;
 
   // Motor & encoder
   private SparkMax turretSpark = new SparkMax(Constants.TurretConstants.k_turretMotorId, MotorType.kBrushless);
-  // private final RelativeEncoder turretEncoder = turretSpark.getEncoder();
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(45.0, 4.0, 0.0,
+      .withClosedLoopController(0.0, 0.0, 0.0,
           DegreesPerSecond.of(180),
           DegreesPerSecondPerSecond.of(360))
       .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
@@ -67,8 +68,7 @@ public class TurretSubsystem extends SubsystemBase {
       .withIdleMode(MotorMode.COAST)
       // .withSoftLimit(-TurretConstants.MAX_ONE_DIR_FOV,
       // TurretConstants.MAX_ONE_DIR_FOV)
-      // .withWrapping(Degrees.of(0), Degrees.of(360))
-      .withStatorCurrentLimit(Amps.of(15.0))
+      .withStatorCurrentLimit(Amps.of(0.0))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
@@ -76,7 +76,8 @@ public class TurretSubsystem extends SubsystemBase {
 
   private final PivotConfig turretConfig = new PivotConfig(smc)
       .withMOI(Inches.of(6), Pounds.of(1))
-      .withStartingPosition(Degrees.of(0))
+      // .withStartingPosition(Degrees.of(0))
+      // .withWrapping(Degrees.of(0), Degrees.of(360))
       // .withHardLimit(MIN_ANGLE, MAX_ANGLE)
       .withTelemetry("Turret", TelemetryVerbosity.HIGH);
 
@@ -184,7 +185,9 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public Command setAngle(Angle angle) {
-    return turret.setAngle(clampSafeAngle(() -> angle));
+    return turret.setAngle(angle);
+
+    // return turret.setAngle(clampSafeAngle(() -> angle));
     // return run(() -> {
     // // Angle adjustedAngle =
     // // clampSafeAngle(angle.plus(getAngle().minus(computeTurretAngleFromAbs())));
@@ -249,23 +252,25 @@ public class TurretSubsystem extends SubsystemBase {
     Logger.recordOutput("Turret/isRezeroed", isRezeroed);
     Logger.recordOutput("Turret/m12TAbsEncoderConnected", m12TAbsEncoder.isConnected());
     Logger.recordOutput("Turret/m13TAbsEncoderConnected", m13TAbsEncoder.isConnected());
+
     Logger.recordOutput("Turret/PositionRots",
-        turret.getMotorController().getMechanismPosition());
+        turret.getMotorController().getMechanismPosition().in(Degrees), Degrees);
     Logger.recordOutput("Turret/VelocityRotsPerSec",
-        turret.getMotorController().getMechanismVelocity());
+        turret.getMotorController().getMechanismVelocity().in(DegreesPerSecond), DegreesPerSecond);
     Logger.recordOutput("Turret/SetpointRots",
-        turret.getMotorController().getMechanismPositionSetpoint().orElse(Degrees.of(0)));
-    Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs());
+        turret.getMotorController().getMechanismPositionSetpoint().orElse(Degrees.of(0)).in(Degrees), Degrees);
+    Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs().in(Degrees), Degrees);
 
     // Abs encoders
     Logger.recordOutput("Turret/frequency/m12", m12TAbsEncoder.getFrequency());
     Logger.recordOutput("Turret/frequency/m13", m13TAbsEncoder.getFrequency());
 
     // Turret mechanism
-    Logger.recordOutput("TURRET-MECH/Angle", turret.getAngle());
-    Logger.recordOutput("TURRET-MECH/Setpoint", turret.getMechanismSetpoint().orElse(Degree.of(0)));
+    Logger.recordOutput("TURRET-MECH/Angle", turret.getAngle().in(Degrees), Degrees);
+    Logger.recordOutput("TURRET-MECH/Setpoint", turret.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees),
+        Degrees);
 
-    Logger.recordOutput("Turret/outoutVoltage", turret.getMotorController().getVoltage());
+    Logger.recordOutput("Turret/outputVoltage", turret.getMotorController().getVoltage().in(Volts), Volts);
   }
 
   @Override

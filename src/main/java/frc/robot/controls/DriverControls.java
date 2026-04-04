@@ -58,21 +58,28 @@ public class DriverControls {
           // Lerp: slow pulls from k_standardSpeed down to k_slowSpeed,
           // boost pulls from k_standardSpeed up to k_boostSpeed
           double speedScaler = ControllerConstants.k_standardSpeed
-              - slowInput * (ControllerConstants.k_standardSpeed - ControllerConstants.k_slowSpeed)
-              + boostInput * (ControllerConstants.k_boostSpeed - ControllerConstants.k_standardSpeed);
+              - slowInput * (ControllerConstants.k_standardSpeed
+                  - ControllerConstants.k_slowSpeed)
+              + boostInput * (ControllerConstants.k_boostSpeed
+                  - ControllerConstants.k_standardSpeed);
 
           // Lerp: slow pulls from k_standardRot down to k_slowRot,
           // boost pulls from k_standardRot up to k_boostRot
           double rotScaler = ControllerConstants.k_standardRot
-              - slowInput * (ControllerConstants.k_standardRot - ControllerConstants.k_slowRot)
-              + boostInput * (ControllerConstants.k_boostRot - ControllerConstants.k_standardRot);
+              - slowInput * (ControllerConstants.k_standardRot
+                  - ControllerConstants.k_slowRot)
+              + boostInput * (ControllerConstants.k_boostRot
+                  - ControllerConstants.k_standardRot);
 
           double finalRot = RotationsPerSecond.of(
-              scale(-controller.getRightX()) * rotScaler).in(RadiansPerSecond);
+              scale(-controller.getRightX()) * rotScaler)
+              .in(RadiansPerSecond);
 
           return drive
-              .withVelocityX(scale(controller.getLeftY()) * MaxSpeed * speedScaler)
-              .withVelocityY(scale(controller.getLeftX()) * MaxSpeed * speedScaler)
+              .withVelocityX(scale(controller.getLeftY()) * MaxSpeed
+                  * speedScaler)
+              .withVelocityY(scale(controller.getLeftX()) * MaxSpeed
+                  * speedScaler)
               .withRotationalRate(finalRot);
         }));
 
@@ -99,10 +106,9 @@ public class DriverControls {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    // controller.povLeft().onTrue(superstructure.turretLeftCommand());
-    // controller.povRight().onTrue(superstructure.turretRightCommand());
-
-    // controller.povUp().onTrue(superstructure.turretCenterCommand());
+    controller.povLeft().onTrue(superstructure.turretLeftCommand());
+    controller.povRight().onTrue(superstructure.turretRightCommand());
+    controller.povUp().onTrue(superstructure.turretCenterCommand());
 
     // controller.leftBumper().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
