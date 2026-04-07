@@ -7,7 +7,7 @@
       "height": 1077,
       "state": {
         "sidebar": {
-          "width": 297,
+          "width": 356,
           "expanded": [
             "/Tuning/Shooter/ShooterMotor",
             "/Tuning/Shooter/ShooterMotor/closedloop",
@@ -72,15 +72,17 @@
             "/DriveState/Pose/translation",
             "/DriveState/Pose/rotation",
             "/AdvantageKit/RealOutputs",
-            "/AdvantageKit/RealOutputs/Limelight",
             "/AdvantageKit/RealOutputs/Limelight/limelight-up",
             "/AdvantageKit/RealOutputs/Limelight/limelight-down",
+            "/Mechanisms/Turret/TurretMotor/rotor",
+            "/AdvantageKit/RealOutputs/TURRET-MECH",
+            "/AdvantageKit/RealOutputs/Turret",
             "/Mechanisms",
-            "/Mechanisms/Turret/TurretMotor/rotor"
+            "/AdvantageKit"
           ]
         },
         "tabs": {
-          "selected": 9,
+          "selected": 10,
           "tabs": [
             {
               "type": 0,
@@ -831,31 +833,11 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/outputVolts",
-                    "logType": "Number",
-                    "visible": false,
-                    "options": {
-                      "color": "#e48b32",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/calculate/ffOutput",
                     "logType": "Number",
                     "visible": false,
                     "options": {
                       "color": "#858584",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/calculate/outputVolts",
-                    "logType": "Number",
-                    "visible": false,
-                    "options": {
-                      "color": "#3b875a",
                       "size": "normal"
                     }
                   },
@@ -868,6 +850,115 @@
                       "color": "#d993aa",
                       "size": "normal"
                     }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/outputVoltage",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#3b875a",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": {
+                    "type": null,
+                    "factor": 1
+                  }
+                },
+                "rightUnitConversion": {
+                  "autoTarget": "degrees/second",
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "crvn4hjla9h7q3p0zx5ez3end58bu0rc",
+              "renderer": null,
+              "controlsHeight": 409
+            },
+            {
+              "type": 1,
+              "title": "SendHalp",
+              "controller": {
+                "leftSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Turret/TurretMotor/mechanism/position",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#2b66a2",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/TURRET-MECH/Angle",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e5b31b",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/PositionRots",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#e48b32",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/TURRET-MECH/Setpoint",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#af2437",
+                      "size": "normal"
+                    }
+                  }
+                ],
+                "rightSources": [
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/Mechanisms/Turret/TurretMotor/closedloop/setpoint/position",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/SetpointRots",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#c0b487",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/outputVoltage",
+                    "logType": "Number",
+                    "visible": true,
+                    "options": {
+                      "color": "#858584",
+                      "size": "normal"
+                    }
                   }
                 ],
                 "discreteSources": [],
@@ -878,15 +969,15 @@
                   "preset": null
                 },
                 "rightUnitConversion": {
-                  "autoTarget": null,
+                  "autoTarget": "degrees",
                   "preset": null
                 },
                 "leftFilter": 0,
                 "rightFilter": 0
               },
-              "controllerUUID": "crvn4hjla9h7q3p0zx5ez3end58bu0rc",
+              "controllerUUID": "9j4al32pkqzeaaaqj0lrgwpusiwn0c48",
               "renderer": null,
-              "controlsHeight": 373
+              "controlsHeight": 302
             },
             {
               "type": 1,
