@@ -50,15 +50,15 @@ public class TurretSubsystem extends SubsystemBase {
   // Total reduction: 5 * 5 = 25:1
   public final double GEAR_RATIO = (5.0 * (60.0 / 12.0));
 
-  public final double MAX_ANGLE = TurretConstants.MAX_ONE_DIR_FOV;
-  public final double MIN_ANGLE = -TurretConstants.MAX_ONE_DIR_FOV;
+  public final Angle MAX_ANGLE = TurretConstants.MAX_ONE_DIR_FOV;
+  public final Angle MIN_ANGLE = TurretConstants.MAX_ONE_DIR_FOV.unaryMinus();
 
   // Motor & encoder
   private SparkMax turretSpark = new SparkMax(Constants.TurretConstants.k_turretMotorId, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.0, 0.0, 0.0,
+      .withClosedLoopController(45.0, 0.0, 0.0,
           DegreesPerSecond.of(180),
           DegreesPerSecondPerSecond.of(360))
       .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
@@ -66,9 +66,8 @@ public class TurretSubsystem extends SubsystemBase {
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(true)
       .withIdleMode(MotorMode.COAST)
-      // .withSoftLimit(-TurretConstants.MAX_ONE_DIR_FOV,
-      // TurretConstants.MAX_ONE_DIR_FOV)
-      .withStatorCurrentLimit(Amps.of(0.0))
+      .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
+      .withStatorCurrentLimit(Amps.of(15.0))
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
@@ -76,9 +75,9 @@ public class TurretSubsystem extends SubsystemBase {
 
   private final PivotConfig turretConfig = new PivotConfig(smc)
       .withMOI(Inches.of(6), Pounds.of(1))
-      // .withStartingPosition(Degrees.of(0))
-      // .withWrapping(Degrees.of(0), Degrees.of(360))
-      // .withHardLimit(MIN_ANGLE, MAX_ANGLE)
+      .withStartingPosition(Degrees.of(0))
+      .withWrapping(Degrees.of(0), Degrees.of(360))
+      .withHardLimit(MIN_ANGLE, MAX_ANGLE)
       .withTelemetry("Turret", TelemetryVerbosity.HIGH);
 
   private Pivot turret = new Pivot(turretConfig);
@@ -211,15 +210,13 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public Supplier<Angle> clampSafeAngle(Supplier<Angle> angle) {
-    double MAX_ONE_DIR_FOV = TurretConstants.MAX_ONE_DIR_FOV;
-
     Angle actual = angle.get();
     final Angle result;
 
-    if (actual.in(Degrees) > MAX_ONE_DIR_FOV) {
-      result = Degrees.of(MAX_ONE_DIR_FOV);
-    } else if (actual.in(Degrees) < -MAX_ONE_DIR_FOV) {
-      result = Degrees.of(-MAX_ONE_DIR_FOV);
+    if (actual.gt(MAX_ANGLE)) {
+      result = MAX_ANGLE;
+    } else if (actual.lt(MIN_ANGLE)) {
+      result = MIN_ANGLE;
     } else {
       result = actual;
     }
@@ -258,7 +255,7 @@ public class TurretSubsystem extends SubsystemBase {
     Logger.recordOutput("Turret/VelocityRotsPerSec",
         turret.getMotorController().getMechanismVelocity().in(DegreesPerSecond), DegreesPerSecond);
     Logger.recordOutput("Turret/SetpointRots",
-        turret.getMotorController().getMechanismPositionSetpoint().orElse(Degrees.of(0)).in(Degrees), Degrees);
+        turret.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees), Degrees);
     Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs().in(Degrees), Degrees);
 
     // Abs encoders
