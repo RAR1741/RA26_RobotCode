@@ -14,7 +14,6 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Robot;
 import frc.robot.Simulation;
 import frc.robot.Telemetry;
-import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
@@ -33,7 +32,9 @@ public class DriverControls {
       .withDeadband(MaxSpeed * m_deadbandLimit).withRotationalDeadband(MaxAngularRate * m_deadbandLimit)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
+  @SuppressWarnings("unused")
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  @SuppressWarnings("unused")
   private static final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   public static double scale(double input) {

@@ -20,6 +20,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 
+import edu.wpi.first.wpilibj.util.Color;
+
 public class Constants {
   public static final CANBus ctreCANBus = new CANBus("Drivetrain");
 
@@ -54,8 +56,16 @@ public class Constants {
   }
 
   public static class LEDConstants {
-    public static final int k_port = 2; //TODO: CHANGE
+    public static final int k_port = 9; //TODO: CHANGE
     public static final int k_length = 17; //TODO: CHANGE
+
+    // COLORS ACCOSIATIONS
+    //we are insane in the membrane :3
+    public static final Color autoColor = Color.kBlue;
+    public static final Color teleColor = Color.kGreen;
+    public static final Color disableColor = Color.kRed; //Barbie Mode https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjZ8IP6ttqTAxVvCnkGHVpAKAQQ78AJegQIFhAB&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DZyhrYis509A&usg=AOvVaw0WXXn6ZTj3d_dYYDGtsTpk&opi=89978449 
+    public static final Color motorError = Color.kOrange;
+    public static final Color sotmOnColor = Color.kLavender;
   }
 
   public static class IntakeConstants {

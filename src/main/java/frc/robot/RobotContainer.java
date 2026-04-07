@@ -28,8 +28,8 @@ import frc.robot.controls.DriverControls;
 import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Superstructure;
-
 
 public class RobotContainer {
   private final Telemetry logger = new Telemetry();
@@ -228,5 +228,9 @@ public class RobotContainer {
     }
 
     System.out.println("Alliance changed to: " + alliance);
+  }
+
+  public LEDSubsystem getLEDS(){
+    return superstructure.getLEDs();
   }
 }

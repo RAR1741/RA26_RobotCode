@@ -3,7 +3,8 @@ package frc.robot.subsystems;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.simulation.AddressableLEDSim;
+import edu.wpi.first.wpilibj.AddressableLED;
+
 // import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -12,15 +13,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class LEDSubsystem extends SubsystemBase {
-    private AddressableLEDSim led; //CHANGE BACK TO AddressableLED
+    private AddressableLED led;
     private AddressableLEDBuffer buffer;
     private int length;
 
     private LEDBufferView allLEDs;
     
     public LEDSubsystem() {
-        led = new AddressableLEDSim();
-        //led = new AddressableLED();
+        led = new AddressableLED(LEDConstants.k_port);
         buffer = new AddressableLEDBuffer(LEDConstants.k_length);
         length = buffer.getLength();
 
@@ -28,17 +28,16 @@ public class LEDSubsystem extends SubsystemBase {
     
         led.setLength(length);
 
-        led.setData(convertLEDBufferIntoSimlish(buffer));
-        // led.setData(buffer);
-        // led.start();
+        led.setData(buffer);
+        led.start();
         
-        // set default commando to lighto solido coloro basedo yoko ono allianceo
+        //TODO: set default color
     }
 
     @Override
     public void periodic() {
-        led.setData(convertLEDBufferIntoSimlish(buffer));
-        // led.setData(buffer);
+        //led.setData(convertLEDBufferIntoSimlish(buffer));
+        led.setData(buffer);
     }
 
     private static byte[] convertLEDBufferIntoSimlish(AddressableLEDBuffer buffer) {

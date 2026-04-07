@@ -23,12 +23,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.AimPoints;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Superstructure;
 
 public class ShootOnTheMoveCommand extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final Superstructure superstructure;
+  private final LEDSubsystem leds;
 
   private Supplier<Translation3d> aimPointSupplier; // The point to aim at
   private AngularVelocity latestShootSpeed = RPM.of(0);
@@ -40,6 +43,7 @@ public class ShootOnTheMoveCommand extends Command {
     this.drivetrain = drivetrain;
     this.superstructure = superstructure;
     this.aimPointSupplier = aimPointSupplier;
+    this.leds = superstructure.getLEDs();
   }
 
   @Override
@@ -71,6 +75,7 @@ public class ShootOnTheMoveCommand extends Command {
 
   @Override
   public void execute() {
+    leds.setAllSolidColor(LEDConstants.sotmOnColor);
     // Calculate trajectory to aimPoint
     var target = aimPointSupplier.get();
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
@@ -151,6 +156,10 @@ public class ShootOnTheMoveCommand extends Command {
     // speed: " + latestShootSpeed
     // + ", hood angle: " + latestHoodAngle + ", turret angle: " +
     // latestTurretAngle);
+  }
+
+  public void end(boolean interrupted){
+    leds.setAllSolidColor(LEDConstants.teleColor);
   }
 
   private double getFlightTime(Distance distanceToTarget) {

@@ -62,6 +62,10 @@ public class Superstructure extends SubsystemBase {
     this.isReadyToShoot = shooter.isAtTarget.and(turret.isAtTarget).and(hood.isAtTarget);
   }
 
+  public LEDSubsystem getLEDs(){
+    return this.leds;
+  }
+
   public Command feedAllCommand() {
     return Commands.waitUntil(isReadyToShoot)
         .andThen(
