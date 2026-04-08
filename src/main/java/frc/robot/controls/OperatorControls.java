@@ -1,11 +1,13 @@
 package frc.robot.controls;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
 
 public class OperatorControls {
+  public static boolean shooting = false;
   public static void configure(int port, CommandSwerveDrivetrain drivetrain, Superstructure superstructure) {
     CommandXboxController controller = new CommandXboxController(port);
 
@@ -32,6 +34,8 @@ public class OperatorControls {
         new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
             .ignoringDisable(true)
             .withName("OperatorControls.aimCommand"));
+
+    controller.a().onTrue(Commands.runOnce(() -> {shooting = !shooting;}));
 
     controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
 
