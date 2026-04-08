@@ -77,8 +77,8 @@ public class Superstructure extends SubsystemBase {
         .andThen(
             Commands.parallel(
                 // intake.feedCommand(),
-                hopper.feedCommand(),
-                kicker.feedCommand())
+                hopper.feedCommand().asProxy(),
+                kicker.feedCommand().asProxy())
                 .onlyWhile(isReadyToShoot))
         .repeatedly()
         .withName("Superstructure.feedAll");

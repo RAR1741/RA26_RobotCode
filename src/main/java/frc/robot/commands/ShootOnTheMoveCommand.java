@@ -130,11 +130,12 @@ public class ShootOnTheMoveCommand extends Command {
     Logger.recordOutput("ShootOnTheMove/Running", isRunning);
 
     latestTurretAngle = calculatedHeading;
-    // latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
-    // latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
+    latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
+    latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
 
-    latestShootSpeed = RPM.of(0);
-    latestHoodAngle = Degrees.of(80.0);
+    // FOR TESTING - DO NOT USE (turns off shooter and hood)
+    // latestShootSpeed = RPM.of(0);
+    // latestHoodAngle = Degrees.of(80.0);
 
     // Kicker corrective bias based on how close to forward/0 we are
     // latestTurretAngle =

@@ -53,7 +53,7 @@ public class TurretSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(45.0, 0.0, 0.0)
+      .withClosedLoopController(20.0, 0.0, 0.0)
       // .withClosedLoopController(45.0, 0.0, 0.0,
       // DegreesPerSecond.of(180),
       // DegreesPerSecondPerSecond.of(360))
@@ -244,6 +244,8 @@ public class TurretSubsystem extends SubsystemBase {
     }
 
     // Telemetry
+    Logger.recordOutput("Turret/error",
+        turret.getMechanismSetpoint().orElse(Degrees.of(0)).minus(turret.getAngle()).in(Degrees), Degrees);
     Logger.recordOutput("Turret/isRezeroed", isRezeroed);
     Logger.recordOutput("Turret/m12TAbsEncoderConnected", m12TAbsEncoder.isConnected());
     Logger.recordOutput("Turret/m13TAbsEncoderConnected", m13TAbsEncoder.isConnected());
