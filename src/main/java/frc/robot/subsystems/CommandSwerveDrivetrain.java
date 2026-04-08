@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Optional;
@@ -23,14 +26,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.util.MapleSimSwerveDrivetrain;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -47,6 +52,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static final double kSimLoopPeriod = 0.004; // 4 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
+  private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.k180deg;
@@ -243,19 +249,40 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
   }
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
   private void startSimThread() {
-    m_lastSimTime = Utils.getCurrentTimeSeconds();
+    com.ctre.phoenix6.swerve.SwerveModuleConstants[] moduleConsts = {
+        frc.robot.generated.TunerConstants.FrontLeft,
+        frc.robot.generated.TunerConstants.FrontRight,
+        frc.robot.generated.TunerConstants.BackLeft,
+        frc.robot.generated.TunerConstants.BackRight
+    };
+    MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(moduleConsts);
 
-    /* Run simulation at a faster rate so PID gains behave more reasonably */
-    m_simNotifier = new Notifier(() -> {
-      final double currentTime = Utils.getCurrentTimeSeconds();
-      double deltaTime = currentTime - m_lastSimTime;
-      m_lastSimTime = currentTime;
+    mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
+        Seconds.of(kSimLoopPeriod),
+        Pounds.of(125),
+        Inches.of(33.5), // bumper length X (forward/back)
+        Inches.of(28.5), // bumper width Y (left/right)
+        DCMotor.getKrakenX60(1),
+        DCMotor.getFalcon500(1),
+        1.0, // wheel COF (Colson wheels)
+        getModuleLocations(),
+        getPigeon2(),
+        getModules(),
+        moduleConsts);
 
-      /* use the measured time delta, get battery voltage from WPILib */
-      updateSimState(deltaTime, RobotController.getBatteryVoltage());
-    });
+    m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
     m_simNotifier.startPeriodic(kSimLoopPeriod);
+  }
+
+  @Override
+  public void resetPose(Pose2d pose) {
+    if (mapleSimSwerveDrivetrain != null) {
+      mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+      Timer.delay(0.1);
+    }
+    super.resetPose(pose);
   }
 
   /**

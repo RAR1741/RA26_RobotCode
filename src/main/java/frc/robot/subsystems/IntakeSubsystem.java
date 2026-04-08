@@ -207,7 +207,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    seedRelativeEncoderFromAbsolute();
+    if (!edu.wpi.first.wpilibj.RobotBase.isSimulation()) {
+      seedRelativeEncoderFromAbsolute();
+    }
 
     rollerSmc.updateTelemetry();
     pivotSmc.updateTelemetry();

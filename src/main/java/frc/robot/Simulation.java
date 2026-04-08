@@ -26,8 +26,8 @@ public final class Simulation {
   }
 
   public void periodic() {
-    m_arena.simulationPeriodic();
-
+    // simulationPeriodic() is driven by the MapleSimSwerveDrivetrain Notifier in CommandSwerveDrivetrain.
+    // Calling it again here would double-step the physics engine and break game piece trajectories.
     Logger.recordOutput("FieldSimulation/Fuel", m_arena.getGamePiecesArrayByType("Fuel"));
 
     Logger.recordOutput("Sim/RobotPose", m_swerve.getState().Pose);
