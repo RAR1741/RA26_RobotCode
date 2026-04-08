@@ -22,20 +22,19 @@ public class DriverControls {
   // kSpeedAt12Volts desired top speed
   private static double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
 
-  private static double m_deadbandLimit = 0.01; // 1% deadband on joystick inputs
-
-  // 3/4 of a rotation per second max angular velocity
-  private static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+  private static double m_deadbandLimit = ControllerConstants.k_DEADBAND;
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private static final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * m_deadbandLimit).withRotationalDeadband(MaxAngularRate * m_deadbandLimit)
+      .withDeadband(MaxSpeed * m_deadbandLimit)
+      .withRotationalDeadband(ControllerConstants.k_standardRot * m_deadbandLimit)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   @SuppressWarnings("unused")
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  @SuppressWarnings("unused")
-  private static final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+
+  // private static final SwerveRequest.PointWheelsAt point = new
+  // SwerveRequest.PointWheelsAt();
 
   public static double scale(double input) {
     double numeratorFactor = (Math.abs(input) - m_deadbandLimit);
@@ -57,16 +56,25 @@ public class DriverControls {
           double slowInput = controller.getLeftTriggerAxis(); // [0, 1]
           double boostInput = controller.getRightTriggerAxis(); // [0, 1]
 
-          // Lerp: slow pulls from standardSpeed down to slowModeMin,
-          // boost pulls from standardSpeed up to boostModeScaler
+          // Lerp: slow pulls from k_standardSpeed down to k_slowSpeed,
+          // boost pulls from k_standardSpeed up to k_boostSpeed
           double speedScaler = ControllerConstants.k_standardSpeed
-              - slowInput * (ControllerConstants.k_standardSpeed - ControllerConstants.k_slowModeMin)
-              + boostInput * (ControllerConstants.k_boostModeScaler - ControllerConstants.k_standardSpeed);
+              - slowInput * (ControllerConstants.k_standardSpeed - ControllerConstants.k_slowSpeed)
+              + boostInput * (ControllerConstants.k_boostSpeed - ControllerConstants.k_standardSpeed);
+
+          // Lerp: slow pulls from k_standardRot down to k_slowRot,
+          // boost pulls from k_standardRot up to k_boostRot
+          double rotScaler = ControllerConstants.k_standardRot
+              - slowInput * (ControllerConstants.k_standardRot - ControllerConstants.k_slowRot)
+              + boostInput * (ControllerConstants.k_boostRot - ControllerConstants.k_standardRot);
+
+          double finalRot = RotationsPerSecond.of(
+              scale(-controller.getRightX()) * rotScaler).in(RadiansPerSecond);
 
           return drive
               .withVelocityX(scale(controller.getLeftY()) * MaxSpeed * speedScaler)
               .withVelocityY(scale(controller.getLeftX()) * MaxSpeed * speedScaler)
-              .withRotationalRate(scale(-controller.getRightX()) * MaxAngularRate);
+              .withRotationalRate(finalRot);
         }));
 
     // Idle while the robot is disabled. This ensures the configured
@@ -75,7 +83,7 @@ public class DriverControls {
     RobotModeTriggers.disabled().whileTrue(
         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-    // controller.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    controller.x().whileTrue(drivetrain.applyRequest(() -> brake));
     // controller.b().whileTrue(drivetrain.applyRequest(
     // () -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(),
     // -controller.getLeftX()))));
@@ -94,15 +102,16 @@ public class DriverControls {
 
     // controller.povLeft().onTrue(superstructure.turretLeftCommand());
     // controller.povRight().onTrue(superstructure.turretRightCommand());
-    
+
     // controller.povUp().onTrue(superstructure.turretCenterCommand());
 
     // controller.leftBumper().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
     // controller.rightBumper().toggleOnTrue(
-    //     new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
-    //         .ignoringDisable(true)
-    //         .withName("OperatorControls.aimCommand"));
+    // new ShootOnTheMoveCommand(drivetrain, superstructure, () ->
+    // superstructure.getAimPoint())
+    // .ignoringDisable(true)
+    // .withName("OperatorControls.aimCommand"));
 
     if (Robot.isSimulation()) {
       // Fire fuel 10 times per second while button is held

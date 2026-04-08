@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.lang.Thread.State;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.Robot;
+import frc.robot.subsystems.StateManager.StateManager;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.PivotConfig;
@@ -41,6 +43,7 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 public class HoodSubsystem extends SubsystemBase {
   public Angle MIN_ANGLE = Degrees.of(40);
   public Angle MAX_ANGLE = Degrees.of(80);
+  public Angle MIN_SAFE_ANGLE = Degrees.of(70);
 
   private double GEAR_RATIO = 0.891 * 360.0; // output/input
 
@@ -75,7 +78,13 @@ public class HoodSubsystem extends SubsystemBase {
       () -> hood.getMechanismSetpoint().orElse(Degrees.of(-100)).minus(hood.getAngle())
           .abs(Degrees) < SuperstructureConstants.k_hoodTolerance.in(Degrees));
 
-  public HoodSubsystem() {
+  private StateManager stateManager;
+
+  public HoodSubsystem(StateManager stateManager) {
+    this.stateManager = stateManager;
+
+    stateManager.inDecapitationZoneTrigger.onTrue(setAngle(MIN_SAFE_ANGLE));
+
     // YAMS Pivot bug workaround: the Pivot constructor creates a new DCMotorSim
     // at 0 radians and overwrites the SimSupplier, but never initializes the
     // DCMotorSim position to match withStartingPosition(). This causes the sim
@@ -134,6 +143,9 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   public Command setAngle(Angle angle) {
+    if (stateManager.inDecapitationZoneTrigger.getAsBoolean() && angle.lt(MIN_SAFE_ANGLE)) {
+      angle = MIN_SAFE_ANGLE;
+    }
     return hood.setAngle(angle);
   }
 

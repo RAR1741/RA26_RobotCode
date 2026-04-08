@@ -14,10 +14,11 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,25 +40,28 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class IntakeSubsystem extends SubsystemBase {
 
-  private static final AngularVelocity INTAKE_ROLLER_SPEED = RPM.of(3000.0);
+  private static final AngularVelocity INTAKE_ROLLER_SPEED = RPM.of(2000.0);
+  private static final AngularVelocity EJECT_ROLLER_SPEED = RPM.of(3000.0);
+
 
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
-  private SparkMax pivotSecondaySpark = new SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
+  // private SparkMax pivotSecondaySpark = new
+  // SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
 
   private final REVThroughBoreEncoder pivotAbsEncoder;
 
-  private static final double PIVOT_GEAR_RATIO = 5 * (36.0 / 24.0);
+  private static final double PIVOT_GEAR_RATIO = 9.0 * (48.0 / 22.0);
 
   private final SmartMotorControllerConfig pivotSmcConfig = new SmartMotorControllerConfig(this)
-      .withFollowers(Pair.of(pivotSecondaySpark, true))
+      // .withFollowers(Pair.of(pivotSecondaySpark, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(7.5, 0, 0)
-      // .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
+      .withClosedLoopController(2.0, 0, 0)
+      // .withFeedforward(new ArmFeedforward(0.191, 0.11858, 0.0))
       .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(PIVOT_GEAR_RATIO)))
       .withMotorInverted(false)
-      .withIdleMode(MotorMode.BRAKE);
-      //.withStatorCurrentLimit(Amps.of(40.0));
+      .withIdleMode(MotorMode.BRAKE)
+      .withStatorCurrentLimit(Amps.of(80.0));
 
   private final SmartMotorController pivotSmc = new SparkWrapper(
       pivotLeaderSpark,
@@ -76,15 +80,19 @@ public class IntakeSubsystem extends SubsystemBase {
 
   // Nova motor controller with NEO motor
   private SparkFlex rollerSpark = new SparkFlex(Constants.IntakeConstants.k_rollerMotorId, MotorType.kBrushless);
+  private SparkFlex rollerSecondarySpark = new SparkFlex(Constants.IntakeConstants.k_rollerMotorSecondaryId,
+      MotorType.kBrushless);
 
   private SmartMotorControllerConfig rollerSmcConfig = new SmartMotorControllerConfig(this)
+      .withFollowers(Pair.of(rollerSecondarySpark, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.0300, 0, 0)
+      .withClosedLoopController(0.0100, 0, 0)
+      .withFeedforward(new SimpleMotorFeedforward(0.191, 0.09558, 0.0))
       .withTelemetry("RollerMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
       .withMotorInverted(true)
-      .withIdleMode(MotorMode.COAST)
-      .withStatorCurrentLimit(Amps.of(40));
+      .withIdleMode(MotorMode.COAST);
+  // .withStatorCurrentLimit(Amps.of(40));
 
   private SmartMotorController rollerSmc = new SparkWrapper(rollerSpark, DCMotor.getNeoVortex(1), rollerSmcConfig);
 
@@ -132,20 +140,22 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeDeployAndRun() {
-    return Commands.parallel(
-        roller.setSpeed(INTAKE_ROLLER_SPEED).asProxy(),
-        setIntakeDeployed())
+    return Commands.sequence(
+        intakePivot.setAngle(IntakeConstants.k_IntakeDeployed)
+            .until(intakePivot.isNear(IntakeConstants.k_IntakeDeployed, Degrees.of(3))),
+        roller.setSpeed(INTAKE_ROLLER_SPEED))
         .withName("Intake.intakeDeployAndRun");
   }
 
   public Command feedCommand() {
-    return Commands.parallel(
-        setIntakeFeedPivot().asProxy(),
-        Commands.sequence(
-            roller.setSpeed(INTAKE_ROLLER_SPEED).withTimeout(IntakeConstants.k_feedUpTime),
-            roller.setSpeed(RPM.of(0)).withTimeout(IntakeConstants.k_feedDownTime))
-            .repeatedly())
-        .withName("Intake.feedCommand");
+    return setIntakeFeedPivot();
+    // return Commands.parallel(
+    // setIntakeFeedPivot().asProxy(),
+    // Commands.sequence(
+    // roller.setSpeed(INTAKE_ROLLER_SPEED).withTimeout(IntakeConstants.k_feedUpTime),
+    // roller.setSpeed(RPM.of(0)).withTimeout(IntakeConstants.k_feedDownTime))
+    // .repeatedly())
+    // .withName("Intake.feedCommand");
   }
 
   public Command stopCommand() {
@@ -153,7 +163,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command ejectCommand() {
-    return roller.setSpeed(INTAKE_ROLLER_SPEED.unaryMinus()).withName("Intake.EjectCommand");
+    return roller.setSpeed(EJECT_ROLLER_SPEED.unaryMinus()).withName("Intake.EjectCommand");
   }
 
   public Command setPivotAngle(Angle angle) {
@@ -170,7 +180,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command setIntakeFeedPivot() {
-    return intakePivot.setAngle(IntakeConstants.k_IntakeFeed);
+    return intakePivot.setAngle(IntakeConstants.k_IntakeMaxWhileRoller);
   }
 
   public Command setIntakeDeployed() {

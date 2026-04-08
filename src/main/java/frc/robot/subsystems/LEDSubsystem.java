@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class LEDSubsystem extends SubsystemBase {
     private AddressableLED led;
@@ -40,6 +41,7 @@ public class LEDSubsystem extends SubsystemBase {
         led.setData(buffer);
     }
 
+    @SuppressWarnings("unused")
     private static byte[] convertLEDBufferIntoSimlish(AddressableLEDBuffer buffer) {
         int length = buffer.getLength();
         byte[] data = new byte[length * 3];
@@ -74,7 +76,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public Command setAllAllianceColor() {
-        return setAllSolidColor(RobotContainer.retrieveAlliance() == Alliance.Red ? Color.kRed : Color.kBlue);
+        return setAllSolidColor(DriverStation.getAlliance().orElse(null) == Alliance.Red ? Color.kRed : Color.kBlue);
     }
 
     public Command setAllColorChase(Color color, int ms) {
