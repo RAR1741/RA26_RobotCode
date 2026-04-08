@@ -1,15 +1,11 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.ArrayList;
@@ -21,7 +17,6 @@ import org.littletonrobotics.junction.Logger;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
@@ -58,27 +53,29 @@ public class TurretSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(45.0, 0.0, 0.0,
-          DegreesPerSecond.of(180),
-          DegreesPerSecondPerSecond.of(360))
-      .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
+      .withClosedLoopController(45.0, 0.0, 0.0)
+      // .withClosedLoopController(45.0, 0.0, 0.0,
+      // DegreesPerSecond.of(180),
+      // DegreesPerSecondPerSecond.of(360))
+      .withClosedLoopTolerance(Degrees.of(0.1))
+      // .withFeedforward(new SimpleMotorFeedforward(0.0, 10.0, 0.0))
       .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(true)
       .withIdleMode(MotorMode.COAST)
       .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
-      .withStatorCurrentLimit(Amps.of(15.0))
-      .withClosedLoopRampRate(Seconds.of(0.1))
-      .withOpenLoopRampRate(Seconds.of(0.1));
+      .withStatorCurrentLimit(Amps.of(15.0));
+  // .withClosedLoopRampRate(Seconds.of(0.1))
+  // .withOpenLoopRampRate(Seconds.of(0.1));
 
   private SmartMotorController smc = new SparkWrapper(turretSpark, DCMotor.getNEO(1), smcConfig);
 
   private final PivotConfig turretConfig = new PivotConfig(smc)
       .withMOI(Inches.of(6), Pounds.of(1))
-      .withStartingPosition(Degrees.of(0))
+      // .withStartingPosition(Degrees.of(0))
       // .withWrapping(Degrees.of(0), Degrees.of(360))
-      .withSoftLimits(MIN_ANGLE, MAX_ANGLE)
-      .withHardLimit(MIN_ANGLE.minus(Degrees.of(5)), MAX_ANGLE.plus(Degrees.of(5)))
+      // .withSoftLimits(MIN_ANGLE, MAX_ANGLE)
+      // .withHardLimit(MIN_ANGLE.minus(Degrees.of(5)), MAX_ANGLE.plus(Degrees.of(5)))
       .withTelemetry("Turret", TelemetryVerbosity.HIGH);
 
   private Pivot turret = new Pivot(turretConfig);
