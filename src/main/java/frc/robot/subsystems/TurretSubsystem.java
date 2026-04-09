@@ -3,9 +3,13 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.ArrayList;
@@ -17,6 +21,7 @@ import org.littletonrobotics.junction.Logger;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
@@ -28,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.wrappers.RARSparkWrapper;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -38,7 +44,6 @@ import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.local.SparkWrapper;
 
 public class TurretSubsystem extends SubsystemBase {
   // 1 Neo, 5:1 gearbox, 60:12 pivot gearing, non-continuous 360 deg
@@ -53,12 +58,12 @@ public class TurretSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(20.0, 0.0, 0.0)
-      // .withClosedLoopController(45.0, 0.0, 0.0,
-      // DegreesPerSecond.of(180),
-      // DegreesPerSecondPerSecond.of(360))
-      .withClosedLoopTolerance(Degrees.of(0.1))
-      // .withFeedforward(new SimpleMotorFeedforward(0.0, 10.0, 0.0))
+      // .withClosedLoopController(20.0, 0.0, 0.0)
+      .withClosedLoopController(1.0, 0.0, 0.0,
+          DegreesPerSecond.of(45),
+          DegreesPerSecondPerSecond.of(45))
+      .withFeedforward(new SimpleMotorFeedforward(0.0, 1.0, 0.0))
+      .withClosedLoopTolerance(Degrees.of(360.0))
       .withTelemetry("TurretMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(true)
@@ -68,7 +73,7 @@ public class TurretSubsystem extends SubsystemBase {
   // .withClosedLoopRampRate(Seconds.of(0.1))
   // .withOpenLoopRampRate(Seconds.of(0.1));
 
-  private SmartMotorController smc = new SparkWrapper(turretSpark, DCMotor.getNEO(1), smcConfig);
+  private SmartMotorController smc = new RARSparkWrapper(turretSpark, DCMotor.getNEO(1), smcConfig);
 
   private final PivotConfig turretConfig = new PivotConfig(smc)
       .withMOI(Inches.of(6), Pounds.of(1))
@@ -226,6 +231,10 @@ public class TurretSubsystem extends SubsystemBase {
     return setAngle(Degrees.of(0));
   }
 
+  public Command sysid() {
+    return turret.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(10));
+  }
+
   public Angle getRobotAdjustedAngle() {
     // Returns the turret angle in the robot's coordinate frame
     // since the turret is mounted backwards, we need to add 180 degrees
@@ -257,6 +266,16 @@ public class TurretSubsystem extends SubsystemBase {
     Logger.recordOutput("Turret/SetpointRots",
         turret.getMechanismSetpoint().orElse(Degrees.of(0)).in(Degrees), Degrees);
     Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs().in(Degrees), Degrees);
+
+    // MaxMotion
+    Logger.recordOutput("Turret/MaxMotion/PositionGoalRots",
+        turretSpark.getClosedLoopController().getSetpoint(), Rotations);
+    Logger.recordOutput("Turret/MaxMotion/PositionSetpointRots",
+        turretSpark.getClosedLoopController().getMAXMotionSetpointPosition(), Rotations);
+    Logger.recordOutput("Turret/MaxMotion/PositionSetpointVelocity",
+        turretSpark.getClosedLoopController().getMAXMotionSetpointVelocity(), RotationsPerSecond);
+    Logger.recordOutput("Turret/MaxMotion/controlType",
+        turretSpark.getClosedLoopController().getControlType());
 
     // Abs encoders
     Logger.recordOutput("Turret/frequency/m12", m12TAbsEncoder.getFrequency());
