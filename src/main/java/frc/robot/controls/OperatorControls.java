@@ -5,11 +5,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class OperatorControls {
   public static boolean shooting = false;
   public static void configure(int port, CommandSwerveDrivetrain drivetrain, Superstructure superstructure) {
     CommandXboxController controller = new CommandXboxController(port);
+
+    final Command ShootOnTheMoveCommand = new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint());
 
     // controller.rightTrigger().whileTrue(superstructure.shootCommand());
 
@@ -28,10 +31,14 @@ public class OperatorControls {
     controller.y().onTrue(superstructure.turretCenterCommand());
     controller.start().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
-    controller.a().toggleOnTrue(
-        new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint())
+    controller.a().onTrue(ShootOnTheMoveCommand
             .ignoringDisable(true)
-            .withName("OperatorControls.aimCommand"));
+            .withName("OperatorControls.aimCommand")
+    );
+
+    controller.x().onTrue(
+      Commands.runOnce(ShootOnTheMoveCommand::cancel)
+    );
 
     controller.a().onTrue(Commands.runOnce(() -> {shooting = !shooting;}));
 
