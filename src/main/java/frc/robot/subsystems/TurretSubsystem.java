@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -14,7 +13,6 @@ import org.littletonrobotics.junction.Logger;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -24,7 +22,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
@@ -65,10 +62,6 @@ public class TurretSubsystem extends SubsystemBase {
       0.0, // kD
       new TrapezoidProfile.Constraints(MAX_VELOCITY_ROT_PER_SEC, MAX_ACCEL_ROT_PER_SEC2));
 
-  // Feedforward (kS, kV, kA — in volts, volts*s/deg, volts*s^2/deg)
-  // TODO: Tune feedforward gains via SysId
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 3.5, 0.0);
-
   private boolean isRezeroed = false;
   private boolean isRezeroing = false;
   private boolean closedLoopEnabled = false;
@@ -79,12 +72,23 @@ public class TurretSubsystem extends SubsystemBase {
 
   // public final Trigger isAtTarget = new Trigger(() -> profiledPID.atGoal());
 
-  public final Trigger isAtTarget = new Trigger(
-      () -> Math.abs(Rotations.of(turretEncoder.getPosition()
-          - profiledPID.getGoal().position).in(Degrees)) < SuperstructureConstants.k_turretTolerance.in(Degrees));
+  // TODO: figure this out... again
+  // public final Trigger isAtTarget = new Trigger(
+  // () -> Math.abs(Rotations.of(turretEncoder.getPosition()
+  // - profiledPID.getGoal().position).in(Degrees)) <
+  // SuperstructureConstants.k_turretTolerance.in(Degrees));
+
+  public final Trigger isAtTarget = new Trigger(() -> true);
 
   public TurretSubsystem() {
     turretConfig = new SparkMaxConfig();
+
+    turretConfig.softLimit.forwardSoftLimit(MAX_ANGLE.in(Rotations));
+    turretConfig.softLimit.reverseSoftLimit(MIN_ANGLE.in(Rotations));
+    turretConfig.softLimit.forwardSoftLimitEnabled(true);
+    turretConfig.softLimit.reverseSoftLimitEnabled(true);
+
+    // TODO: figure out how to turn on status frames 7/8/9
 
     turretConfig.inverted(true);
     turretConfig.idleMode(IdleMode.kCoast);
@@ -98,17 +102,17 @@ public class TurretSubsystem extends SubsystemBase {
 
     turretConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .p(1.0)
+        .p(10.0)
         .i(0)
         .d(0)
         .outputRange(-1, 1).feedForward
         // kV is now in Volts, so we multiply by the nominal voltage (12V)
-        .kV(1.0);
+        .kV(25.0);
 
     turretConfig.closedLoop.maxMotion
-        .cruiseVelocity(Degrees.of(45).in(Rotations))
-        .maxAcceleration(Degrees.of(45).in(Rotations))
-        .allowedProfileError(Degrees.of(360).in(Rotations));
+        .cruiseVelocity(Degrees.of(1440).in(Rotations))
+        .maxAcceleration(Degrees.of(1440).in(Rotations)) // TODO: Up this, so the profile ramps down later
+        .allowedProfileError(Degrees.of(5).in(Rotations));
 
     turretSpark.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -218,6 +222,9 @@ public class TurretSubsystem extends SubsystemBase {
     return run(() -> {
       closedLoopEnabled = true;
       // profiledPID.setGoal(clampSafeAngle(turretAngleSupplier.get()).in(Rotations));
+
+      turretController.setSetpoint(turretAngleSupplier.get().in(Rotations),
+          SparkBase.ControlType.kMAXMotionPositionControl);
     }).withName("Turret.SetAngleDynamic");
   }
 
