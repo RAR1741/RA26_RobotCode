@@ -25,13 +25,13 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
-import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 
@@ -83,6 +83,9 @@ public class TurretSubsystem extends SubsystemBase {
   public TurretSubsystem() {
     turretConfig = new SparkMaxConfig();
 
+    turretConfig.signals.setSetpointAlwaysOn(true);
+    turretConfig.signals.maxMotionSetpointPositionAlwaysOn(true);
+
     turretConfig.softLimit.forwardSoftLimit(MAX_ANGLE.in(Rotations));
     turretConfig.softLimit.reverseSoftLimit(MIN_ANGLE.in(Rotations));
     turretConfig.softLimit.forwardSoftLimitEnabled(true);
@@ -102,17 +105,18 @@ public class TurretSubsystem extends SubsystemBase {
 
     turretConfig.closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .p(10.0)
+        .p(45.0)
         .i(0)
         .d(0)
         .outputRange(-1, 1).feedForward
         // kV is now in Volts, so we multiply by the nominal voltage (12V)
-        .kV(25.0);
+        .kV(4.0);
+    // .kV(3.0 * (1 / GEAR_RATIO));
 
     turretConfig.closedLoop.maxMotion
         .cruiseVelocity(Degrees.of(1440).in(Rotations))
-        .maxAcceleration(Degrees.of(1440).in(Rotations)) // TODO: Up this, so the profile ramps down later
-        .allowedProfileError(Degrees.of(5).in(Rotations));
+        .maxAcceleration(Degrees.of(5760).in(Rotations)) // TODO: Up this, so the profile ramps down later
+        .allowedProfileError(Degrees.of(22.5).in(Rotations));
 
     turretSpark.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -290,7 +294,8 @@ public class TurretSubsystem extends SubsystemBase {
     // }
 
     // Telemetry
-    Logger.recordOutput("Turret/outputVolts", turretSpark.getAppliedOutput());
+    Logger.recordOutput("Turret/outputVolts",
+        turretSpark.getAppliedOutput() * RobotController.getBatteryVoltage());
     Logger.recordOutput("Turret/closedLoopEnabled", closedLoopEnabled);
     Logger.recordOutput("Turret/isRezeroed", isRezeroed);
     Logger.recordOutput("Turret/m12TAbsEncoderConnected", m12TAbsEncoder.isConnected());
