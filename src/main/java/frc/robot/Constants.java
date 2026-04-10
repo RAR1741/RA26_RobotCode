@@ -98,9 +98,9 @@ public class Constants {
     //we are insane in the membrane :3
     public static final Color autoColor = Color.kBlue;
     public static final Color teleColor = Color.kGreen;
-    public static final Color disableColor = Color.kRed; //Barbie Mode https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjZ8IP6ttqTAxVvCnkGHVpAKAQQ78AJegQIFhAB&url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DZyhrYis509A&usg=AOvVaw0WXXn6ZTj3d_dYYDGtsTpk&opi=89978449 
+    public static final Color disableColor = Color.kRed; 
     public static final Color motorError = Color.kOrange;
-    public static final Color sotmOnColor = Color.kLavender;
+    public static final Color sotmOnColor = Color.kPurple;
   }
 
   public static class IntakeConstants {

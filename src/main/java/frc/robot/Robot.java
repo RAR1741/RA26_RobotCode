@@ -56,7 +56,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
-    CommandScheduler.getInstance().schedule(leds.setAllSolidColor(LEDConstants.disableColor));
+    leds.setAllSolidColor(LEDConstants.disableColor).execute(); //we are criminals
   }
 
   @Override

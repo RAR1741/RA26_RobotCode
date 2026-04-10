@@ -48,6 +48,14 @@ public class ShootOnTheMoveCommand extends Command {
     this.leds = superstructure.getLEDs();
   }
 
+  private void setIsRunning(boolean state){
+    isRunning = state;
+  }
+
+  private boolean getisRunning(){
+    return isRunning;
+  }
+
   @Override
   public void initialize() {
     super.initialize();
@@ -73,12 +81,13 @@ public class ShootOnTheMoveCommand extends Command {
 
     CommandScheduler.getInstance().schedule(aimCommand);
     
-    isRunning = true;
+    setIsRunning(true);
   }
 
   @Override
   public boolean isFinished() {
-    return !isRunning; //it freaks out and runs wrong
+    System.out.println(!isRunning);
+    return !getisRunning(); //it freaks out and runs wrong
   }
 
   @Override
@@ -89,7 +98,7 @@ public class ShootOnTheMoveCommand extends Command {
       return;
     }
 
-    leds.setAllSolidColor(LEDConstants.sotmOnColor);
+    leds.setAllSolidColor(LEDConstants.sotmOnColor).execute();
     // Calculate trajectory to aimPoint
     var target = aimPointSupplier.get();
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
@@ -133,7 +142,7 @@ public class ShootOnTheMoveCommand extends Command {
     Logger.recordOutput("ShootOnTheMove/DesiredTurretHeading", calculatedHeading.in(Degrees));
     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
     Logger.recordOutput("ShootOnTheMove/Running", isRunning);
-    Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", "Yes");
+    Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", getisRunning());
 
     latestTurretAngle = calculatedHeading;
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
@@ -177,17 +186,14 @@ public class ShootOnTheMoveCommand extends Command {
   }
 
   public void end(boolean interrupted) {
-    System.out.println("ln netri = -1");
-    leds.setAllSolidColor(LEDConstants.teleColor);
-    isRunning = false;
-    Logger.recordOutput("ShootOnTheMove/Running", isRunning);
+    
+    leds.setAllSolidColor(LEDConstants.teleColor).execute();
+    setIsRunning(false);
+    Logger.recordOutput("ShootOnTheMove/Running", getisRunning());
     if (aimCommand != null) {
       aimCommand.cancel();
-      Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", "No");
     }
-    else {
-      Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", "No");
-    }
+    Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", getisRunning());
   }
 
   private double getFlightTime(Distance distanceToTarget) {

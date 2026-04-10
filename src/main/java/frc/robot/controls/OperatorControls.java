@@ -9,10 +9,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class OperatorControls {
   public static boolean shooting = false;
+
+  private static Command Sotm;
+
   public static void configure(int port, CommandSwerveDrivetrain drivetrain, Superstructure superstructure) {
     CommandXboxController controller = new CommandXboxController(port);
-
-    final Command ShootOnTheMoveCommand = new ShootOnTheMoveCommand(drivetrain, superstructure, () -> superstructure.getAimPoint());
 
     // controller.rightTrigger().whileTrue(superstructure.shootCommand());
 
@@ -31,13 +32,22 @@ public class OperatorControls {
     controller.y().onTrue(superstructure.turretCenterCommand());
     controller.start().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
-    controller.a().onTrue(ShootOnTheMoveCommand
+    controller.a().onTrue(
+        Commands.runOnce(() -> {
+            Sotm = new ShootOnTheMoveCommand(
+                drivetrain,
+                superstructure,
+                () -> superstructure.getAimPoint()
+            )
             .ignoringDisable(true)
-            .withName("OperatorControls.aimCommand")
+            .withName("OperatorControls.aimCommand");
+          
+            Sotm.schedule();
+        })
     );
 
     controller.x().onTrue(
-      Commands.runOnce(ShootOnTheMoveCommand::cancel)
+      Commands.runOnce(() -> Sotm.end(true))
     );
 
     controller.a().onTrue(Commands.runOnce(() -> {shooting = !shooting;}));
