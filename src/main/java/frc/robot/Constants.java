@@ -63,13 +63,6 @@ public class Constants {
     public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(
         m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation); // get this in when
                                                                                              // we know bot dims
-
-    public static final double k_maxSpeed = Units.feetToMeters(14.5);
-
-    public static final double k_maxDriverSpeed = 1.0; // Meters per second
-    public static final double k_maxDriverBoostSpeed = 4.5;
-
-    public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
   }
 
   public static class ControllerConstants {
@@ -80,7 +73,7 @@ public class Constants {
     public static final double k_standardSpeed = 0.5; // Normal max speed
     public static final double k_boostSpeed = 1.0; // Scales up max speed when boost mode is active
 
-    public static final double k_slowRot = 0.25;
+    public static final double k_slowRot = 0.10;
     public static final double k_standardRot = 0.75;
     public static final double k_boostRot = 0.75;
 
@@ -130,7 +123,7 @@ public class Constants {
   public static class TurretConstants {
     public static final int k_turretMotorId = 50;
 
-    public static final Angle MAX_ONE_DIR_FOV = Degrees.of(110); // degrees
+    public static final Angle MAX_ONE_DIR_FOV = Degrees.of(160); // degrees
 
     // Mechanical lash:
     // - Old m12: (0.935568 - 0.927775) 0.007793 * 360 = 2.80548 deg
