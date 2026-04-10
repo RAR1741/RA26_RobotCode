@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Constants.SuperstructureConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 
@@ -70,15 +71,14 @@ public class TurretSubsystem extends SubsystemBase {
   private final REVThroughBoreEncoder m12TAbsEncoder;
   private final REVThroughBoreEncoder m13TAbsEncoder;
 
-  // public final Trigger isAtTarget = new Trigger(() -> profiledPID.atGoal());
+  public final Trigger isAtTarget = new Trigger(
+      () -> Rotations
+          .of(Math.abs(turretSpark.getClosedLoopController().getSetpoint() -
+              turretSpark.getClosedLoopController()
+                  .getMAXMotionSetpointPosition()))
+          .lt(SuperstructureConstants.k_turretTolerance));
 
-  // TODO: figure this out... again
-  // public final Trigger isAtTarget = new Trigger(
-  // () -> Math.abs(Rotations.of(turretEncoder.getPosition()
-  // - profiledPID.getGoal().position).in(Degrees)) <
-  // SuperstructureConstants.k_turretTolerance.in(Degrees));
-
-  public final Trigger isAtTarget = new Trigger(() -> true);
+  // public final Trigger isAtTarget = new Trigger(() -> true);
 
   public TurretSubsystem() {
     turretConfig = new SparkMaxConfig();
@@ -302,11 +302,11 @@ public class TurretSubsystem extends SubsystemBase {
     Logger.recordOutput("Turret/m13TAbsEncoderConnected", m13TAbsEncoder.isConnected());
     Logger.recordOutput("Turret/PositionRots", turretEncoder.getPosition());
     Logger.recordOutput("Turret/VelocityRotsPerSec", turretEncoder.getVelocity());
-    Logger.recordOutput("Turret/GoalRots", profiledPID.getGoal().position);
-    Logger.recordOutput("Turret/SetpointRots", profiledPID.getSetpoint().position);
-    Logger.recordOutput("Turret/SetpointVelRotsPerSec", profiledPID.getSetpoint().velocity);
-    Logger.recordOutput("Turret/AtGoal", profiledPID.atGoal());
     Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs());
+    Logger.recordOutput("Turret/error",
+        Rotations.of(turretSpark.getClosedLoopController().getSetpoint()
+            - turretSpark.getClosedLoopController().getMAXMotionSetpointPosition()).in(Degrees),
+        Degrees);
 
     Logger.recordOutput("Turret/frequency/m12", m12TAbsEncoder.getFrequency());
     Logger.recordOutput("Turret/frequency/m13", m13TAbsEncoder.getFrequency());
