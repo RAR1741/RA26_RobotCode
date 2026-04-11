@@ -59,6 +59,45 @@ public record ChoreoTraj(
         new Pose2d(4.46035, 0.44309, Rotation2d.fromRadians(1.5708)),
         new Pose2d(3.42544, 2.41536, Rotation2d.fromRadians(-3.07233))
     );
+    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
+    public static final ChoreoTraj RightTrench$0 = new ChoreoTraj(
+        "RightTrench",
+        OptionalInt.of(0),
+        8.27165,
+        new Pose2d(4.46035, 0.44309, Rotation2d.fromRadians(1.5708)),
+        new Pose2d(2.67796, 0.67272, Rotation2d.fromRadians(-3.14057))
+    );
+    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
+    public static final ChoreoTraj RightTrench$1 = new ChoreoTraj(
+        "RightTrench",
+        OptionalInt.of(1),
+        6.758040000000001,
+        new Pose2d(2.67796, 0.67272, Rotation2d.fromRadians(-3.14057)),
+        new Pose2d(3.42544, 2.41536, Rotation2d.fromRadians(-3.07233))
+    );
+    public static final ChoreoTraj RightTrenchBump = new ChoreoTraj(
+        "RightTrenchBump",
+        OptionalInt.empty(),
+        12.86497,
+        new Pose2d(4.46035, 0.44309, Rotation2d.fromRadians(1.5708)),
+        new Pose2d(7.0324, 0.63457, Rotation2d.fromRadians(-0.00014))
+    );
+    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
+    public static final ChoreoTraj RightTrenchBump$0 = new ChoreoTraj(
+        "RightTrenchBump",
+        OptionalInt.of(0),
+        7.10677,
+        new Pose2d(4.46035, 0.44309, Rotation2d.fromRadians(1.5708)),
+        new Pose2d(3.11919, 2.46074, Rotation2d.fromRadians(3.13227))
+    );
+    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
+    public static final ChoreoTraj RightTrenchBump$1 = new ChoreoTraj(
+        "RightTrenchBump",
+        OptionalInt.of(1),
+        5.7581999999999995,
+        new Pose2d(3.11919, 2.46074, Rotation2d.fromRadians(3.13227)),
+        new Pose2d(7.0324, 0.63457, Rotation2d.fromRadians(-0.00014))
+    );
 
     /**
      * A map between trajectory names and their corresponding data.
@@ -69,7 +108,12 @@ public record ChoreoTraj(
         Map.entry("LeftTrench", LeftTrench),
         Map.entry("RightBasic", RightBasic),
         Map.entry("RightBasicNoIntake", RightBasicNoIntake),
-        Map.entry("RightTrench", RightTrench)
+        Map.entry("RightTrench", RightTrench),
+        Map.entry("RightTrench$0", RightTrench$0),
+        Map.entry("RightTrench$1", RightTrench$1),
+        Map.entry("RightTrenchBump", RightTrenchBump),
+        Map.entry("RightTrenchBump$0", RightTrenchBump$0),
+        Map.entry("RightTrenchBump$1", RightTrenchBump$1)
     );
 
     /**

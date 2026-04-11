@@ -7,7 +7,7 @@
     {"x":7.675356388092041, "y":0.6931443810462952, "heading":1.563333866001125, "intervals":61, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":7.7175211906433105, "y":3.580214262008667, "heading":1.5848797334744038, "intervals":37, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":7.094276428222656, "y":0.6931445002555847, "heading":3.141592653589793, "intervals":49, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
-    {"x":2.677959442138672, "y":0.6727177500724792, "heading":-3.130098882025435, "intervals":72, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
+    {"x":2.677959442138672, "y":0.6727177500724792, "heading":-3.130098882025435, "intervals":72, "split":true, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":1.7921018600463867, "y":2.1091132164001465, "heading":-3.133840854864589, "intervals":83, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":3.425443172454834, "y":2.4153647422790527, "heading":0.0, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false}],
   "constraints":[
@@ -32,7 +32,7 @@
     {"x":{"exp":"7.675356388092041 m", "val":7.675356388092041}, "y":{"exp":"0.6931443810462952 m", "val":0.6931443810462952}, "heading":{"exp":"1.563333866001125 rad", "val":1.563333866001125}, "intervals":61, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"7.7175211906433105 m", "val":7.7175211906433105}, "y":{"exp":"3.580214262008667 m", "val":3.580214262008667}, "heading":{"exp":"1.5848797334744038 rad", "val":1.5848797334744038}, "intervals":37, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"7.094276428222656 m", "val":7.094276428222656}, "y":{"exp":"0.6931445002555847 m", "val":0.6931445002555847}, "heading":{"exp":"3.141592653589793 rad", "val":3.141592653589793}, "intervals":49, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
-    {"x":{"exp":"2.677959442138672 m", "val":2.677959442138672}, "y":{"exp":"0.6727177500724792 m", "val":0.6727177500724792}, "heading":{"exp":"-3.130098882025435 rad", "val":-3.130098882025435}, "intervals":72, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
+    {"x":{"exp":"2.677959442138672 m", "val":2.677959442138672}, "y":{"exp":"0.6727177500724792 m", "val":0.6727177500724792}, "heading":{"exp":"-3.130098882025435 rad", "val":-3.130098882025435}, "intervals":72, "split":true, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"1.7921018600463867 m", "val":1.7921018600463867}, "y":{"exp":"2.1091132164001465 m", "val":2.1091132164001465}, "heading":{"exp":"-3.133840854864589 rad", "val":-3.133840854864589}, "intervals":83, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"3.425443172454834 m", "val":3.425443172454834}, "y":{"exp":"2.4153647422790527 m", "val":2.4153647422790527}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false}],
   "constraints":[
@@ -422,12 +422,13 @@
     {"t":14.9486, "x":3.40088, "y":2.41096, "heading":-3.07232, "vx":0.49202, "vy":0.08828, "omega":-0.00029, "ax":-3.26272, "ay":-0.58549, "alpha":0.00726, "fx":[-55.47902,-55.48321,-55.517,-55.51281], "fy":[-9.98037,-9.9364,-9.93761,-9.98157]},
     {"t":14.98914, "x":3.41815, "y":2.41406, "heading":-3.07233, "vx":0.35974, "vy":0.06455, "omega":0.0, "ax":-8.87296, "ay":-1.59206, "alpha":0.00001, "fx":[-150.92649,-150.92651,-150.92651,-150.92649], "fy":[-27.08052,-27.08038,-27.08037,-27.0805]},
     {"t":15.02969, "x":3.42544, "y":2.41536, "heading":-3.07233, "vx":0.0, "vy":0.0, "omega":0.0, "ax":0.0, "ay":0.0, "alpha":0.0, "fx":[0.0,0.0,0.0,0.0], "fy":[0.0,0.0,0.0,0.0]}],
-  "splits":[0]
+  "splits":[0,185]
  },
  "events":[
    {"name":"intakeDeployCommand", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intakeDeployCommand"}}},
    {"name":"ShootOnTheMoveCommand", "from":{"target":4, "targetTimestamp":8.27165, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"ShootOnTheMoveCommand"}}},
    {"name":"feedAllCommand", "from":{"target":4, "targetTimestamp":8.27165, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"feedAllCommand"}}},
    {"name":"intakeCommand", "from":{"target":1, "targetTimestamp":1.79114, "offset":{"exp":"-1 s", "val":-1.0}}, "event":{"type":"named", "data":{"name":"intakeCommand"}}},
-   {"name":"Marker", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
+   {"name":"Marker", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"Marker", "from":{"target":5, "targetTimestamp":11.6646, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"wait", "data":{"waitTime":{"exp":"5 s", "val":5.0}}}}]
 }
