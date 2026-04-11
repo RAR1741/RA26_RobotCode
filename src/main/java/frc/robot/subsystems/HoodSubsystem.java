@@ -43,7 +43,7 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 public class HoodSubsystem extends SubsystemBase {
   public Angle MIN_ANGLE = Degrees.of(40);
   public Angle MAX_ANGLE = Degrees.of(80);
-  public Angle MIN_SAFE_ANGLE = Degrees.of(70);
+  public Angle MAX_SAFE_ANGLE = Degrees.of(70);
 
   private double GEAR_RATIO = 0.891 * 360.0; // output/input
 
@@ -83,7 +83,8 @@ public class HoodSubsystem extends SubsystemBase {
   public HoodSubsystem(StateManager stateManager) {
     this.stateManager = stateManager;
 
-    stateManager.inDecapitationZoneTrigger.onTrue(setAngle(MIN_SAFE_ANGLE));
+    stateManager.inDecapitationZoneTrigger.onTrue(setAngle(MAX_SAFE_ANGLE));
+    // stateManager.inDecapitationZoneTrigger.onFalse(setAngle(MAX_SAFE_ANGLE));
 
     // YAMS Pivot bug workaround: the Pivot constructor creates a new DCMotorSim
     // at 0 radians and overwrites the SimSupplier, but never initializes the
@@ -135,7 +136,7 @@ public class HoodSubsystem extends SubsystemBase {
           // .withForwardSoftLimitThreshold(getScaledLimit(MAX_ANGLE))
           // .withReverseSoftLimitEnable(true)
           // .withReverseSoftLimitThreshold(getScaledLimit(MIN_ANGLE)));
-        })).withName("Hood.Home");
+        })).withName("Hood.Home").withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
   }
 
   public double getScaledLimit(Angle angle) {
@@ -143,8 +144,8 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   public Command setAngle(Angle angle) {
-    if (stateManager.inDecapitationZoneTrigger.getAsBoolean() && angle.lt(MIN_SAFE_ANGLE)) {
-      angle = MIN_SAFE_ANGLE;
+    if (stateManager.inDecapitationZoneTrigger.getAsBoolean() && angle.lt(MAX_SAFE_ANGLE)) {
+      angle = MAX_SAFE_ANGLE;
     }
     return hood.setAngle(angle);
   }
