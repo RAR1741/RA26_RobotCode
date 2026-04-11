@@ -55,9 +55,9 @@ public record ChoreoTraj(
     public static final ChoreoTraj RightTrench = new ChoreoTraj(
         "RightTrench",
         OptionalInt.empty(),
-        10.83388,
-        new Pose2d(4.41034, 0.48382, Rotation2d.fromRadians(0)),
-        new Pose2d(0.76765, 0.67537, Rotation2d.fromRadians(-3.14063))
+        15.02969,
+        new Pose2d(4.46035, 0.44309, Rotation2d.fromRadians(1.5708)),
+        new Pose2d(3.42544, 2.41536, Rotation2d.fromRadians(-3.07233))
     );
 
     /**
