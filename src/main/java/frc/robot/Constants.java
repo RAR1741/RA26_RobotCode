@@ -182,8 +182,7 @@ public class Constants {
 
     public static final int minTagCount = 1;
     public static final double maxAvgDistance = 100.0;
-    public static final double autoStdDevScale = 1.0; // TODO: maybe make this bigger, for less trust
-    public static final double autoTranslationMax = 100.0;
+    public static final double autoStdDevScale = 10.0; // TODO: maybe make this bigger, for less trust
   }
 
   /**
