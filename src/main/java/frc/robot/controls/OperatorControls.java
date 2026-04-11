@@ -11,6 +11,9 @@ public class OperatorControls {
   public static boolean shooting = false;
 
   private static Command Sotm;
+  private static boolean inZone = false;
+  private static boolean operatorOveride = false;
+  private static boolean isOn = false;
 
   public static void configure(int port, CommandSwerveDrivetrain drivetrain, Superstructure superstructure) {
     CommandXboxController controller = new CommandXboxController(port);
@@ -34,6 +37,7 @@ public class OperatorControls {
 
     controller.a().onTrue(
         Commands.runOnce(() -> {
+          if (!inZone) { //FIX THIS
             Sotm = new ShootOnTheMoveCommand(
                 drivetrain,
                 superstructure,
@@ -43,14 +47,46 @@ public class OperatorControls {
             .withName("OperatorControls.aimCommand");
           
             Sotm.schedule();
-        })
+            shooting = true;
+        }})
     );
 
     controller.x().onTrue(
-      Commands.runOnce(() -> Sotm.end(true))
+      Commands.runOnce(() -> {
+        if (!inZone){
+          Sotm.end(true);
+          shooting = false;
+          operatorOveride = true;
+        }
+      })
     );
 
-    controller.a().onTrue(Commands.runOnce(() -> {shooting = !shooting;}));
+    superstructure.getStateManager().inDecapitationZoneTrigger.onTrue(
+      Commands.runOnce(() -> {
+        if (shooting) {
+          Sotm.end(true);
+          inZone = true;
+          operatorOveride = false;
+        }
+      })
+    );
+
+    superstructure.getStateManager().inDecapitationZoneTrigger.onFalse(
+      Commands.runOnce(() -> {
+        if (shooting && !operatorOveride) {
+          Sotm = new ShootOnTheMoveCommand(
+              drivetrain,
+              superstructure,
+              () -> superstructure.getAimPoint()
+          )
+          .ignoringDisable(true)
+          .withName("OperatorControls.aimCommand");
+    
+          Sotm.schedule();
+          inZone = false;
+          operatorOveride = false;
+        }
+  }));
 
     controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
 

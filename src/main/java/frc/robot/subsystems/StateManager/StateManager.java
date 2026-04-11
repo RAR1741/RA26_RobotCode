@@ -133,6 +133,7 @@ public class StateManager extends SubsystemBase {
     pose = drivetrain.getState().Pose;
 
     OperationStates.inDecapitationZone = decapitationZone.contains(pose);
+    Logger.recordOutput("StateManager/inLeZone", OperationStates.inDecapitationZone);
     OperationStates.inPassZone1 = passZoneOne.contains(pose);
     OperationStates.inPassZone2 = passZoneTwo.contains(pose);
     OperationStates.inPassZone3 = passZoneThree.contains(pose);

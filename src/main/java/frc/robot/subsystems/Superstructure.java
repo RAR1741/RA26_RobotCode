@@ -204,6 +204,10 @@ public class Superstructure extends SubsystemBase {
         turret.getRobotAdjustedAngle());
   }
 
+  public StateManager getStateManager() {
+    return stateManager;
+  }
+
   public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle, Angle hoodAngle) {
     targetShooterSpeed = shooterSpeed;
     targetTurretAngle = turretAngle;
