@@ -7,7 +7,7 @@
       "height": 1077,
       "state": {
         "sidebar": {
-          "width": 356,
+          "width": 296,
           "expanded": [
             "/Tuning/Shooter/ShooterMotor",
             "/Tuning/Shooter/ShooterMotor/closedloop",
@@ -83,7 +83,7 @@
           ]
         },
         "tabs": {
-          "selected": 10,
+          "selected": 2,
           "tabs": [
             {
               "type": 0,
@@ -154,9 +154,9 @@
                 "cameraIndex": -1,
                 "orbitFov": 50,
                 "cameraPosition": [
-                  9.434878163213138,
+                  9.434878163213137,
                   8.45765708505973,
-                  -4.74561480006751
+                  -4.745614800067509
                 ],
                 "cameraTarget": [
                   3.135445888543555,
@@ -668,7 +668,7 @@
                     "type": "stepped",
                     "logKey": "NT:/Mechanisms/Hood/HoodMotor/motor/outputVoltage",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#af2437",
                       "size": "normal"
@@ -707,7 +707,17 @@
                     }
                   }
                 ],
-                "discreteSources": [],
+                "discreteSources": [
+                  {
+                    "type": "stripes",
+                    "logKey": "NT:/AdvantageKit/DriverStation/Enabled",
+                    "logType": "Boolean",
+                    "visible": true,
+                    "options": {
+                      "color": "#2b66a2"
+                    }
+                  }
+                ],
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
@@ -856,7 +866,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/error",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#e48b32",
                       "size": "normal"
@@ -866,7 +876,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/outputVoltage",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#3b875a",
                       "size": "normal"
@@ -877,11 +887,8 @@
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "autoTarget": null,
-                  "preset": {
-                    "type": null,
-                    "factor": 1
-                  }
+                  "autoTarget": "degrees",
+                  "preset": null
                 },
                 "rightUnitConversion": {
                   "autoTarget": "degrees/second",
@@ -896,7 +903,7 @@
             },
             {
               "type": 1,
-              "title": "SendHalp",
+              "title": "TurretTuning",
               "controller": {
                 "leftSources": [
                   {
@@ -976,7 +983,7 @@
                 "leftLockedRange": null,
                 "rightLockedRange": null,
                 "leftUnitConversion": {
-                  "autoTarget": "rotations",
+                  "autoTarget": "degrees",
                   "preset": null
                 },
                 "rightUnitConversion": {
