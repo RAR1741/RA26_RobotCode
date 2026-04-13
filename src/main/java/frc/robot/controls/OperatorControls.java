@@ -37,7 +37,7 @@ public class OperatorControls {
 
     controller.a().onTrue(
         Commands.runOnce(() -> {
-          if (!inZone) { //FIX THIS
+          if (!inZone && !shooting) { //FIX THIS
             Sotm = new ShootOnTheMoveCommand(
                 drivetrain,
                 superstructure,
@@ -48,6 +48,7 @@ public class OperatorControls {
           
             Sotm.schedule();
             shooting = true;
+            operatorOveride = true;
         }})
     );
 
@@ -65,9 +66,9 @@ public class OperatorControls {
       Commands.runOnce(() -> {
         if (shooting) {
           Sotm.end(true);
-          inZone = true;
           operatorOveride = false;
         }
+        inZone = true;
       })
     );
 
@@ -83,9 +84,9 @@ public class OperatorControls {
           .withName("OperatorControls.aimCommand");
     
           Sotm.schedule();
-          inZone = false;
-          operatorOveride = false;
+          operatorOveride = true;
         }
+        inZone = false;
   }));
 
     controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
