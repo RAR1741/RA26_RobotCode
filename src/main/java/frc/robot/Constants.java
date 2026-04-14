@@ -73,7 +73,7 @@ public class Constants {
     public static final double k_standardSpeed = 0.5; // Normal max speed
     public static final double k_boostSpeed = 1.0; // Scales up max speed when boost mode is active
 
-    public static final double k_slowRot = 0.10;
+    public static final double k_slowRot = 0.25;
     public static final double k_standardRot = 0.75;
     public static final double k_boostRot = 0.75;
 
@@ -131,8 +131,8 @@ public class Constants {
     // - Old m13: (0.593744 - 0.587949) 0.005795 * 360 = 2.0862 deg
     // - New m13: (0.649539 - 0.64658) 0.002959 * 360 = 1.06524 deg
 
-    public static final double M12_OFFSET = 0.684788;
-    public static final double M13_OFFSET = 0.623915;
+    public static final double M12_OFFSET = 0.870937;
+    public static final double M13_OFFSET = 0.638683;
 
     public static final double m12Frequency = 965.0; // Hz
     public static final double m13Frequency = 978.0; // Hz
