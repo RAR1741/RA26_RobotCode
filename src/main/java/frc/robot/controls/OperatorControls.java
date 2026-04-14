@@ -13,7 +13,6 @@ public class OperatorControls {
   private static Command Sotm;
   private static boolean inZone = false;
   private static boolean operatorOveride = false;
-  private static boolean isOn = false;
 
   public static void configure(int port, CommandSwerveDrivetrain drivetrain, Superstructure superstructure) {
     CommandXboxController controller = new CommandXboxController(port);
@@ -37,7 +36,7 @@ public class OperatorControls {
 
     controller.a().onTrue(
         Commands.runOnce(() -> {
-          if (!inZone && !shooting) { //FIX THIS
+          if (!inZone && !shooting) {
             Sotm = new ShootOnTheMoveCommand(
                 drivetrain,
                 superstructure,
@@ -87,7 +86,8 @@ public class OperatorControls {
           operatorOveride = true;
         }
         inZone = false;
-  }));
+      })
+    );
 
     controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
 

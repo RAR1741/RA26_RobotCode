@@ -84,6 +84,7 @@ public class DriverControls {
         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
     controller.x().whileTrue(drivetrain.applyRequest(() -> brake));
+    controller.back().onTrue(Commands.runOnce(() -> drivetrain.getPigeon2().reset()));
     // controller.b().whileTrue(drivetrain.applyRequest(
     // () -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(),
     // -controller.getLeftX()))));
