@@ -76,14 +76,14 @@
             "/AdvantageKit/RealOutputs/Limelight/limelight-down",
             "/Mechanisms/Turret/TurretMotor/rotor",
             "/AdvantageKit/RealOutputs/TURRET-MECH",
-            "/AdvantageKit/RealOutputs/Turret",
             "/AdvantageKit",
             "/AdvantageKit/RealOutputs/Turret/MaxMotion",
-            "/AdvantageKit/RealOutputs/Turret/MaxMotion/trapezoidProfile"
+            "/AdvantageKit/RealOutputs/Turret/MaxMotion/trapezoidProfile",
+            "/AdvantageKit/RealOutputs/ShootOnTheMove"
           ]
         },
         "tabs": {
-          "selected": 2,
+          "selected": 9,
           "tabs": [
             {
               "type": 0,
@@ -199,6 +199,16 @@
                     }
                   },
                   {
+                    "type": "vision",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/ShootOnTheMove/rawTarget",
+                    "logType": "Translation2d",
+                    "visible": true,
+                    "options": {
+                      "color": "#00ff00",
+                      "size": "normal"
+                    }
+                  },
+                  {
                     "type": "ghost",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Auto/SamplePose",
                     "logType": "Pose2d",
@@ -223,15 +233,6 @@
                     "visible": true,
                     "options": {
                       "color": "#ff0000"
-                    }
-                  },
-                  {
-                    "type": "heatmap",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/ShootOnTheMove/rawTarget",
-                    "logType": "Translation3d",
-                    "visible": true,
-                    "options": {
-                      "timeRange": "enabled"
                     }
                   },
                   {
@@ -332,7 +333,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/FieldSimulation/heading/pose",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#af2437",
                       "size": "normal"
@@ -836,7 +837,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/computeTurretAngleFromAbs",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
@@ -866,7 +867,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/error",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e48b32",
                       "size": "normal"
@@ -876,7 +877,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/outputVoltage",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#3b875a",
                       "size": "normal"
