@@ -77,11 +77,23 @@ public class Superstructure extends SubsystemBase {
         .andThen(
             Commands.parallel(
                 // intake.feedCommand(),
+                hopper.feedCommand().asProxy(),
+                kicker.feedCommand().asProxy())
+                .onlyWhile(isReadyToShoot))
+        .repeatedly()
+        .withName("Superstructure.feedAll");
+  }
+
+  public Command feedAllAutoCommand() {
+    return Commands.waitUntil(isReadyToShoot)
+        .andThen(
+            Commands.parallel(
+                // intake.feedCommand(),
                 hopper.feedCommand(),
                 kicker.feedCommand())
                 .onlyWhile(isReadyToShoot))
         .repeatedly()
-        .withName("Superstructure.feedAll");
+        .withName("Superstructure.feedAllAuto");
   }
 
   // public Command shootCommand() {
@@ -121,7 +133,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command hoodHomeSequence() {
-    return hood.homeSequence().asProxy().withName("Superstructure.hoodHome");
+    return hood.homeSequence().withName("Superstructure.hoodHome");
   }
 
   public Command turretLeftCommand() {
