@@ -43,7 +43,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private static final AngularVelocity INTAKE_ROLLER_SPEED = RPM.of(2000.0);
   private static final AngularVelocity EJECT_ROLLER_SPEED = RPM.of(3000.0);
 
-
   private SparkMax pivotLeaderSpark = new SparkMax(IntakeConstants.k_pivotPrimaryMotorId, MotorType.kBrushless);
   // private SparkMax pivotSecondaySpark = new
   // SparkMax(IntakeConstants.k_pivotSecondaryMotorId, MotorType.kBrushless);
