@@ -53,7 +53,7 @@ public class OperatorControls {
 
     controller.x().onTrue(
       Commands.runOnce(() -> {
-        if (!inZone){
+        if (!inZone && Sotm != null){
           Sotm.end(true);
           shooting = false;
           operatorOveride = true;

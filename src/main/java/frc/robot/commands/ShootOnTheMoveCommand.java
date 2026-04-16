@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 // import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ShooterSubsystem;
 //import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.StateManager.State;
@@ -79,7 +80,7 @@ public class ShootOnTheMoveCommand extends Command {
         }
     );
 
-    CommandScheduler.getInstance().schedule(aimCommand);
+    aimCommand.schedule();
     
     setIsRunning(true);
   }
@@ -190,7 +191,10 @@ public class ShootOnTheMoveCommand extends Command {
     setIsRunning(false);
     Logger.recordOutput("ShootOnTheMove/Running", getisRunning());
     if (aimCommand != null) {
+      aimCommand.end(true);
       aimCommand.cancel();
+      superstructure.getShooterSubsystem().stopCommand().schedule();
+      Logger.recordOutput("ShootOnTheMove/IsSched", CommandScheduler.getInstance().isScheduled(aimCommand));
     }
     Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", getisRunning());
   }

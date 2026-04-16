@@ -222,4 +222,12 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput("Superstructure/hoodReady", hood.isAtTarget.getAsBoolean());
     Logger.recordOutput("Superstructure/isReadyToShoot", isReadyToShoot.getAsBoolean());
   }
+
+  public ShooterSubsystem getShooterSubsystem(){
+    return shooter;
+  }
+
+  public TurretSubsystem getTurrenSubsystem(){
+    return turret;
+  }
 }
