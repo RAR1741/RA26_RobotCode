@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -12,16 +13,19 @@ import org.littletonrobotics.junction.Logger;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,8 +41,13 @@ public class TurretSubsystem extends SubsystemBase {
   // Total reduction: 5 * 5 = 25:1
   public final double GEAR_RATIO = 1.0 / (5.0 * (60.0 / 12.0));
 
+  public final Angle MAX_ANGLE = TurretConstants.MAX_ONE_DIR_FOV;
+  public final Angle MIN_ANGLE = TurretConstants.MAX_ONE_DIR_FOV.unaryMinus();
+
   // Motor & encoder
   private final SparkMax turretSpark = new SparkMax(Constants.TurretConstants.k_turretMotorId, MotorType.kBrushless);
+  private final SparkMaxConfig turretConfig;
+  private final SparkClosedLoopController turretController = turretSpark.getClosedLoopController();
   private final RelativeEncoder turretEncoder = turretSpark.getEncoder();
 
   // Profiled PID controller (operates in degrees)
@@ -54,10 +63,6 @@ public class TurretSubsystem extends SubsystemBase {
       0.0, // kD
       new TrapezoidProfile.Constraints(MAX_VELOCITY_ROT_PER_SEC, MAX_ACCEL_ROT_PER_SEC2));
 
-  // Feedforward (kS, kV, kA — in volts, volts*s/deg, volts*s^2/deg)
-  // TODO: Tune feedforward gains via SysId
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0.0, 3.5, 0.0);
-
   private boolean isRezeroed = false;
   private boolean isRezeroing = false;
   private boolean closedLoopEnabled = false;
@@ -66,31 +71,57 @@ public class TurretSubsystem extends SubsystemBase {
   private final REVThroughBoreEncoder m12TAbsEncoder;
   private final REVThroughBoreEncoder m13TAbsEncoder;
 
-  // public final Trigger isAtTarget = new Trigger(() -> profiledPID.atGoal());
-
   public final Trigger isAtTarget = new Trigger(
-      () -> Math.abs(Rotations.of(turretEncoder.getPosition()
-          - profiledPID.getGoal().position).in(Degrees)) < SuperstructureConstants.k_turretTolerance.in(Degrees));
+      () -> Rotations
+          .of(Math.abs(turretSpark.getClosedLoopController().getSetpoint() -
+              turretSpark.getClosedLoopController()
+                  .getMAXMotionSetpointPosition()))
+          .lt(SuperstructureConstants.k_turretTolerance));
+
+  // public final Trigger isAtTarget = new Trigger(() -> true);
 
   public TurretSubsystem() {
-    m12TAbsEncoder = new REVThroughBoreEncoder(1, TurretConstants.m12Frequency);
-    m13TAbsEncoder = new REVThroughBoreEncoder(0, TurretConstants.m13Frequency);
+    turretConfig = new SparkMaxConfig();
 
-    // Configure SparkMax
-    SparkMaxConfig config = new SparkMaxConfig();
-    config.inverted(true);
-    config.idleMode(IdleMode.kCoast);
-    config.smartCurrentLimit(30);
-    config.openLoopRampRate(0.1);
-    config.closedLoopRampRate(0.1);
+    turretConfig.signals.setSetpointAlwaysOn(true);
+    turretConfig.signals.maxMotionSetpointPositionAlwaysOn(true);
+
+    turretConfig.softLimit.forwardSoftLimit(MAX_ANGLE.in(Rotations));
+    turretConfig.softLimit.reverseSoftLimit(MIN_ANGLE.in(Rotations));
+    turretConfig.softLimit.forwardSoftLimitEnabled(true);
+    turretConfig.softLimit.reverseSoftLimitEnabled(true);
+
+    // TODO: figure out how to turn on status frames 7/8/9
+
+    turretConfig.inverted(true);
+    turretConfig.idleMode(IdleMode.kCoast);
+    turretConfig.smartCurrentLimit(15);
+    // turretConfig.openLoopRampRate(0.1);
+    // turretConfig.closedLoopRampRate(0.1);
 
     // Encoder conversion: motor rotations -> mechanism degrees
-    config.encoder.positionConversionFactor(GEAR_RATIO); // rotations -> degrees
-    config.encoder.velocityConversionFactor(GEAR_RATIO / 60.0); // RPM -> deg/s
+    turretConfig.encoder.positionConversionFactor(GEAR_RATIO); // rotations -> degrees
+    turretConfig.encoder.velocityConversionFactor(GEAR_RATIO / 60.0); // RPM -> deg/s
 
-    turretSpark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    turretConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+        .p(45.0)
+        .i(0)
+        .d(0)
+        .outputRange(-1, 1).feedForward
+        // kV is now in Volts, so we multiply by the nominal voltage (12V)
+        .kV(4.0);
+    // .kV(3.0 * (1 / GEAR_RATIO));
 
-    profiledPID.setTolerance(SuperstructureConstants.k_turretTolerance.in(Degrees));
+    turretConfig.closedLoop.maxMotion
+        .cruiseVelocity(Degrees.of(1440).in(Rotations))
+        .maxAcceleration(Degrees.of(5760).in(Rotations)) // TODO: Up this, so the profile ramps down later
+        .allowedProfileError(Degrees.of(22.5).in(Rotations));
+
+    turretSpark.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    m12TAbsEncoder = new REVThroughBoreEncoder(1, TurretConstants.m12Frequency);
+    m13TAbsEncoder = new REVThroughBoreEncoder(0, TurretConstants.m13Frequency);
   }
 
   public Command rezero() {
@@ -102,7 +133,7 @@ public class TurretSubsystem extends SubsystemBase {
           isRezeroing = true;
           samples.clear();
           System.out.println("==============================");
-          System.out.println("== Rezeroing turret (3s avg) =");
+          System.out.println("== Rezeroing turret (1s avg) =");
           System.out.println("==============================");
         }),
         Commands.run(() -> {
@@ -115,7 +146,7 @@ public class TurretSubsystem extends SubsystemBase {
               .orElse(0.0);
           Angle turretAngle = Rotations.of(avgRotations);
 
-          System.out.println("Averaged " + samples.size() + " samples over 3 seconds");
+          System.out.println("Averaged " + samples.size() + " samples over 1 second");
           System.out.println(
               "Setting Offset: " + turretAngle.in(Degrees) + " deg (" + turretAngle.in(Rotations) + " rot)");
 
@@ -181,27 +212,39 @@ public class TurretSubsystem extends SubsystemBase {
       // Safety check: prevent commanding angles outside of physical limits (which
       // could cause damage)
       closedLoopEnabled = true;
-      Angle adjustedAngle = angle.plus(getAngle().minus(computeTurretAngleFromAbs()));
-      profiledPID.setGoal(clampSafeAngle(adjustedAngle).in(Rotations));
+      // Angle adjustedAngle =
+      // angle.plus(getAngle().minus(computeTurretAngleFromAbs()));
+      // profiledPID.setGoal(clampSafeAngle(adjustedAngle).in(Rotations));
+
+      // profiledPID.setGoal(clampSafeAngle(adjustedAngle).in(Rotations));
+
+      turretController.setSetpoint(angle.in(Rotations), SparkBase.ControlType.kMAXMotionPositionControl);
     }).withName("Turret.SetAngle(" + angle.in(Degrees) + " deg)");
   }
 
   public Command setAngleDynamic(Supplier<Angle> turretAngleSupplier) {
     return run(() -> {
       closedLoopEnabled = true;
-      profiledPID.setGoal(clampSafeAngle(turretAngleSupplier.get()).in(Rotations));
+      // profiledPID.setGoal(clampSafeAngle(turretAngleSupplier.get()).in(Rotations));
+
+      turretController.setSetpoint(turretAngleSupplier.get().in(Rotations),
+          SparkBase.ControlType.kMAXMotionPositionControl);
     }).withName("Turret.SetAngleDynamic");
   }
 
-  public Angle clampSafeAngle(Angle angle) {
-    double MAX_ONE_DIR_FOV = TurretConstants.MAX_ONE_DIR_FOV;
+  public Supplier<Angle> clampSafeAngle(Supplier<Angle> angle) {
+    Angle actual = angle.get();
+    final Angle result;
 
-    if (angle.in(Degrees) > MAX_ONE_DIR_FOV) {
-      return Degrees.of(MAX_ONE_DIR_FOV);
-    } else if (angle.in(Degrees) < -MAX_ONE_DIR_FOV) {
-      return Degrees.of(-MAX_ONE_DIR_FOV);
+    if (actual.gt(MAX_ANGLE)) {
+      result = MAX_ANGLE;
+    } else if (actual.lt(MIN_ANGLE)) {
+      result = MIN_ANGLE;
+    } else {
+      result = actual;
     }
-    return angle;
+
+    return () -> result;
   }
 
   public Command center() {
@@ -232,40 +275,51 @@ public class TurretSubsystem extends SubsystemBase {
       CommandScheduler.getInstance().schedule(rezero());
     }
 
-    double outputVolts = 0.0;
+    // double outputVolts = 0.0;
 
     // Run profiled PID loop
-    if (closedLoopEnabled) {
-      double measurement = turretEncoder.getPosition();
-      double pidOutput = profiledPID.calculate(measurement);
-      double ffOutput = feedforward.calculate(profiledPID.getSetpoint().velocity);
-      outputVolts = pidOutput + ffOutput;
+    // if (closedLoopEnabled) {
+    // double measurement = turretEncoder.getPosition();
+    // double pidOutput = profiledPID.calculate(measurement);
+    // double ffOutput = feedforward.calculate(profiledPID.getSetpoint().velocity);
+    // outputVolts = pidOutput + ffOutput;
 
-      Logger.recordOutput("Turret/calculate/pidOutput", pidOutput);
-      Logger.recordOutput("Turret/calculate/ffOutput", ffOutput);
-      Logger.recordOutput("Turret/calculate/outputVolts", outputVolts);
+    // Logger.recordOutput("Turret/calculate/pidOutput", pidOutput);
+    // Logger.recordOutput("Turret/calculate/ffOutput", ffOutput);
+    // Logger.recordOutput("Turret/calculate/outputVolts", outputVolts);
 
-      // Clamp to battery voltage and convert to duty cycle
-      outputVolts = Math.max(-12.0, Math.min(12.0, outputVolts));
-      turretSpark.setVoltage(outputVolts);
-    }
+    // // Clamp to battery voltage and convert to duty cycle
+    // outputVolts = Math.max(-12.0, Math.min(12.0, outputVolts));
+    // turretSpark.setVoltage(outputVolts);
+    // }
 
     // Telemetry
-    Logger.recordOutput("Turret/outputVolts", outputVolts);
+    Logger.recordOutput("Turret/outputVolts",
+        turretSpark.getAppliedOutput() * RobotController.getBatteryVoltage());
     Logger.recordOutput("Turret/closedLoopEnabled", closedLoopEnabled);
     Logger.recordOutput("Turret/isRezeroed", isRezeroed);
     Logger.recordOutput("Turret/m12TAbsEncoderConnected", m12TAbsEncoder.isConnected());
     Logger.recordOutput("Turret/m13TAbsEncoderConnected", m13TAbsEncoder.isConnected());
     Logger.recordOutput("Turret/PositionRots", turretEncoder.getPosition());
     Logger.recordOutput("Turret/VelocityRotsPerSec", turretEncoder.getVelocity());
-    Logger.recordOutput("Turret/GoalRots", profiledPID.getGoal().position);
-    Logger.recordOutput("Turret/SetpointRots", profiledPID.getSetpoint().position);
-    Logger.recordOutput("Turret/SetpointVelRotsPerSec", profiledPID.getSetpoint().velocity);
-    Logger.recordOutput("Turret/AtGoal", profiledPID.atGoal());
     Logger.recordOutput("Turret/computeTurretAngleFromAbs", computeTurretAngleFromAbs());
+    Logger.recordOutput("Turret/error",
+        Rotations.of(turretSpark.getClosedLoopController().getSetpoint()
+            - turretSpark.getClosedLoopController().getMAXMotionSetpointPosition()).in(Degrees),
+        Degrees);
 
     Logger.recordOutput("Turret/frequency/m12", m12TAbsEncoder.getFrequency());
     Logger.recordOutput("Turret/frequency/m13", m13TAbsEncoder.getFrequency());
+
+    // MaxMotion
+    Logger.recordOutput("Turret/MaxMotion/PositionGoalRots",
+        turretSpark.getClosedLoopController().getSetpoint(), Rotations);
+    Logger.recordOutput("Turret/MaxMotion/PositionSetpointRots",
+        turretSpark.getClosedLoopController().getMAXMotionSetpointPosition(), Rotations);
+    Logger.recordOutput("Turret/MaxMotion/PositionSetpointVelocity",
+        turretSpark.getClosedLoopController().getMAXMotionSetpointVelocity(), RotationsPerSecond);
+    Logger.recordOutput("Turret/MaxMotion/controlType",
+        turretSpark.getClosedLoopController().getControlType());
   }
 
   @Override
