@@ -30,7 +30,7 @@ import frc.robot.subsystems.StateManager.State;
 public class ShootOnTheMoveCommand extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final Superstructure superstructure;
-  //private final LEDSubsystem leds;
+  // private final LEDSubsystem leds;
 
   private Supplier<Translation2d> aimPointSupplier; // The point to aim at
   private AngularVelocity latestShootSpeed = RPM.of(0);
@@ -46,14 +46,14 @@ public class ShootOnTheMoveCommand extends Command {
     this.drivetrain = drivetrain;
     this.superstructure = superstructure;
     this.aimPointSupplier = aimPointSupplier;
-    //this.leds = superstructure.getLEDs();
+    // this.leds = superstructure.getLEDs();
   }
 
-  private void setIsRunning(boolean state){
+  private void setIsRunning(boolean state) {
     isRunning = state;
   }
 
-  private boolean getisRunning(){
+  private boolean getisRunning() {
     return isRunning;
   }
 
@@ -77,17 +77,16 @@ public class ShootOnTheMoveCommand extends Command {
         },
         () -> {
           return this.latestHoodAngle;
-        }
-    );
+        });
 
     aimCommand.schedule();
-    
+
     setIsRunning(true);
   }
 
   @Override
   public boolean isFinished() {
-    return !getisRunning(); //it freaks out and runs wrong
+    return !getisRunning(); // it freaks out and runs wrong
   }
 
   @Override
@@ -98,7 +97,7 @@ public class ShootOnTheMoveCommand extends Command {
       return;
     }
 
-    //leds.setAllSolidColor(LEDConstants.sotmOnColor).execute();
+    // leds.setAllSolidColor(LEDConstants.sotmOnColor).execute();
     // Calculate trajectory to aimPoint
     var target = aimPointSupplier.get();
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
@@ -148,6 +147,10 @@ public class ShootOnTheMoveCommand extends Command {
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
     latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
 
+    // FOR TESTING - DO NOT USE (turns off shooter and hood)
+    // latestShootSpeed = RPM.of(0);
+    // latestHoodAngle = Degrees.of(80.0);
+
     // Kicker corrective bias based on how close to forward/0 we are
     // latestTurretAngle =
     // latestTurretAngle.times(Double.valueOf(DriverStation.getGameSpecificMessage()));
@@ -186,8 +189,8 @@ public class ShootOnTheMoveCommand extends Command {
   }
 
   public void end(boolean interrupted) {
-    
-    //leds.setAllSolidColor(LEDConstants.teleColor).execute();
+
+    // leds.setAllSolidColor(LEDConstants.teleColor).execute();
     setIsRunning(false);
     Logger.recordOutput("ShootOnTheMove/Running", getisRunning());
     if (aimCommand != null) {
@@ -242,7 +245,7 @@ public class ShootOnTheMoveCommand extends Command {
           Map.entry(5.281523, 1700.0), // Close bump
           Map.entry(7.883727, 2300.0), // Midfield
           Map.entry(10.29897, 2800.0), // Far bump
-          Map.entry(14.07683, 3300.0)); // Far wall
+          Map.entry(14.07683, 4000.0)); // Far wall
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(

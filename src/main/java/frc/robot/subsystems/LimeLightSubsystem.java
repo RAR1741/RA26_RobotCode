@@ -125,7 +125,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 
     Command onEnable = Commands.runOnce(() -> {
       hasEnabled = true;
-      
+
       if (limelight == null)
         return;
       System.out.println("Setting LL (" + limelight.limelightName + ") IMU Assist Alpha to 0.000001");
@@ -222,7 +222,7 @@ public class LimeLightSubsystem extends SubsystemBase {
       return false;
     }
 
-    if (estimate.tagCount <= 0) {
+    if (estimate.tagCount <= VisionConstants.minTagCount) {
       return false;
     }
 
