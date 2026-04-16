@@ -11,7 +11,6 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.lang.Thread.State;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -20,6 +19,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -43,7 +43,10 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 public class HoodSubsystem extends SubsystemBase {
   public Angle MIN_ANGLE = Degrees.of(40);
   public Angle MAX_ANGLE = Degrees.of(80);
-  public Angle MIN_SAFE_ANGLE = Degrees.of(70);
+  public Angle MAX_SAFE_ANGLE = Degrees.of(70);
+
+  private Current ZEROING_CURRENT = Amps.of(15.0);
+  private Current RUNNING_CURRENT = Amps.of(20.0);
 
   private double GEAR_RATIO = 0.891 * 360.0; // output/input
 
@@ -51,16 +54,16 @@ public class HoodSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(500.0, 0, 0,
-          DegreesPerSecond.of(120),
-          DegreesPerSecondPerSecond.of(240))
-      .withFeedforward(new SimpleMotorFeedforward(0.0, 0.0, 0.0))
+      .withClosedLoopController(250.0, 0, 0,
+          DegreesPerSecond.of(240),
+          DegreesPerSecondPerSecond.of(480))
+      .withFeedforward(new SimpleMotorFeedforward(0.0, 35.0, 0.0))
       .withTelemetry("HoodMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(GEAR_RATIO)))
       .withMotorInverted(false)
       .withIdleMode(MotorMode.BRAKE)
       .withSoftLimit(MIN_ANGLE, MAX_ANGLE)
-      .withStatorCurrentLimit(Amps.of(15.0))
+      .withStatorCurrentLimit(ZEROING_CURRENT)
       .withClosedLoopRampRate(Seconds.of(0.1))
       .withOpenLoopRampRate(Seconds.of(0.1));
 
@@ -85,7 +88,7 @@ public class HoodSubsystem extends SubsystemBase {
 
     stateManager.inDecapitationZoneTrigger.onTrue(Commands.parallel(
       Commands.runOnce(() -> System.out.println("override shootonlemove")), 
-      setAngle(MIN_SAFE_ANGLE)
+      setAngle(MAX_SAFE_ANGLE)
     ));
 
     // YAMS Pivot bug workaround: the Pivot constructor creates a new DCMotorSim
@@ -131,6 +134,8 @@ public class HoodSubsystem extends SubsystemBase {
           hoodKraken.setPosition(MAX_ANGLE.in(Rotations));
         }, this),
         Commands.runOnce(() -> {
+          hood.getMotorController().setStatorCurrentLimit(RUNNING_CURRENT);
+
           // TODO: Add this back... please
           // hoodKraken.getConfigurator().apply(
           // new SoftwareLimitSwitchConfigs()
@@ -138,7 +143,7 @@ public class HoodSubsystem extends SubsystemBase {
           // .withForwardSoftLimitThreshold(getScaledLimit(MAX_ANGLE))
           // .withReverseSoftLimitEnable(true)
           // .withReverseSoftLimitThreshold(getScaledLimit(MIN_ANGLE)));
-        })).withName("Hood.Home");
+        })).withName("Hood.Home").withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
   }
 
   public double getScaledLimit(Angle angle) {
@@ -146,8 +151,8 @@ public class HoodSubsystem extends SubsystemBase {
   }
 
   public Command setAngle(Angle angle) {
-    if (stateManager.inDecapitationZoneTrigger.getAsBoolean() && angle.lt(MIN_SAFE_ANGLE)) {
-      angle = MIN_SAFE_ANGLE;
+    if (stateManager.inDecapitationZoneTrigger.getAsBoolean() && angle.lt(MAX_SAFE_ANGLE)) {
+      angle = MAX_SAFE_ANGLE;
     }
     return hood.setAngle(angle);
   }

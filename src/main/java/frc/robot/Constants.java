@@ -65,13 +65,6 @@ public class Constants {
     public static final SwerveDriveKinematics k_kinematics = new SwerveDriveKinematics(
         m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation); // get this in when
                                                                                              // we know bot dims
-
-    public static final double k_maxSpeed = Units.feetToMeters(14.5);
-
-    public static final double k_maxDriverSpeed = 1.0; // Meters per second
-    public static final double k_maxDriverBoostSpeed = 4.5;
-
-    public static final double k_boostScaler = k_maxDriverBoostSpeed / k_maxDriverSpeed;
   }
 
   public static class ControllerConstants {
@@ -117,7 +110,7 @@ public class Constants {
 
     // WARNING: make sure this doesn't loop over 0.0/1.0!
     // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
-    public static final double k_pivotAbsEncoderOffset = 0.352112;
+    public static final double k_pivotAbsEncoderOffset = 0.517193;
 
     public static final Time k_feedUpTime = Seconds.of(0.5);
     public static final Time k_feedDownTime = Seconds.of(2.0);
@@ -145,7 +138,7 @@ public class Constants {
   public static class TurretConstants {
     public static final int k_turretMotorId = 50;
 
-    public static final double MAX_ONE_DIR_FOV = 110; // degrees
+    public static final Angle MAX_ONE_DIR_FOV = Degrees.of(160); // degrees
 
     // Mechanical lash:
     // - Old m12: (0.935568 - 0.927775) 0.007793 * 360 = 2.80548 deg
@@ -153,8 +146,8 @@ public class Constants {
     // - Old m13: (0.593744 - 0.587949) 0.005795 * 360 = 2.0862 deg
     // - New m13: (0.649539 - 0.64658) 0.002959 * 360 = 1.06524 deg
 
-    public static final double M12_OFFSET = 0.687852;
-    public static final double M13_OFFSET = 0.628145;
+    public static final double M12_OFFSET = 0.870937;
+    public static final double M13_OFFSET = 0.638683;
 
     public static final double m12Frequency = 965.0; // Hz
     public static final double m13Frequency = 978.0; // Hz
@@ -204,8 +197,7 @@ public class Constants {
 
     public static final int minTagCount = 1;
     public static final double maxAvgDistance = 100.0;
-    public static final double autoStdDevScale = 1.0; // TODO: maybe make this bigger, for less trust
-    public static final double autoTranslationMax = 100.0;
+    public static final double autoStdDevScale = 10.0; // TODO: maybe make this bigger, for less trust
   }
 
   /**

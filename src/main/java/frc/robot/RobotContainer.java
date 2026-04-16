@@ -76,7 +76,7 @@ public class RobotContainer {
     routine.active().onTrue(
         Commands.sequence(
             // DO NOT CALL THIS
-            // traj.resetOdometry(),
+            traj.resetOdometry(),
             traj.cmd()));
 
     // // When the trajectory is done, score
@@ -93,7 +93,7 @@ public class RobotContainer {
     traj.atTime("intakeStopCommand").onTrue(superstructure.intakeStopCommand());
 
     // Feeding
-    traj.atTime("feedAllCommand").onTrue(superstructure.feedAllCommand());
+    traj.atTime("feedAllCommand").onTrue(superstructure.feedAllAutoCommand());
 
     // Shooting
     traj.atTime("ShootOnTheMoveCommand")

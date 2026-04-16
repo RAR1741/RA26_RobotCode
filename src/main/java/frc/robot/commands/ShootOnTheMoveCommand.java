@@ -148,6 +148,10 @@ public class ShootOnTheMoveCommand extends Command {
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
     latestHoodAngle = calculateRequiredHoodAngle(correctedDistance);
 
+    // FOR TESTING - DO NOT USE (turns off shooter and hood)
+    // latestShootSpeed = RPM.of(0);
+    // latestHoodAngle = Degrees.of(80.0);
+
     // Kicker corrective bias based on how close to forward/0 we are
     // latestTurretAngle =
     // latestTurretAngle.times(Double.valueOf(DriverStation.getGameSpecificMessage()));
@@ -242,7 +246,7 @@ public class ShootOnTheMoveCommand extends Command {
           Map.entry(5.281523, 1700.0), // Close bump
           Map.entry(7.883727, 2300.0), // Midfield
           Map.entry(10.29897, 2800.0), // Far bump
-          Map.entry(14.07683, 3300.0)); // Far wall
+          Map.entry(14.07683, 4000.0)); // Far wall
 
   // meters, degrees
   private static final InterpolatingDoubleTreeMap HOOD_ANGLE_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(

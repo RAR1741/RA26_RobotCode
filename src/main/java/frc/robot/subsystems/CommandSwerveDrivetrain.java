@@ -40,8 +40,8 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  * https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/index.html
  */
 public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
-  private final PIDController xController = new PIDController(1.0, 0.0, 0.0);
-  private final PIDController yController = new PIDController(1.0, 0.0, 0.0);
+  private final PIDController xController = new PIDController(1.5, 0.0, 0.0);
+  private final PIDController yController = new PIDController(1.5, 0.0, 0.0);
   private final PIDController headingController = new PIDController(3.0, 0.0, 0.0);
 
   private static final double kSimLoopPeriod = 0.004; // 4 ms
