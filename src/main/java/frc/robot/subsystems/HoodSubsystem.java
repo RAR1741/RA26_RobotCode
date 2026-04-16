@@ -87,8 +87,9 @@ public class HoodSubsystem extends SubsystemBase {
     this.stateManager = stateManager;
 
     stateManager.inDecapitationZoneTrigger.onTrue(Commands.parallel(
-        Commands.runOnce(() -> System.out.println("override shootonlemove")),
-        setAngle(MAX_SAFE_ANGLE)));
+      Commands.runOnce(() -> System.out.println("override shootonlemove")),
+      setAngle(MAX_SAFE_ANGLE)
+    ));
 
     // YAMS Pivot bug workaround: the Pivot constructor creates a new DCMotorSim
     // at 0 radians and overwrites the SimSupplier, but never initializes the
