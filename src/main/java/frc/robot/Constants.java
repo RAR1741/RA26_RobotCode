@@ -95,7 +95,7 @@ public class Constants {
 
     // WARNING: make sure this doesn't loop over 0.0/1.0!
     // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
-    public static final double k_pivotAbsEncoderOffset = 0.352112;
+    public static final double k_pivotAbsEncoderOffset = 0.517193;
 
     public static final Time k_feedUpTime = Seconds.of(0.5);
     public static final Time k_feedDownTime = Seconds.of(2.0);
