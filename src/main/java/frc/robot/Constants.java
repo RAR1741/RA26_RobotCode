@@ -103,14 +103,15 @@ public class Constants {
     public static final int k_rollerMotorSecondaryId = 33;
 
     public static final Angle k_IntakeStow = Degrees.of(0);
-    public static final Angle k_IntakeFeed = Degrees.of(80);
-    public static final Angle k_IntakeMaxWhileRoller = Degrees.of(103.5);
+    // public static final Angle k_IntakeFeed = Degrees.of(80);
+    public static final Angle k_IntakeMaxWhileRoller = Degrees.of(650);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
-    public static final Angle k_IntakeDeployed = Degrees.of(110);
+    public static final Angle k_IntakeDeployed = Degrees.of(1320);
 
     // WARNING: make sure this doesn't loop over 0.0/1.0!
     // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
-    public static final double k_pivotAbsEncoderOffset = 0.517193;
+    // public static final double k_pivotAbsEncoderOffset = 0.517193;
+    public static final double k_pivotAbsEncoderOffset = 0.0;
 
     public static final Time k_feedUpTime = Seconds.of(0.5);
     public static final Time k_feedDownTime = Seconds.of(2.0);
