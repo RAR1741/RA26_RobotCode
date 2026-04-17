@@ -31,7 +31,6 @@ public class OperatorControls {
     // controller.back().onTrue(superstructure.intakeRezero().ignoringDisable(true));
 
     // Comp controls
-    controller.y().onTrue(superstructure.turretCenterCommand());
     controller.start().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 
     controller.a().onTrue(
@@ -60,6 +59,17 @@ public class OperatorControls {
         }
       })
     );
+
+    controller.y().onTrue(Commands.parallel(
+      superstructure.turretCenterCommand(),
+      Commands.runOnce(() -> {
+        if (!inZone && Sotm != null){
+          Sotm.end(true);
+          shooting = false;
+          operatorOveride = true;
+        } else {}
+      })
+    ));
 
     superstructure.getStateManager().inDecapitationZoneTrigger.onTrue(
       Commands.runOnce(() -> {

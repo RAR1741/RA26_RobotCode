@@ -20,6 +20,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 // import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -196,8 +197,9 @@ public class ShootOnTheMoveCommand extends Command {
     if (aimCommand != null) {
       aimCommand.end(true);
       aimCommand.cancel();
-      superstructure.getShooterSubsystem().stopCommand().schedule();
+      Commands.runOnce(() -> superstructure.getShooterSubsystem().stopCommand().schedule());
       Logger.recordOutput("ShootOnTheMove/IsSched", CommandScheduler.getInstance().isScheduled(aimCommand));
+      Logger.recordOutput("ShootOnTheMove/isDone", isFinished());
     }
     Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", getisRunning());
   }
