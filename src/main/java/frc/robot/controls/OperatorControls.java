@@ -39,65 +39,51 @@ public class OperatorControls {
             Sotm = new ShootOnTheMoveCommand(
                 drivetrain,
                 superstructure,
-                () -> superstructure.getAimPoint()
-            )
-            .ignoringDisable(true)
-            .withName("OperatorControls.aimCommand");
-          
+                () -> superstructure.getAimPoint())
+                .ignoringDisable(true)
+                .withName("OperatorControls.aimCommand");
+
             Sotm.schedule();
             shooting = true;
             operatorOveride = true;
-        }})
-    );
-
-    controller.x().onTrue(
-      Commands.runOnce(() -> {
-        if (!inZone && Sotm != null){
-          Sotm.end(true);
-          shooting = false;
-          operatorOveride = true;
-        }
-      })
-    );
+          }
+        }));
 
     controller.y().onTrue(Commands.parallel(
-      superstructure.turretCenterCommand(),
-      Commands.runOnce(() -> {
-        if (!inZone && Sotm != null){
-          Sotm.end(true);
-          shooting = false;
-          operatorOveride = true;
-        } else {}
-      })
-    ));
+        superstructure.turretCenterCommand(),
+        Commands.runOnce(() -> {
+          if (!inZone && Sotm != null) {
+            Sotm.end(true);
+            shooting = false;
+            operatorOveride = true;
+          } else {
+          }
+        })));
 
     superstructure.getStateManager().inDecapitationZoneTrigger.onTrue(
-      Commands.runOnce(() -> {
-        if (shooting) {
-          Sotm.end(true);
-          operatorOveride = false;
-        }
-        inZone = true;
-      })
-    );
+        Commands.runOnce(() -> {
+          if (shooting) {
+            Sotm.end(true);
+            operatorOveride = false;
+          }
+          inZone = true;
+        }));
 
     superstructure.getStateManager().inDecapitationZoneTrigger.onFalse(
-      Commands.runOnce(() -> {
-        if (shooting && !operatorOveride) {
-          Sotm = new ShootOnTheMoveCommand(
-              drivetrain,
-              superstructure,
-              () -> superstructure.getAimPoint()
-          )
-          .ignoringDisable(true)
-          .withName("OperatorControls.aimCommand");
-    
-          Sotm.schedule();
-          operatorOveride = true;
-        }
-        inZone = false;
-      })
-    );
+        Commands.runOnce(() -> {
+          if (shooting && !operatorOveride) {
+            Sotm = new ShootOnTheMoveCommand(
+                drivetrain,
+                superstructure,
+                () -> superstructure.getAimPoint())
+                .ignoringDisable(true)
+                .withName("OperatorControls.aimCommand");
+
+            Sotm.schedule();
+            operatorOveride = true;
+          }
+          inZone = false;
+        }));
 
     controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
 
