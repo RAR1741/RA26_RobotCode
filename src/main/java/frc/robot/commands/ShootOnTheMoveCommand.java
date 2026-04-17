@@ -20,13 +20,18 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+// import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ShooterSubsystem;
+//import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.StateManager.State;
 
 public class ShootOnTheMoveCommand extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final Superstructure superstructure;
+  // private final LEDSubsystem leds;
 
   private Supplier<Translation2d> aimPointSupplier; // The point to aim at
   private AngularVelocity latestShootSpeed = RPM.of(0);
@@ -35,11 +40,22 @@ public class ShootOnTheMoveCommand extends Command {
 
   private boolean isRunning = false;
 
+  private Command aimCommand;
+
   public ShootOnTheMoveCommand(CommandSwerveDrivetrain drivetrain, Superstructure superstructure,
       Supplier<Translation2d> aimPointSupplier) {
     this.drivetrain = drivetrain;
     this.superstructure = superstructure;
     this.aimPointSupplier = aimPointSupplier;
+    // this.leds = superstructure.getLEDs();
+  }
+
+  private void setIsRunning(boolean state) {
+    isRunning = state;
+  }
+
+  private boolean getisRunning() {
+    return isRunning;
   }
 
   @Override
@@ -52,7 +68,8 @@ public class ShootOnTheMoveCommand extends Command {
 
     // TODO: when this current command ends, we should probably cancel the dynamic
     // aim command
-    CommandScheduler.getInstance().schedule(superstructure.aimDynamicCommand(
+
+    aimCommand = superstructure.aimDynamicCommand(
         () -> {
           return this.latestShootSpeed;
         },
@@ -61,20 +78,16 @@ public class ShootOnTheMoveCommand extends Command {
         },
         () -> {
           return this.latestHoodAngle;
-        }));
+        });
 
-    isRunning = true;
+    aimCommand.schedule();
+
+    setIsRunning(true);
   }
 
   @Override
   public boolean isFinished() {
-    return false;
-  }
-
-  @Override
-  public void end(boolean inturupted) {
-    isRunning = false;
-    Logger.recordOutput("ShootOnTheMove/Running", isRunning);
+    return !getisRunning(); // it freaks out and runs wrong
   }
 
   @Override
@@ -85,6 +98,7 @@ public class ShootOnTheMoveCommand extends Command {
       return;
     }
 
+    // leds.setAllSolidColor(LEDConstants.sotmOnColor).execute();
     // Calculate trajectory to aimPoint
     var target = aimPointSupplier.get();
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
@@ -128,6 +142,7 @@ public class ShootOnTheMoveCommand extends Command {
     Logger.recordOutput("ShootOnTheMove/DesiredTurretHeading", calculatedHeading.in(Degrees));
     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
     Logger.recordOutput("ShootOnTheMove/Running", isRunning);
+    Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", getisRunning());
 
     latestTurretAngle = calculatedHeading;
     latestShootSpeed = calculateRequiredShooterSpeed(correctedDistance);
@@ -172,6 +187,21 @@ public class ShootOnTheMoveCommand extends Command {
     // speed: " + latestShootSpeed
     // + ", hood angle: " + latestHoodAngle + ", turret angle: " +
     // latestTurretAngle);
+  }
+
+  public void end(boolean interrupted) {
+
+    // leds.setAllSolidColor(LEDConstants.teleColor).execute();
+    setIsRunning(false);
+    Logger.recordOutput("ShootOnTheMove/Running", getisRunning());
+    if (aimCommand != null) {
+      aimCommand.end(true);
+      aimCommand.cancel();
+      Commands.runOnce(() -> superstructure.getShooterSubsystem().stopCommand().schedule());
+      Logger.recordOutput("ShootOnTheMove/IsSched", CommandScheduler.getInstance().isScheduled(aimCommand));
+      Logger.recordOutput("ShootOnTheMove/isDone", isFinished());
+    }
+    Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", getisRunning());
   }
 
   private double getFlightTime(Distance distanceToTarget) {

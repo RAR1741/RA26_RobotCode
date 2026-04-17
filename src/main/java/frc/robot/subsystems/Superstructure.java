@@ -26,6 +26,7 @@ public class Superstructure extends SubsystemBase {
   public final TurretSubsystem turret;
   public final HoodSubsystem hood;
   public final ShooterSubsystem shooter;
+  //public final LEDSubsystem leds;
 
   public final CommandSwerveDrivetrain drivetrain;
 
@@ -56,6 +57,7 @@ public class Superstructure extends SubsystemBase {
     this.turret = new TurretSubsystem();
     this.hood = new HoodSubsystem(stateManager);
     this.shooter = new ShooterSubsystem();
+    //this.leds = new LEDSubsystem();
 
     this.limelightUp = new LimeLightSubsystem(drivetrain,
         LimelightConstants.upName,
@@ -71,6 +73,10 @@ public class Superstructure extends SubsystemBase {
         .and(turret.isAtTarget)
         .and(hood.isAtTarget);
   }
+
+  // public LEDSubsystem getLEDs(){
+  //   return this.leds;
+  // }
 
   public Command feedAllCommand() {
     return Commands.waitUntil(isReadyToShoot)
@@ -210,6 +216,10 @@ public class Superstructure extends SubsystemBase {
         turret.getRobotAdjustedAngle());
   }
 
+  public StateManager getStateManager() {
+    return stateManager;
+  }
+
   public void setShooterSetpoints(AngularVelocity shooterSpeed, Angle turretAngle, Angle hoodAngle) {
     targetShooterSpeed = shooterSpeed;
     targetTurretAngle = turretAngle;
@@ -223,5 +233,13 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput("Superstructure/turretReady", turret.isAtTarget.getAsBoolean());
     Logger.recordOutput("Superstructure/hoodReady", hood.isAtTarget.getAsBoolean());
     Logger.recordOutput("Superstructure/isReadyToShoot", isReadyToShoot.getAsBoolean());
+  }
+
+  public ShooterSubsystem getShooterSubsystem(){
+    return shooter;
+  }
+
+  public TurretSubsystem getTurrenSubsystem(){
+    return turret;
   }
 }

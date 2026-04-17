@@ -30,6 +30,7 @@ public class DriverControls {
       .withRotationalDeadband(ControllerConstants.k_standardRot * m_deadbandLimit)
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
+  @SuppressWarnings("unused")
   private static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
 
   // private static final SwerveRequest.PointWheelsAt point = new
@@ -90,6 +91,7 @@ public class DriverControls {
         drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
     controller.x().whileTrue(drivetrain.applyRequest(() -> brake));
+    controller.back().onTrue(Commands.runOnce(() -> drivetrain.getPigeon2().reset()));
     // controller.b().whileTrue(drivetrain.applyRequest(
     // () -> point.withModuleDirection(new Rotation2d(-controller.getLeftY(),
     // -controller.getLeftX()))));

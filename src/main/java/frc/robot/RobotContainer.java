@@ -25,6 +25,7 @@ import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
+//import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
   private final Telemetry logger = new Telemetry();
@@ -147,4 +148,8 @@ public class RobotContainer {
       System.out.println("[Sim] Reset pose to start of auto: " + selected);
     }
   }
+
+  //public LEDSubsystem getLEDs() {
+  //  return superstructure.leds;
+  //}
 }
