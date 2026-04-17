@@ -120,8 +120,8 @@ public class TurretSubsystem extends SubsystemBase {
 
     turretSpark.configure(turretConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    m12TAbsEncoder = new REVThroughBoreEncoder(1, TurretConstants.m12Frequency);
-    m13TAbsEncoder = new REVThroughBoreEncoder(0, TurretConstants.m13Frequency);
+    m12TAbsEncoder = new REVThroughBoreEncoder(0, TurretConstants.m12Frequency);
+    m13TAbsEncoder = new REVThroughBoreEncoder(1, TurretConstants.m13Frequency);
   }
 
   public Command rezero() {
@@ -187,7 +187,8 @@ public class TurretSubsystem extends SubsystemBase {
 
     double colE = e1 - e2;
     double colF = ((colE + 1.5) % 1.0) - 0.5;
-    double colG = ((colF * 2.6) + 2.0) % 1.0; // 2.6 = (12/60) * (13/60) / ((12/60) - (13/60))
+    double factor = 1.4; // 1.4 = (12/60) * (14/60) / ((12/60) - (14/60))
+    double colG = ((colF * factor) + 2.0) % 1.0;
     double turretAngleDeg = colG * 360.0;
 
     // Wrap from [0, 360) to [-180, 180) so negative turret positions are
