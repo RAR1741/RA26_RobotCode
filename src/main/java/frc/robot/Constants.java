@@ -139,7 +139,7 @@ public class Constants {
   public static class TurretConstants {
     public static final int k_turretMotorId = 50;
 
-    public static final Angle MAX_ONE_DIR_FOV = Degrees.of(160); // degrees
+    public static final Angle MAX_ONE_DIR_FOV = Degrees.of(90); // degrees
 
     // Mechanical lash:
     // - Old m12: (0.935568 - 0.927775) 0.007793 * 360 = 2.80548 deg
