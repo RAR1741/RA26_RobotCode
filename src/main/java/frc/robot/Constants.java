@@ -84,14 +84,14 @@ public class Constants {
   }
 
   public static class LEDConstants {
-    public static final int k_port = 9; //TODO: CHANGE
-    public static final int k_length = 17; //TODO: CHANGE
+    public static final int k_port = 9; // TODO: CHANGE
+    public static final int k_length = 17; // TODO: CHANGE
 
     // COLORS ACCOSIATIONS
-    //we are insane in the membrane :3
+    // we are insane in the membrane :3
     public static final Color autoColor = Color.kBlue;
     public static final Color teleColor = Color.kGreen;
-    public static final Color disableColor = Color.kRed; 
+    public static final Color disableColor = Color.kRed;
     public static final Color motorError = Color.kOrange;
     public static final Color sotmOnColor = Color.kPurple;
   }
@@ -174,7 +174,7 @@ public class Constants {
     public static final int k_hoodMotorId = 51;
 
     // TODO: Update this after testing
-    public static final double boxXMultiplier = 0.25;
+    public static final double boxXMultiplier = 0.35;
     public static final double boxYMultiplier = 0.075;
   }
 
