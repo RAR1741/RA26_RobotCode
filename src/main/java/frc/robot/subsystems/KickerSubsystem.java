@@ -37,7 +37,7 @@ public class KickerSubsystem extends SubsystemBase {
       .withFeedforward(new SimpleMotorFeedforward(0.191, 0.11858, 0.0))
       .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1))) // no gear reduction
-      .withMotorInverted(false)
+      .withMotorInverted(true)
       .withIdleMode(MotorMode.COAST);
   // .withStatorCurrentLimit(Amps.of(40));
 
