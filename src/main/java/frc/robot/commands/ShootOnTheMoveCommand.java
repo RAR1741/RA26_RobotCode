@@ -238,8 +238,8 @@ public class ShootOnTheMoveCommand extends Command {
   // meters, RPM
   private static final InterpolatingDoubleTreeMap HUB_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap.ofEntries(
       Map.entry(1.554228, 1900.0), // HUB
-      Map.entry(3.153828, 2100.0), // TRENCH
-      Map.entry(4.792132, 2350.0)); // OUTPOST
+      Map.entry(3.153828, 2000.0), // TRENCH
+      Map.entry(4.792132, 2300.0)); // OUTPOST
 
   // meters, RPM
   private static final InterpolatingDoubleTreeMap PASS_SHOOTING_SPEED_BY_DISTANCE = InterpolatingDoubleTreeMap
