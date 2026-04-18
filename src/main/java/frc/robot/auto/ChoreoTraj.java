@@ -34,9 +34,32 @@ public record ChoreoTraj(
     public static final ChoreoTraj LeftTrench = new ChoreoTraj(
         "LeftTrench",
         OptionalInt.empty(),
-        10.4236,
-        new Pose2d(4.43873, 7.42359, Rotation2d.fromRadians(0)),
+        10.39963,
+        new Pose2d(4.46711, 7.5797, Rotation2d.fromRadians(-1.5708)),
         new Pose2d(1.51523, 7.4094, Rotation2d.fromRadians(3.1183))
+    );
+    public static final ChoreoTraj LeftTrenchBump = new ChoreoTraj(
+        "LeftTrenchBump",
+        OptionalInt.empty(),
+        17.00495,
+        new Pose2d(4.46318, 7.62527, Rotation2d.fromRadians(-1.5708)),
+        new Pose2d(6.62426, 4.21625, Rotation2d.fromRadians(-1.69054))
+    );
+    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
+    public static final ChoreoTraj LeftTrenchBump$0 = new ChoreoTraj(
+        "LeftTrenchBump",
+        OptionalInt.of(0),
+        8.16454,
+        new Pose2d(4.46318, 7.62527, Rotation2d.fromRadians(-1.5708)),
+        new Pose2d(2.07012, 5.61897, Rotation2d.fromRadians(-3.13152))
+    );
+    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
+    public static final ChoreoTraj LeftTrenchBump$1 = new ChoreoTraj(
+        "LeftTrenchBump",
+        OptionalInt.of(1),
+        8.84041,
+        new Pose2d(2.07012, 5.61897, Rotation2d.fromRadians(-3.13152)),
+        new Pose2d(6.62426, 4.21625, Rotation2d.fromRadians(-1.69054))
     );
     public static final ChoreoTraj RightBasic = new ChoreoTraj(
         "RightBasic",
@@ -55,32 +78,32 @@ public record ChoreoTraj(
     public static final ChoreoTraj RightTrench = new ChoreoTraj(
         "RightTrench",
         OptionalInt.empty(),
-        15.02969,
+        9.32505,
         new Pose2d(4.46035, 0.44309, Rotation2d.fromRadians(1.5708)),
-        new Pose2d(3.42544, 2.41536, Rotation2d.fromRadians(-3.07233))
+        new Pose2d(0.66372, 0.71089, Rotation2d.fromRadians(-3.13384))
     );
     /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
     public static final ChoreoTraj RightTrench$0 = new ChoreoTraj(
         "RightTrench",
         OptionalInt.of(0),
-        8.27165,
+        8.20603,
         new Pose2d(4.46035, 0.44309, Rotation2d.fromRadians(1.5708)),
-        new Pose2d(2.67796, 0.67272, Rotation2d.fromRadians(-3.14057))
+        new Pose2d(2.67796, 0.67272, Rotation2d.fromRadians(-3.14101))
     );
     /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
     public static final ChoreoTraj RightTrench$1 = new ChoreoTraj(
         "RightTrench",
         OptionalInt.of(1),
-        6.758040000000001,
-        new Pose2d(2.67796, 0.67272, Rotation2d.fromRadians(-3.14057)),
-        new Pose2d(3.42544, 2.41536, Rotation2d.fromRadians(-3.07233))
+        1.119019999999999,
+        new Pose2d(2.67796, 0.67272, Rotation2d.fromRadians(-3.14101)),
+        new Pose2d(0.66372, 0.71089, Rotation2d.fromRadians(-3.13384))
     );
     public static final ChoreoTraj RightTrenchBump = new ChoreoTraj(
         "RightTrenchBump",
         OptionalInt.empty(),
-        17.8155,
+        17.77718,
         new Pose2d(4.46035, 0.44309, Rotation2d.fromRadians(1.5708)),
-        new Pose2d(6.15524, 3.40103, Rotation2d.fromRadians(1.56723))
+        new Pose2d(6.68102, 3.36475, Rotation2d.fromRadians(1.6712))
     );
     /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
     public static final ChoreoTraj RightTrenchBump$0 = new ChoreoTraj(
@@ -94,32 +117,9 @@ public record ChoreoTraj(
     public static final ChoreoTraj RightTrenchBump$1 = new ChoreoTraj(
         "RightTrenchBump",
         OptionalInt.of(1),
-        9.10753,
+        9.069210000000002,
         new Pose2d(2.16108, 2.62944, Rotation2d.fromRadians(-3.08028)),
-        new Pose2d(6.15524, 3.40103, Rotation2d.fromRadians(1.56723))
-    );
-    public static final ChoreoTraj LeftTrenchBump = new ChoreoTraj(
-        "LeftTrenchBump",
-        OptionalInt.empty(),
-        17.36323,
-        new Pose2d(4.46318, 7.62527, Rotation2d.fromRadians(-1.57705)),
-        new Pose2d(6.17306, 3.85931, Rotation2d.fromRadians(-1.5951))
-    );
-    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
-    public static final ChoreoTraj LeftTrenchBump$0 = new ChoreoTraj(
-        "LeftTrenchBump",
-        OptionalInt.of(0),
-        8.16454,
-        new Pose2d(4.46318, 7.62527, Rotation2d.fromRadians(-1.57705)),
-        new Pose2d(2.07012, 5.61897, Rotation2d.fromRadians(-3.13152))
-    );
-    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
-    public static final ChoreoTraj LeftTrenchBump$1 = new ChoreoTraj(
-        "LeftTrenchBump",
-        OptionalInt.of(1),
-        9.198690000000001,
-        new Pose2d(2.07012, 5.61897, Rotation2d.fromRadians(-3.13152)),
-        new Pose2d(6.17306, 3.85931, Rotation2d.fromRadians(-1.5951))
+        new Pose2d(6.68102, 3.36475, Rotation2d.fromRadians(1.6712))
     );
 
     /**
@@ -129,6 +129,9 @@ public record ChoreoTraj(
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
         Map.entry("LeftBasic", LeftBasic),
         Map.entry("LeftTrench", LeftTrench),
+        Map.entry("LeftTrenchBump", LeftTrenchBump),
+        Map.entry("LeftTrenchBump$0", LeftTrenchBump$0),
+        Map.entry("LeftTrenchBump$1", LeftTrenchBump$1),
         Map.entry("RightBasic", RightBasic),
         Map.entry("RightBasicNoIntake", RightBasicNoIntake),
         Map.entry("RightTrench", RightTrench),
@@ -136,10 +139,7 @@ public record ChoreoTraj(
         Map.entry("RightTrench$1", RightTrench$1),
         Map.entry("RightTrenchBump", RightTrenchBump),
         Map.entry("RightTrenchBump$0", RightTrenchBump$0),
-        Map.entry("RightTrenchBump$1", RightTrenchBump$1),
-        Map.entry("LeftTrenchBump", LeftTrenchBump),
-        Map.entry("LeftTrenchBump$0", LeftTrenchBump$0),
-        Map.entry("LeftTrenchBump$1", LeftTrenchBump$1)
+        Map.entry("RightTrenchBump$1", RightTrenchBump$1)
     );
 
     /**
