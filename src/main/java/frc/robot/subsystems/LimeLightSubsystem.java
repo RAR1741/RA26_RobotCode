@@ -222,7 +222,7 @@ public class LimeLightSubsystem extends SubsystemBase {
       return false;
     }
 
-    if (estimate.tagCount <= VisionConstants.minTagCount) {
+    if (estimate.tagCount < VisionConstants.minTagCount) {
       return false;
     }
 
