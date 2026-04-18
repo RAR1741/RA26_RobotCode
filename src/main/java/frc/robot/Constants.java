@@ -35,25 +35,27 @@ public class Constants {
   public static class LimelightConstants {
     public static final boolean IS_LIMELIGHT_ENABLED = true;
 
+    // RIGHT
     public static final String upName = "limelight-up";
     public static final Pose3d upCameraOffset = new Pose3d(
-        Inches.of(-12.75).in(Meters), // FORWARD
-        Inches.of(-2.75).in(Meters), // RIGHT
-        Inches.of(20.25).in(Meters), // UP
+        Inches.of(-12.25).in(Meters), // FORWARD
+        Inches.of(-6.75+3.625).in(Meters), // RIGHT
+        Inches.of(17.75).in(Meters), // UP
         new Rotation3d(
-            0,
-            Degrees.of(20).in(Radians),
-            Degrees.of(180).in(Radians)));
+            0, // ROLL 
+            Degrees.of(0).in(Radians), // PITCH
+            Degrees.of(-150).in(Radians)));  // YAW
 
+    // LEFT
     public static final String downName = "limelight-down";
     public static final Pose3d downCameraOffset = new Pose3d(
-        Inches.of(-12.75).in(Meters), // FORWARD
-        Inches.of(-5.878).in(Meters), // RIGHT
-        Inches.of(16.875).in(Meters), // UP
+        Inches.of(-12.25).in(Meters), // FORWARD
+        Inches.of(-6.75-3.875).in(Meters), // RIGHT
+        Inches.of(17.75).in(Meters), // UP
         new Rotation3d(
-            0,
-            Degrees.of(0).in(Radians),
-            Degrees.of(180).in(Radians)));
+            0, // ROLL
+            Degrees.of(0).in(Radians), // PATCH
+            Degrees.of(151).in(Radians))); // YAW
   }
 
   public static class SwerveDriveConstants {
@@ -139,7 +141,7 @@ public class Constants {
   public static class TurretConstants {
     public static final int k_turretMotorId = 50;
 
-    public static final Angle MAX_ONE_DIR_FOV = Degrees.of(90); // degrees
+    public static final Angle MAX_ONE_DIR_FOV = Degrees.of(160); // degrees
 
     // Mechanical lash:
     // - Old m12: (0.935568 - 0.927775) 0.007793 * 360 = 2.80548 deg
@@ -147,8 +149,8 @@ public class Constants {
     // - Old m13: (0.593744 - 0.587949) 0.005795 * 360 = 2.0862 deg
     // - New m13: (0.649539 - 0.64658) 0.002959 * 360 = 1.06524 deg
 
-    public static final double M12_OFFSET = 0.758924;
-    public static final double M13_OFFSET = 0.209706;
+    public static final double M12_OFFSET = 0.790021;
+    public static final double M13_OFFSET = 0.23406;
 
     public static final double m12Frequency = 965.0; // Hz
     public static final double m13Frequency = 982.0; // Hz
