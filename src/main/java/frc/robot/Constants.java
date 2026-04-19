@@ -79,7 +79,7 @@ public class Constants {
 
     public static final double k_slowRot = 0.25;
     public static final double k_standardRot = 0.75;
-    public static final double k_boostRot = 0.75;
+    public static final double k_boostRot = 1.25;
 
     // Joystick Deadband
     public static final double k_DEADBAND = 0.01;
