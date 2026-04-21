@@ -90,6 +90,18 @@ public class Superstructure extends SubsystemBase {
         .withName("Superstructure.feedAll");
   }
 
+  public Command feedAllCommandNoSafety() {
+    return Commands.waitUntil(() -> true)
+        .andThen(
+            Commands.parallel(
+                // intake.feedCommand(),
+                hopper.feedCommand().asProxy(),
+                kicker.feedCommand().asProxy())
+                .onlyWhile(() -> true))
+        .repeatedly()
+        .withName("Superstructure.feedAllNoSafety");
+  }
+
   public Command feedAllAutoCommand() {
     return Commands.waitUntil(isReadyToShoot)
         .andThen(

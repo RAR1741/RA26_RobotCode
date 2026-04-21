@@ -49,27 +49,27 @@ public class IntakeSubsystem extends SubsystemBase {
 
   private final REVThroughBoreEncoder pivotAbsEncoder;
 
-  private static final double PIVOT_GEAR_RATIO = 9.0 * (48.0 / 22.0);
+  private static final double PIVOT_GEAR_RATIO = 9.0;
 
   private final SmartMotorControllerConfig pivotSmcConfig = new SmartMotorControllerConfig(this)
       // .withFollowers(Pair.of(pivotSecondaySpark, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(2.0, 0, 0)
+      .withClosedLoopController(1.0, 0, 0)
       // .withFeedforward(new ArmFeedforward(0.191, 0.11858, 0.0))
       .withTelemetry("PivotMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(PIVOT_GEAR_RATIO)))
-      .withMotorInverted(false)
-      .withIdleMode(MotorMode.BRAKE)
-      .withStatorCurrentLimit(Amps.of(80.0));
+      .withMotorInverted(true)
+      .withIdleMode(MotorMode.COAST)
+      .withStatorCurrentLimit(Amps.of(5.0));
 
   private final SmartMotorController pivotSmc = new SparkWrapper(
       pivotLeaderSpark,
-      DCMotor.getNEO(2),
+      DCMotor.getNEO(1),
       pivotSmcConfig);
 
   private final ArmConfig intakePivotConfig = new ArmConfig(pivotSmc)
-      .withSoftLimits(Degrees.of(0), Degrees.of(120))
-      .withHardLimit(Degrees.of(0), Degrees.of(125))
+      .withSoftLimits(Degrees.of(0), Degrees.of(1320))
+      .withHardLimit(Degrees.of(0), Degrees.of(1320))
       .withStartingPosition(Degrees.of(0))
       .withLength(Feet.of(1))
       .withMass(Pounds.of(2))
@@ -116,7 +116,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     pivotAbsEncoder = new REVThroughBoreEncoder(2);
 
-    seedRelativeEncoderFromAbsolute();
+    // seedRelativeEncoderFromAbsolute();
   }
 
   private void seedRelativeEncoderFromAbsolute() {
@@ -206,22 +206,24 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    seedRelativeEncoderFromAbsolute();
+    // seedRelativeEncoderFromAbsolute();
 
     rollerSmc.updateTelemetry();
     pivotSmc.updateTelemetry();
 
-    if (isDeployStalled()) {
-      if (intakePivot.getMechanismSetpoint().get() == IntakeConstants.k_IntakeDeployed) {
-        hammerTime = true;
-        setIntakeStow().schedule();
-      }
-    }
+    // if (isDeployStalled()) {
+    // if (intakePivot.getMechanismSetpoint().get() ==
+    // IntakeConstants.k_IntakeDeployed) {
+    // hammerTime = true;
+    // setIntakeStow().schedule();
+    // }
+    // }
 
-    if (hammerTime && intakePivot.isNear(IntakeConstants.k_IntakeStow, Degrees.of(5)).getAsBoolean()) {
-      hammerTime = false;
-      setIntakeDeployed().schedule();
-    }
+    // if (hammerTime && intakePivot.isNear(IntakeConstants.k_IntakeStow,
+    // Degrees.of(5)).getAsBoolean()) {
+    // hammerTime = false;
+    // setIntakeDeployed().schedule();
+    // }
   }
 
   @Override

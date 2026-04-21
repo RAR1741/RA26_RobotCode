@@ -7,17 +7,17 @@
       "ModuleId": 0,
       "Encoder": {
         "Id": 12,
-        "Name": "FrontLeftEncoder",
+        "Name": "FLE",
         "Model": "CANCoder",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": null
       },
       "SteerMotor": {
         "Id": 11,
-        "Name": "FrontLeftTurn",
+        "Name": "FLT",
         "Model": "Talon FX vers. F",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": {
           "Name": "WCP Kraken x44",
@@ -28,9 +28,9 @@
       },
       "DriveMotor": {
         "Id": 10,
-        "Name": "FrontLeftDrive",
+        "Name": "FLD",
         "Model": "Talon FX vers. C",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": {
           "Name": "WCP Kraken x60",
@@ -42,7 +42,7 @@
       "IsEncoderInverted": false,
       "IsSteerInverted": false,
       "SelectedEncoderType": "CANcoder",
-      "EncoderOffset": 0.357666015625,
+      "EncoderOffset": 0.0263671875,
       "DriveMotorSelectionState": 1,
       "SteerMotorSelectionState": 1,
       "SteerEncoderSelectionState": 1,
@@ -56,17 +56,17 @@
       "ModuleId": 1,
       "Encoder": {
         "Id": 15,
-        "Name": "FrontRightEncoder",
+        "Name": "FRE",
         "Model": "CANCoder",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": null
       },
       "SteerMotor": {
         "Id": 14,
-        "Name": "FrontRightTurn",
+        "Name": "FRT",
         "Model": "Talon FX vers. F",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": {
           "Name": "WCP Kraken x44",
@@ -77,9 +77,9 @@
       },
       "DriveMotor": {
         "Id": 13,
-        "Name": "FrontRightDrive",
+        "Name": "FRD",
         "Model": "Talon FX vers. C",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": {
           "Name": "WCP Kraken x60",
@@ -91,7 +91,7 @@
       "IsEncoderInverted": false,
       "IsSteerInverted": false,
       "SelectedEncoderType": "CANcoder",
-      "EncoderOffset": -0.2763671875,
+      "EncoderOffset": -0.2568359375,
       "DriveMotorSelectionState": 1,
       "SteerMotorSelectionState": 1,
       "SteerEncoderSelectionState": 1,
@@ -105,17 +105,17 @@
       "ModuleId": 2,
       "Encoder": {
         "Id": 18,
-        "Name": "BackLeftEncoder",
+        "Name": "BLE",
         "Model": "CANCoder",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": null
       },
       "SteerMotor": {
         "Id": 17,
-        "Name": "BackLeftTurn",
+        "Name": "BLT",
         "Model": "Talon FX vers. F",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": {
           "Name": "WCP Kraken x44",
@@ -126,9 +126,9 @@
       },
       "DriveMotor": {
         "Id": 16,
-        "Name": "BackLeftDrive",
+        "Name": "BLD",
         "Model": "Talon FX vers. C",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": {
           "Name": "WCP Kraken x60",
@@ -140,7 +140,7 @@
       "IsEncoderInverted": false,
       "IsSteerInverted": false,
       "SelectedEncoderType": "CANcoder",
-      "EncoderOffset": -0.0107421875,
+      "EncoderOffset": 0.455078125,
       "DriveMotorSelectionState": 1,
       "SteerMotorSelectionState": 1,
       "SteerEncoderSelectionState": 1,
@@ -154,17 +154,17 @@
       "ModuleId": 3,
       "Encoder": {
         "Id": 21,
-        "Name": "BackRightEncoder",
+        "Name": "BRE",
         "Model": "CANCoder",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": null
       },
       "SteerMotor": {
         "Id": 20,
-        "Name": "BackRightTurn",
+        "Name": "BRT",
         "Model": "Talon FX vers. F",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": {
           "Name": "WCP Kraken x44",
@@ -175,9 +175,9 @@
       },
       "DriveMotor": {
         "Id": 19,
-        "Name": "BackRightDrive",
+        "Name": "BRD",
         "Model": "Talon FX vers. C",
-        "CANbus": "EDF4087C50374E53202020473A3810FF",
+        "CANbus": "9ED441DC50374E5320202047041B10FF",
         "CANbusFriendly": "Drivetrain",
         "SelectedMotorType": {
           "Name": "WCP Kraken x60",
@@ -189,7 +189,7 @@
       "IsEncoderInverted": false,
       "IsSteerInverted": false,
       "SelectedEncoderType": "CANcoder",
-      "EncoderOffset": 0.171630859375,
+      "EncoderOffset": 0.38134765625,
       "DriveMotorSelectionState": 1,
       "SteerMotorSelectionState": 1,
       "SteerEncoderSelectionState": 1,
@@ -202,9 +202,9 @@
   "SwerveOptions": {
     "Gyro": {
       "Id": 22,
-      "Name": "Pigeon ",
+      "Name": "Pigeon 2 vers. S (Device ID 22)",
       "Model": "Pigeon 2 vers. S",
-      "CANbus": "EDF4087C50374E53202020473A3810FF",
+      "CANbus": "9ED441DC50374E5320202047041B10FF",
       "CANbusFriendly": "Drivetrain",
       "SelectedMotorType": null
     },
@@ -227,6 +227,6 @@
     "HasVerifiedDrive": true,
     "IsValidConfiguration": true
   },
-  "TeamNumber": 1741,
+  "TeamNumber": 0,
   "schema_version": "1"
 }

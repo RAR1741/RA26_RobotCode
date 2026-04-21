@@ -35,25 +35,27 @@ public class Constants {
   public static class LimelightConstants {
     public static final boolean IS_LIMELIGHT_ENABLED = true;
 
+    // RIGHT
     public static final String upName = "limelight-up";
     public static final Pose3d upCameraOffset = new Pose3d(
-        Inches.of(-12.75).in(Meters), // FORWARD
-        Inches.of(-2.75).in(Meters), // RIGHT
-        Inches.of(20.25).in(Meters), // UP
+        Inches.of(-12.25).in(Meters), // FORWARD
+        Inches.of(-6.75+3.625).in(Meters), // RIGHT
+        Inches.of(17.75).in(Meters), // UP
         new Rotation3d(
-            0,
-            Degrees.of(20).in(Radians),
-            Degrees.of(180).in(Radians)));
+            0, // ROLL 
+            Degrees.of(0).in(Radians), // PITCH
+            Degrees.of(-150).in(Radians)));  // YAW
 
+    // LEFT
     public static final String downName = "limelight-down";
     public static final Pose3d downCameraOffset = new Pose3d(
-        Inches.of(-12.75).in(Meters), // FORWARD
-        Inches.of(-5.878).in(Meters), // RIGHT
-        Inches.of(16.875).in(Meters), // UP
+        Inches.of(-12.25).in(Meters), // FORWARD
+        Inches.of(-6.75-3.875).in(Meters), // RIGHT
+        Inches.of(17.75).in(Meters), // UP
         new Rotation3d(
-            0,
-            Degrees.of(0).in(Radians),
-            Degrees.of(180).in(Radians)));
+            0, // ROLL
+            Degrees.of(0).in(Radians), // PATCH
+            Degrees.of(151).in(Radians))); // YAW
   }
 
   public static class SwerveDriveConstants {
@@ -77,7 +79,7 @@ public class Constants {
 
     public static final double k_slowRot = 0.25;
     public static final double k_standardRot = 0.75;
-    public static final double k_boostRot = 0.75;
+    public static final double k_boostRot = 1.25;
 
     // Joystick Deadband
     public static final double k_DEADBAND = 0.01;
@@ -103,14 +105,15 @@ public class Constants {
     public static final int k_rollerMotorSecondaryId = 33;
 
     public static final Angle k_IntakeStow = Degrees.of(0);
-    public static final Angle k_IntakeFeed = Degrees.of(80);
-    public static final Angle k_IntakeMaxWhileRoller = Degrees.of(103.5);
+    // public static final Angle k_IntakeFeed = Degrees.of(80);
+    public static final Angle k_IntakeMaxWhileRoller = Degrees.of(650);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
-    public static final Angle k_IntakeDeployed = Degrees.of(110);
+    public static final Angle k_IntakeDeployed = Degrees.of(1320);
 
     // WARNING: make sure this doesn't loop over 0.0/1.0!
     // return (getAbsAngle() - IntakeConstants.k_pivotAbsEncoderOffset + 1.0) % 1.0;
-    public static final double k_pivotAbsEncoderOffset = 0.517193;
+    // public static final double k_pivotAbsEncoderOffset = 0.517193;
+    public static final double k_pivotAbsEncoderOffset = 0.0;
 
     public static final Time k_feedUpTime = Seconds.of(0.5);
     public static final Time k_feedDownTime = Seconds.of(2.0);
@@ -146,11 +149,11 @@ public class Constants {
     // - Old m13: (0.593744 - 0.587949) 0.005795 * 360 = 2.0862 deg
     // - New m13: (0.649539 - 0.64658) 0.002959 * 360 = 1.06524 deg
 
-    public static final double M12_OFFSET = 0.870937;
-    public static final double M13_OFFSET = 0.638683;
+    public static final double M12_OFFSET = 0.790021;
+    public static final double M13_OFFSET = 0.23406;
 
     public static final double m12Frequency = 965.0; // Hz
-    public static final double m13Frequency = 978.0; // Hz
+    public static final double m13Frequency = 982.0; // Hz
 
     public static final Translation3d turretTranslation = new Translation3d(
         Inches.of(-6.25),
