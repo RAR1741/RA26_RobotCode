@@ -126,6 +126,14 @@ public class DriverControls {
           Commands.repeatingSequence(
               Simulation.fireFuel(drivetrain, superstructure),
               Commands.waitSeconds(1.0)));
+    } else {
+        controller.a().onTrue(
+            superstructure.showDrivetrainConnections()
+        );
+
+        controller.b().onTrue(
+            superstructure.showOtherConnections()
+        );
     }
   }
 }

@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.Degrees;
+import edu.wpi.first.wpilibj.util.Color;
 
 import java.util.function.Supplier;
 
@@ -26,7 +27,7 @@ public class Superstructure extends SubsystemBase {
   public final TurretSubsystem turret;
   public final HoodSubsystem hood;
   public final ShooterSubsystem shooter;
-  //public final LEDSubsystem leds;
+  public final LEDSubsystem leds;
 
   public final CommandSwerveDrivetrain drivetrain;
 
@@ -57,7 +58,7 @@ public class Superstructure extends SubsystemBase {
     this.turret = new TurretSubsystem();
     this.hood = new HoodSubsystem(stateManager);
     this.shooter = new ShooterSubsystem();
-    //this.leds = new LEDSubsystem();
+    this.leds = new LEDSubsystem();
 
     this.limelightUp = new LimeLightSubsystem(drivetrain,
         LimelightConstants.upName,
@@ -74,9 +75,9 @@ public class Superstructure extends SubsystemBase {
         .and(hood.isAtTarget);
   }
 
-  // public LEDSubsystem getLEDs(){
-  //   return this.leds;
-  // }
+  public LEDSubsystem getLEDs(){
+    return this.leds;
+  }
 
   public Command feedAllCommand() {
     return Commands.waitUntil(isReadyToShoot)
@@ -224,6 +225,63 @@ public class Superstructure extends SubsystemBase {
     targetShooterSpeed = shooterSpeed;
     targetTurretAngle = turretAngle;
     targetHoodAngle = hoodAngle;
+  }
+
+  String[] drivetrainConnectionMessages = {
+    "TurretSpark-",
+    "TurretMotor-",
+    "TurretEncoder-"
+  };
+
+  public Command showDrivetrainConnections() {
+    int[] status = drivetrain.getDrivetrainConnections();
+
+    String errorStr = "";
+    for (int i = 0; i < status.length; i++) {
+      if (status[i] == 1) {
+        errorStr = errorStr.concat(drivetrainConnectionMessages[i]);
+      }
+    }
+
+    if (errorStr.length() > 0) {
+      errorStr = errorStr.substring(0, errorStr.length() - 1);
+      Logger.recordOutput("ConnectionStatus/nonDrivetrainConnectionIssues", errorStr);
+      return leds.setAllSolidColor(Color.kRed).withTimeout(3);
+    } else {
+      Logger.recordOutput("ConnectionStatus/nonDrivetrainConnectionIssues", "No issues :D");
+      return leds.setAllSolidColor(Color.kGreen).withTimeout(3);
+    }
+  }
+
+  String[][] otherConnectionMessages = {
+    {
+      "TurretSpark-",
+      "TurretMotor-",
+      "TurretEncoder-"
+    }
+  };
+
+  public Command showOtherConnections() {
+    int[][] status = {{}};
+    status[0] = turret.getTurretConnections();
+
+    String errorStr = "";
+    for (int i = 0; i < status.length; i++) {
+      for (int j = 0; j < status[i].length; j++) {
+        if (status[i][j] == 1) {
+          errorStr = errorStr.concat(otherConnectionMessages[i][j]);
+        }
+      }
+    }
+
+    if (errorStr.length() > 0) {
+      errorStr = errorStr.substring(0, errorStr.length() - 1);
+      Logger.recordOutput("ConnectionStatus/connectionIssues", errorStr);
+      return leds.setAllSolidColor(Color.kRed).withTimeout(3);
+    } else {
+      Logger.recordOutput("ConnectionStatus/connectionIssues", "No issues :D");
+      return leds.setAllSolidColor(Color.kGreen).withTimeout(3);
+    }
   }
 
   @Override

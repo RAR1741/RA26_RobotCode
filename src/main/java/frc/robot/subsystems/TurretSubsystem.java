@@ -326,4 +326,28 @@ public class TurretSubsystem extends SubsystemBase {
   public void simulationPeriodic() {
     // No YAMS sim — add simulation model here if needed
   }
+
+  public int[] getTurretConnections() {
+    int[] out = {0, 0, 0};
+
+    try {
+      turretSpark.getDeviceId();
+    } catch (Exception e) {
+      out[0] = 1;
+    }
+
+    try {
+      turretSpark.getMotorTemperature();
+    } catch (Exception e) {
+      out[1] = 1;
+    }
+
+    try {
+      turretEncoder.getPosition();
+    } catch (Exception e) {
+      out[2] = 1;
+    }
+
+    return out;
+  }
 }

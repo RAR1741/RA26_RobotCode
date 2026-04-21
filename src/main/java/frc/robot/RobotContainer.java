@@ -25,7 +25,7 @@ import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
-//import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
   private final Telemetry logger = new Telemetry();
@@ -149,7 +149,7 @@ public class RobotContainer {
     }
   }
 
-  //public LEDSubsystem getLEDs() {
-  //  return superstructure.leds;
-  //}
+  public LEDSubsystem getLEDs() {
+    return superstructure.leds;
+  }
 }

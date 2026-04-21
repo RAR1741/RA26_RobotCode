@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Constants.StateConstants;
-// import frc.robot.Constants.LEDConstants;
-// import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.Constants.LEDConstants;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class Robot extends LoggedRobot {
   private Simulation sim;
@@ -27,7 +27,7 @@ public class Robot extends LoggedRobot {
 
   private final Field2d field = new Field2d();
 
-  //private final LEDSubsystem leds;
+  private final LEDSubsystem leds;
 
   public Robot() {
     Logger.recordMetadata("ProjectName", "RA26_RobotCode");
@@ -43,7 +43,7 @@ public class Robot extends LoggedRobot {
 
     m_robotContainer = new RobotContainer();
 
-    //this.leds = m_robotContainer.getLEDs();
+    this.leds = m_robotContainer.getLEDs();
     SmartDashboard.putData(field);
   }
 
@@ -56,7 +56,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledInit() {
-    //leds.setAllSolidColor(LEDConstants.disableColor).execute(); //we are criminals
+    leds.setAllSolidColor(LEDConstants.disableColor).execute(); //we are criminals
   }
 
   @Override
@@ -69,7 +69,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    //CommandScheduler.getInstance().schedule(leds.setAllSolidColor(LEDConstants.autoColor));
+    CommandScheduler.getInstance().schedule(leds.setAllSolidColor(LEDConstants.autoColor));
     CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());
 
     // Auto is scheduled automatically by AutoChooser via RobotModeTriggers
@@ -89,7 +89,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    //CommandScheduler.getInstance().schedule(leds.setAllSolidColor(LEDConstants.teleColor));
+    CommandScheduler.getInstance().schedule(leds.setAllSolidColor(LEDConstants.teleColor));
     if (DriverStation.getMatchType() == MatchType.None){
       CommandScheduler.getInstance().schedule(m_robotContainer.getHoodHomeCommand());    
     }
