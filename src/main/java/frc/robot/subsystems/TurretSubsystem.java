@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -19,6 +20,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -200,11 +203,26 @@ public class TurretSubsystem extends SubsystemBase {
     }).withName("Turret.SetAngle(" + angle.in(Degrees) + " deg)");
   }
 
-  public Command setAngleDynamic(Supplier<Angle> turretAngleSupplier) {
+  public Command setAngleDynamic(Supplier<Angle> turretAngleSupplier, Supplier<AngularVelocity> turretAnglularVelocityCompensationSupplier) {
     return run(() -> {
       closedLoopEnabled = true;
       targetPositionRotations = turretAngleSupplier.get().in(Rotations);
-      turretMotor.setControl(motionMagicRequest.withPosition(targetPositionRotations));
+
+      Voltage ffAngularVelocityCompensation = Volts.of(0.0);
+      // TODO: Assume this should be the same as the kV from above, but it can be tuned. It can also be set to 0 to remove the effect
+      double compensationkV = 7.5;
+
+      /* Only apply the angular velocity compensation if the turret hasn't wrapped, and
+         our current position is relatively close to the target. If the turret is 30 degrees
+         or less away from the setpoint, then apply the compensation FF
+      */
+      if (turretAngleSupplier.get().isNear(this.getAngle(), Degrees.of(30.0)))
+      {
+        ffAngularVelocityCompensation = Volts.of(turretAnglularVelocityCompensationSupplier.get().in(RotationsPerSecond) * compensationkV);
+      }
+      Logger.recordOutput("Turret/FFVolts", ffAngularVelocityCompensation);
+
+      turretMotor.setControl(motionMagicRequest.withPosition(targetPositionRotations).withFeedForward(ffAngularVelocityCompensation));
     }).withName("Turret.SetAngleDynamic");
   }
 

@@ -189,10 +189,11 @@ public class Superstructure extends SubsystemBase {
   public Command aimDynamicCommand(
       Supplier<AngularVelocity> shooterSpeedSupplier,
       Supplier<Angle> turretAngleSupplier,
-      Supplier<Angle> hoodAngleSupplier) {
+      Supplier<Angle> hoodAngleSupplier,
+      Supplier<AngularVelocity> turretAngularVelocityCompensationSupplier) {
     return Commands.parallel(
         shooter.setSpeedDynamic(shooterSpeedSupplier),
-        turret.setAngleDynamic(turretAngleSupplier),
+        turret.setAngleDynamic(turretAngleSupplier, turretAngularVelocityCompensationSupplier),
         hood.setAngleDynamic(hoodAngleSupplier))
         .withName("Superstructure.aimDynamic");
   }
