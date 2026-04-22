@@ -11,6 +11,7 @@ import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -100,17 +101,19 @@ public class ShootOnTheMoveCommand extends Command {
 
     // leds.setAllSolidColor(LEDConstants.sotmOnColor).execute();
     // Calculate trajectory to aimPoint
-    var target = aimPointSupplier.get();
+    Translation2d target = aimPointSupplier.get();
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
 
-    var shooterLocation = drivetrain.getState().Pose.getTranslation()
-        .plus(superstructure.getShooterPose().toPose2d().getTranslation());
+    Transform2d botPoseToShooterPoseTransform = new Transform2d(
+      superstructure.getShooterPose().getTranslation().toTranslation2d(),
+      superstructure.getShooterPose().getRotation().toRotation2d());
+    Pose2d shooterLocation = drivetrain.getState().Pose.plus(botPoseToShooterPoseTransform);
 
     // Ignore this parameter for now, the range tables will account for it :/
     // var deltaH = target.getMeasureZ().minus(shooterLocation.getMeasureZ());
-    var shooterOnGround = new Translation2d(shooterLocation.getX(), shooterLocation.getY());
+    Translation2d shooterOnGround = shooterLocation.getTranslation();
 
-    var distanceToTarget = Meters.of(shooterOnGround.getDistance(target));
+    Distance distanceToTarget = Meters.of(shooterOnGround.getDistance(target));
 
     // Get time of flight. We could try to do this analytically but for now it's
     // easier and more realistic
@@ -121,23 +124,25 @@ public class ShootOnTheMoveCommand extends Command {
     // of flight.
     // If we're stationary, this should be zero. If we're backing up, this will be
     // "ahead" of the target, etc.
-    var updatedPosition = ChassisSpeeds
+    ChassisSpeeds updatedPosition = ChassisSpeeds
         .fromRobotRelativeSpeeds(drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation())
         .times(timeOfFlight);
-    var correctiveVector = new Translation2d(updatedPosition.vxMetersPerSecond, updatedPosition.vyMetersPerSecond)
+    Translation2d correctiveVector = new Translation2d(updatedPosition.vxMetersPerSecond, updatedPosition.vyMetersPerSecond)
         .unaryMinus();
 
     Logger.recordOutput("FieldSimulation/AimTargetCorrected",
         new Pose2d(target.plus(correctiveVector), Rotation2d.kZero));
 
-    var correctedTarget = target.plus(correctiveVector);
-    var vectorToTarget = shooterLocation.minus(correctedTarget);
+    Translation2d correctedTarget = target.plus(correctiveVector);
+    Translation2d vectorToTarget = shooterOnGround.minus(correctedTarget);
 
-    var correctedDistance = Meters.of(vectorToTarget.getNorm());
-    var calculatedHeading = vectorToTarget.getAngle()
+    Distance correctedDistance = Meters.of(vectorToTarget.getNorm());
+    Angle calculatedHeading = vectorToTarget.getAngle()
         .rotateBy(drivetrain.getState().Pose.getRotation().unaryMinus())
         .getMeasure();
 
+    Logger.recordOutput("ShootOnTheMove/shooterLocation", shooterLocation);
+    Logger.recordOutput("ShootOnTheMove/shooterOnGround", shooterOnGround);
     Logger.recordOutput("ShootOnTheMove/RobotHeading", drivetrain.getState().Pose.getRotation().getDegrees());
     Logger.recordOutput("ShootOnTheMove/DesiredTurretHeading", calculatedHeading.in(Degrees));
     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
