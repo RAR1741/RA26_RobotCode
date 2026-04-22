@@ -26,7 +26,7 @@ public class Superstructure extends SubsystemBase {
   public final TurretSubsystem turret;
   public final HoodSubsystem hood;
   public final ShooterSubsystem shooter;
-  //public final LEDSubsystem leds;
+  // public final LEDSubsystem leds;
 
   public final CommandSwerveDrivetrain drivetrain;
 
@@ -57,7 +57,7 @@ public class Superstructure extends SubsystemBase {
     this.turret = new TurretSubsystem();
     this.hood = new HoodSubsystem(stateManager);
     this.shooter = new ShooterSubsystem();
-    //this.leds = new LEDSubsystem();
+    // this.leds = new LEDSubsystem();
 
     this.limelightUp = new LimeLightSubsystem(drivetrain,
         LimelightConstants.upName,
@@ -75,7 +75,7 @@ public class Superstructure extends SubsystemBase {
   }
 
   // public LEDSubsystem getLEDs(){
-  //   return this.leds;
+  // return this.leds;
   // }
 
   public Command feedAllCommand() {
@@ -248,11 +248,11 @@ public class Superstructure extends SubsystemBase {
     Logger.recordOutput("Superstructure/isReadyToShoot", isReadyToShoot.getAsBoolean());
   }
 
-  public ShooterSubsystem getShooterSubsystem(){
+  public ShooterSubsystem getShooterSubsystem() {
     return shooter;
   }
 
-  public TurretSubsystem getTurrenSubsystem(){
+  public TurretSubsystem getTurrenSubsystem() {
     return turret;
   }
 }

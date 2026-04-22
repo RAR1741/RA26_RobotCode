@@ -69,7 +69,8 @@ public class ShootOnTheMoveCommand extends Command {
     latestHoodAngle = superstructure.getHoodAngle();
     latestTurretAngle = superstructure.getTurretAngle();
     latestShootSpeed = superstructure.getShooterSpeed();
-    // It is ok to not initialize latestHoodAngularVelocityCompensation since it will be zero at init
+    // It is ok to not initialize latestHoodAngularVelocityCompensation since it
+    // will be zero at init
 
     // TODO: when this current command ends, we should probably cancel the dynamic
     // aim command
@@ -112,8 +113,8 @@ public class ShootOnTheMoveCommand extends Command {
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
 
     Transform2d botPoseToShooterPoseTransform = new Transform2d(
-      superstructure.getShooterPose().getTranslation().toTranslation2d(),
-      superstructure.getShooterPose().getRotation().toRotation2d());
+        superstructure.getShooterPose().getTranslation().toTranslation2d(),
+        superstructure.getShooterPose().getRotation().toRotation2d());
     Pose2d shooterLocation = drivetrain.getState().Pose.plus(botPoseToShooterPoseTransform);
 
     // Ignore this parameter for now, the range tables will account for it :/
@@ -134,7 +135,8 @@ public class ShootOnTheMoveCommand extends Command {
     ChassisSpeeds updatedPosition = ChassisSpeeds
         .fromRobotRelativeSpeeds(drivetrain.getState().Speeds, drivetrain.getState().Pose.getRotation())
         .times(timeOfFlight);
-    Translation2d correctiveVector = new Translation2d(updatedPosition.vxMetersPerSecond, updatedPosition.vyMetersPerSecond)
+    Translation2d correctiveVector = new Translation2d(updatedPosition.vxMetersPerSecond,
+        updatedPosition.vyMetersPerSecond)
         .unaryMinus();
 
     Logger.recordOutput("FieldSimulation/AimTargetCorrected",
@@ -149,9 +151,13 @@ public class ShootOnTheMoveCommand extends Command {
         .getMeasure();
 
     AngularVelocity calculatedAngularVelocityCompensation;
-    calculatedAngularVelocityCompensation = RadiansPerSecond.of(drivetrain.getState().Speeds.omegaRadiansPerSecond).unaryMinus();
-    // TODO This does not yet account for the angular velocity caused by the x,y velocity of the robot
-    // This is maybe ok though since the angle doesn't change much based on x,y the further you get from the target
+    calculatedAngularVelocityCompensation = RadiansPerSecond.of(drivetrain.getState().Speeds.omegaRadiansPerSecond)
+        .unaryMinus();
+
+    // TODO This does not yet account for the angular velocity caused by the x,y
+    // velocity of the robot
+    // This is maybe ok though since the angle doesn't change much based on x,y the
+    // further you get from the target
 
     Logger.recordOutput("ShootOnTheMove/shooterLocation", shooterLocation);
     Logger.recordOutput("ShootOnTheMove/shooterOnGround", shooterOnGround);
@@ -160,7 +166,8 @@ public class ShootOnTheMoveCommand extends Command {
     Logger.recordOutput("ShootOnTheMove/distanceToTarget", distanceToTarget);
     Logger.recordOutput("ShootOnTheMove/Running", isRunning);
     Logger.recordOutput("ShootOnTheMove/IsShootingOnTheMove", getisRunning());
-    Logger.recordOutput("ShootOnTheMove/robotAngularVelocity", RadiansPerSecond.of(drivetrain.getState().Speeds.omegaRadiansPerSecond));
+    Logger.recordOutput("ShootOnTheMove/robotAngularVelocity",
+        RadiansPerSecond.of(drivetrain.getState().Speeds.omegaRadiansPerSecond));
     Logger.recordOutput("ShootOnTheMove/calculatedAngularVelocityCompensation", calculatedAngularVelocityCompensation);
 
     latestTurretAngle = calculatedHeading;

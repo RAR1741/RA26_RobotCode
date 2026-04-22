@@ -203,26 +203,32 @@ public class TurretSubsystem extends SubsystemBase {
     }).withName("Turret.SetAngle(" + angle.in(Degrees) + " deg)");
   }
 
-  public Command setAngleDynamic(Supplier<Angle> turretAngleSupplier, Supplier<AngularVelocity> turretAnglularVelocityCompensationSupplier) {
+  public Command setAngleDynamic(Supplier<Angle> turretAngleSupplier,
+      Supplier<AngularVelocity> turretAnglularVelocityCompensationSupplier) {
     return run(() -> {
       closedLoopEnabled = true;
       targetPositionRotations = turretAngleSupplier.get().in(Rotations);
 
       Voltage ffAngularVelocityCompensation = Volts.of(0.0);
-      // TODO: Assume this should be the same as the kV from above, but it can be tuned. It can also be set to 0 to remove the effect
+      // TODO: Assume this should be the same as the kV from above, but it can be
+      // tuned. It can also be set to 0 to remove the effect
       double compensationkV = 7.5;
 
-      /* Only apply the angular velocity compensation if the turret hasn't wrapped, and
-         our current position is relatively close to the target. If the turret is 30 degrees
-         or less away from the setpoint, then apply the compensation FF
-      */
-      if (turretAngleSupplier.get().isNear(this.getAngle(), Degrees.of(30.0)))
-      {
-        ffAngularVelocityCompensation = Volts.of(turretAnglularVelocityCompensationSupplier.get().in(RotationsPerSecond) * compensationkV);
+      /*
+       * Only apply the angular velocity compensation if the turret hasn't wrapped,
+       * and
+       * our current position is relatively close to the target. If the turret is 30
+       * degrees
+       * or less away from the setpoint, then apply the compensation FF
+       */
+      if (turretAngleSupplier.get().isNear(this.getAngle(), Degrees.of(30.0))) {
+        ffAngularVelocityCompensation = Volts
+            .of(turretAnglularVelocityCompensationSupplier.get().in(RotationsPerSecond) * compensationkV);
       }
       Logger.recordOutput("Turret/FFVolts", ffAngularVelocityCompensation);
 
-      turretMotor.setControl(motionMagicRequest.withPosition(targetPositionRotations).withFeedForward(ffAngularVelocityCompensation));
+      turretMotor.setControl(
+          motionMagicRequest.withPosition(targetPositionRotations).withFeedForward(ffAngularVelocityCompensation));
     }).withName("Turret.SetAngleDynamic");
   }
 
