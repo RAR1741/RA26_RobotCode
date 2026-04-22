@@ -4,11 +4,15 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -57,8 +61,13 @@ public class HopperSubsystem extends SubsystemBase {
     // this.setDefaultCommand(Commands.run(() -> hopper.setSpeed(RPM.of(0)), this));
   }
 
+  Supplier<AngularVelocity> hopperSpeedSupplier = () -> {
+    return RPM.of(Double.valueOf(DriverStation.getGameSpecificMessage()));
+  };
+
   public Command feedCommand() {
-    return hopper.setSpeed(HOPPER_RPM).withName("Hopper.Feed");
+    return hopper.setSpeed(hopperSpeedSupplier).withName("Hopper.Feed");
+    // return hopper.setSpeed(HOPPER_RPM).withName("Hopper.Feed");
   }
 
   public Command ejectCommand() {
