@@ -12,8 +12,11 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.ApplyRobotSpeeds;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.hardware.CANcoder;
 
 import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.Matrix;
@@ -350,25 +353,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     this.setControl(drive.withSpeeds(speed));
   }
 
-  public int[] getDrivetrainConnections() {
-    int[] out = {0, 0, 0};
+  public String[] getDrivetrainConnections() {
+    String[] out = {null, null, null, null, null, null, null, null, null, null, null, null};
 
-    try {
-  
-    } catch (Exception e) {
-      out[0] = 1;
-    }
+    for (int i = 0; i < 4; i++) {
+      SwerveModule<TalonFX, TalonFX, CANcoder> s = this.getModule(i);
 
-    try {
+      try {
+        s.getDriveMotor().getAcceleration(false);
+      } catch (Exception e) {
+        out[3 * i] = e.toString();
+      }
 
-    } catch (Exception e) {
-      out[1] = 1;
-    }
+      try {
+        s.getSteerMotor().getAcceleration(false);
+      } catch (Exception e) {
+        out[3 * i + 1] = e.toString();
+      }
 
-    try {
-      
-    } catch (Exception e) {
-      out[2] = 1;
+      try {
+        s.getEncoder().getPosition(false);
+      } catch (Exception e) {
+        out[3 * i + 2] = e.toString();
+      }
     }
 
     return out;

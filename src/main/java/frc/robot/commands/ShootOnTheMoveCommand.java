@@ -31,7 +31,7 @@ import frc.robot.subsystems.StateManager.State;
 public class ShootOnTheMoveCommand extends Command {
   private final CommandSwerveDrivetrain drivetrain;
   private final Superstructure superstructure;
-  private final LEDSubsystem leds;
+  // private final LEDSubsystem leds;
 
   private Supplier<Translation2d> aimPointSupplier; // The point to aim at
   private AngularVelocity latestShootSpeed = RPM.of(0);
@@ -47,7 +47,7 @@ public class ShootOnTheMoveCommand extends Command {
     this.drivetrain = drivetrain;
     this.superstructure = superstructure;
     this.aimPointSupplier = aimPointSupplier;
-    this.leds = superstructure.getLEDs();
+    // this.leds = superstructure.getLEDs();
   }
 
   private void setIsRunning(boolean state) {
@@ -98,7 +98,7 @@ public class ShootOnTheMoveCommand extends Command {
       return;
     }
 
-    leds.setAllSolidColor(LEDConstants.sotmOnColor).execute();
+    // leds.setAllSolidColor(LEDConstants.sotmOnColor).execute();
     // Calculate trajectory to aimPoint
     var target = aimPointSupplier.get();
     Logger.recordOutput("ShootOnTheMove/rawTarget", target);
@@ -191,7 +191,7 @@ public class ShootOnTheMoveCommand extends Command {
 
   public void end(boolean interrupted) {
 
-    leds.setAllSolidColor(LEDConstants.teleColor).execute();
+    // leds.setAllSolidColor(LEDConstants.teleColor).execute();
     setIsRunning(false);
     Logger.recordOutput("ShootOnTheMove/Running", getisRunning());
     if (aimCommand != null) {
