@@ -362,19 +362,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       try {
         s.getDriveMotor().getAcceleration(false);
       } catch (Exception e) {
-        out[3 * i] = e.toString();
+        out[3 * i] = e.getClass().toString().substring(16);
       }
 
       try {
         s.getSteerMotor().getAcceleration(false);
       } catch (Exception e) {
-        out[3 * i + 1] = e.toString();
+        out[3 * i + 1] = e.getClass().toString().substring(16);
       }
 
       try {
         s.getEncoder().getPosition(false);
       } catch (Exception e) {
-        out[3 * i + 2] = e.toString();
+        out[3 * i + 2] = e.getClass().toString().substring(16);
       }
     }
 

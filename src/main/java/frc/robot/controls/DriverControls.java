@@ -120,20 +120,28 @@ public class DriverControls {
     // .ignoringDisable(true)
     // .withName("OperatorControls.aimCommand"));
 
-    if (Robot.isSimulation()) {
-      // Fire fuel 10 times per second while button is held
-      controller.a().whileTrue(
-          Commands.repeatingSequence(
-              Simulation.fireFuel(drivetrain, superstructure),
-              Commands.waitSeconds(1.0)));
-    } else {
-        controller.a().onTrue(
-            superstructure.showDrivetrainConnections()
-        );
+    controller.a().onTrue(
+        superstructure.showDrivetrainConnections()
+    );
 
-        controller.b().onTrue(
-            superstructure.showOtherConnections()
-        );
-    }
+    controller.b().onTrue(
+        superstructure.showOtherConnections()
+    );
+
+    // if (Robot.isSimulation()) {
+    //   // Fire fuel 10 times per second while button is held
+    //   controller.a().whileTrue(
+    //       Commands.repeatingSequence(
+    //           Simulation.fireFuel(drivetrain, superstructure),
+    //           Commands.waitSeconds(1.0)));
+    // } else {
+    //     controller.a().onTrue(
+    //         superstructure.showDrivetrainConnections()
+    //     );
+
+    //     controller.b().onTrue(
+    //         superstructure.showOtherConnections()
+    //     );
+    // }
   }
 }

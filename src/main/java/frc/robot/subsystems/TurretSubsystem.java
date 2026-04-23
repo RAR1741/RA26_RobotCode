@@ -45,10 +45,10 @@ public class TurretSubsystem extends SubsystemBase {
   public final Angle MIN_ANGLE = TurretConstants.MAX_ONE_DIR_FOV.unaryMinus();
 
   // Motor & encoder
-  private final SparkMax turretSpark = new SparkMax(Constants.TurretConstants.k_turretMotorId, MotorType.kBrushless);
+  private SparkMax turretSpark = new SparkMax(Constants.TurretConstants.k_turretMotorId, MotorType.kBrushless);
   private final SparkMaxConfig turretConfig;
   private final SparkClosedLoopController turretController = turretSpark.getClosedLoopController();
-  private final RelativeEncoder turretEncoder = turretSpark.getEncoder();
+  private RelativeEncoder turretEncoder = turretSpark.getEncoder();
 
   // Profiled PID controller (operates in degrees)
   // Max velocity: NEO free speed (5676 RPM) / gear ratio => deg/s
@@ -333,19 +333,19 @@ public class TurretSubsystem extends SubsystemBase {
     try {
       turretSpark.getAppliedOutput();
     } catch (Exception e) {
-      out[0] = e.toString();
+      out[0] = e.getClass().toString().substring(16);
     }
 
     try {
       turretSpark.getMotorTemperature();
     } catch (Exception e) {
-      out[1] = e.toString();
+      out[1] = e.getClass().toString().substring(16);
     }
 
     try {
       turretEncoder.getPosition();
     } catch (Exception e) {
-      out[2] = e.toString();
+      out[2] = e.getClass().toString().substring(16);
     }
 
     return out;

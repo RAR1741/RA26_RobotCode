@@ -228,64 +228,70 @@ public class Superstructure extends SubsystemBase {
   }
 
   String[] drivetrainConnectionMessages = {
-    "DriveMotorModule",
-    "SteerMotorModule",
-    "EncoderModule"
+    "DriveMotor",
+    "SteerMotor",
+    "Encoder"
   };
 
   public Command showDrivetrainConnections() {
-    String[] status = drivetrain.getDrivetrainConnections();
+    return Commands.runOnce(() -> {
+      String[] status = drivetrain.getDrivetrainConnections();
 
-    String errorStr = "";
-    for (int i = 0; i < status.length; i++) {
-      if (status[i] != null) {
-        errorStr = errorStr + drivetrainConnectionMessages[i] + Integer.toString(i) + ":" + status[i] + "-";
+      String errorStr = "";
+      for (int i = 0; i < status.length; i++) {
+        if (status[i] != null) {
+          errorStr = errorStr + drivetrainConnectionMessages[i % 3] + Integer.toString(1 + i / 3) + " -> " + status[i] + "  ||  ";
+        }
       }
-    }
 
-    if (errorStr.length() > 0) {
-      errorStr = errorStr.substring(0, errorStr.length() - 1);
-      Logger.recordOutput("ConnectionStatus/drivetrainConnectionIssues", errorStr);
-      System.out.println(errorStr);
-      return Commands.none(); // leds.setAllSolidColor(Color.kRed).withTimeout(3);
-    } else {
-      Logger.recordOutput("ConnectionStatus/drivetrainConnectionIssues", "No issues :D");
-      System.out.println("No drivetrain connection issues :D");
-      return Commands.none(); // leds.setAllSolidColor(Color.kGreen).withTimeout(3);
-    }
+      if (errorStr.length() > 0) {
+        errorStr = errorStr.substring(0, errorStr.length() - 6);
+        Logger.recordOutput("ConnectionStatus/drivetrainConnectionIssues", errorStr);
+        System.out.println(errorStr);
+        // leds.setAllSolidColor(Color.kRed).withTimeout(3);
+      } else {
+        Logger.recordOutput("ConnectionStatus/drivetrainConnectionIssues", "No issues :D");
+        System.out.println("No drivetrain connection issues :D");
+        // leds.setAllSolidColor(Color.kGreen).withTimeout(3);
+      }
+    });
   }
 
   String[][] otherConnectionMessages = {
     {
-      "TurretSpark:",
-      "TurretMotor:",
-      "TurretEncoder:"
+      "TurretSpark -> ",
+      "TurretMotor -> ",
+      "TurretEncoder -> "
     }
   };
 
   public Command showOtherConnections() {
-    String[][] status = {{}};
-    status[0] = turret.getTurretConnections();
+    return Commands.runOnce(() -> {
+      String[][] status = {{}};
+      status[0] = turret.getTurretConnections();
 
-    String errorStr = "";
-    for (int i = 0; i < status.length; i++) {
-      for (int j = 0; j < status[i].length; j++) {
-        if (status[i][j] != null) {
-          errorStr = errorStr + otherConnectionMessages[i][j] + status[i][j];
+      String errorStr = "";
+      for (int i = 0; i < status.length; i++) {
+        for (int j = 0; j < status[i].length; j++) {
+          if (status[i][j] != null) {
+            errorStr = errorStr + otherConnectionMessages[i][j] + status[i][j] + "  ||  ";
+          }
         }
       }
-    }
 
-    if (errorStr.length() > 0) {
-      errorStr = errorStr.substring(0, errorStr.length() - 1);
-      Logger.recordOutput("ConnectionStatus/nonDrivetrainConnectionIssues", errorStr);
-      System.out.println(errorStr);
-      return Commands.none(); // leds.setAllSolidColor(Color.kRed).withTimeout(3);
-    } else {
-      Logger.recordOutput("ConnectionStatus/nonDrivetrainConnectionIssues", "No issues :D");
-      System.out.println("No non-drivetrain connection issues :D");
-      return Commands.none(); // leds.setAllSolidColor(Color.kGreen).withTimeout(3);
-    }
+      if (errorStr.length() > 0) {
+        errorStr = errorStr.substring(0, errorStr.length() - 6);
+        Logger.recordOutput("ConnectionStatus/nonDrivetrainConnectionIssues", errorStr);
+        System.out.println(errorStr);
+        // leds.setAllSolidColor(Color.kRed).withTimeout(3);
+      } else {
+        Logger.recordOutput("ConnectionStatus/nonDrivetrainConnectionIssues", "No issues :D");
+        System.out.println("No non-drivetrain connection issues :D");
+        // leds.setAllSolidColor(Color.kGreen).withTimeout(3);
+      }
+    });
+    // .andThen(leds.setAllSolidColor(Color.kGreen).withTimeout(3));
+    // issue: does not update color when command ran
   }
 
   @Override
