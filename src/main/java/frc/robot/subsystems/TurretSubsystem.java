@@ -88,12 +88,13 @@ public class TurretSubsystem extends SubsystemBase {
     // Original SparkMax: kP=45.0 (duty cycle per mechanism rot error)
     // TalonFX Voltage mode: kP in V per mechanism rot error
     // Conversion: 45.0 duty-cycle * 12V = 540 V/rot
+
     // TODO: Tune PID gains for TalonFX
-    config.Slot0.kP = 10.0;// 540.0;
-    config.Slot0.kI = 0;
+    config.Slot0.kP = 75.0;// 540.0;
+    config.Slot0.kI = 0.0;
     config.Slot0.kD = 0;
     config.Slot0.kV = 7.5; // 4.0 // V / (mechanism rot/s)
-    config.Slot0.kS = 0;
+    config.Slot0.kS = 0.0;
 
     // MotionMagic profile constraints (in mechanism rotations)
     // Cruise velocity: 1440 deg/s = 4.0 mechanism rot/s
@@ -212,14 +213,12 @@ public class TurretSubsystem extends SubsystemBase {
       Voltage ffAngularVelocityCompensation = Volts.of(0.0);
       // TODO: Assume this should be the same as the kV from above, but it can be
       // tuned. It can also be set to 0 to remove the effect
-      double compensationkV = 7.5;
+      double compensationkV = 0.0;
 
       /*
        * Only apply the angular velocity compensation if the turret hasn't wrapped,
-       * and
-       * our current position is relatively close to the target. If the turret is 30
-       * degrees
-       * or less away from the setpoint, then apply the compensation FF
+       * and our current position is relatively close to the target. If the turret is
+       * 30 degrees or less away from the setpoint, then apply the compensation FF
        */
       if (turretAngleSupplier.get().isNear(this.getAngle(), Degrees.of(30.0))) {
         ffAngularVelocityCompensation = Volts

@@ -85,6 +85,7 @@ public class OperatorControls {
           inZone = false;
         }));
 
+    // controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
     controller.rightTrigger().whileTrue(superstructure.feedAllCommandNoSafety());
 
     // Intake pivot deployment
