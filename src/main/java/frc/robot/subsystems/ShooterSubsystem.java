@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ConnectedMotorValue;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -114,5 +115,19 @@ public class ShooterSubsystem extends SubsystemBase {
     double voltage = RoboRioSim.getVInVoltage();
     shooter.simIterate();
     RoboRioSim.setVInVoltage(voltage);
+  }
+
+  public String[] getConnections(){
+    String[] out = {null, null};
+
+    if (leaderTalon.getConnectedMotor().getValue() == ConnectedMotorValue.Unknown) {
+      out[0] = "Not Connected";
+    }
+
+    if (followerTalon.getConnectedMotor().getValue() == ConnectedMotorValue.Unknown) {
+      out[1] = "Not Connected";
+    }
+
+    return out;
   }
 }

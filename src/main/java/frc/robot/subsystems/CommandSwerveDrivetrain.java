@@ -353,7 +353,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     this.setControl(drive.withSpeeds(speed));
   }
 
-  public String[] getDrivetrainConnections() {
+  public String[] getConnections() {
     String[] out = {null, null, null, null, null, null, null, null, null, null, null, null};
 
     for (int i = 0; i < 4; i++) {

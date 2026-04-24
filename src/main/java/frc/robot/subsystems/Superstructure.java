@@ -235,7 +235,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command showDrivetrainConnections() {
     return Commands.runOnce(() -> {
-      String[] status = drivetrain.getDrivetrainConnections();
+      String[] status = drivetrain.getConnections();
 
       String errorStr = "";
       for (int i = 0; i < status.length; i++) {
@@ -259,22 +259,53 @@ public class Superstructure extends SubsystemBase {
 
   String[][] otherConnectionMessages = {
     {
-      "TurretSpark -> ",
-      "TurretMotor -> ",
-      "TurretEncoder -> "
+      "TurretSpark",
+      "TurretMotor",
+      "TurretEncoder"
+    }, {
+      "HoodMotor"
+    }, {
+      "ShooterLeadMotor",
+      "ShooterFollowerMotor"
+    }, {
+      "KickerSpark",
+      "KickerMotor",
+      "KickerEncoder"
+    }, {
+      "HopperSpark",
+      "HopperMotor",
+      "HopperEncoder"
+    }, {
+      "IntakeSpinSpark",
+      "IntakeSpinMotor",
+      "IntakeSpinEncoder",
+      "IntakeDeploySpark",
+      "IntakeDeployMotor",
+      "IntakeDeployEncoder"
+    }, {
+      "LimeLight1"
+    }, {
+      "LimeLight2"
     }
   };
 
   public Command showOtherConnections() {
     return Commands.runOnce(() -> {
-      String[][] status = {{}};
-      status[0] = turret.getTurretConnections();
+      String[][] status = {{}, {}, {}, {}, {}, {}, {}, {}};
+      status[0] = turret.getConnections();
+      status[1] = hood.getConnections();
+      status[2] = shooter.getConnections();
+      status[3] = kicker.getConnections();
+      status[4] = hopper.getConnections();
+      status[5] = intake.getConnections();
+      status[6] = limelightDown.getConnections();
+      status[7] = limelightUp.getConnections();
 
       String errorStr = "";
       for (int i = 0; i < status.length; i++) {
         for (int j = 0; j < status[i].length; j++) {
           if (status[i][j] != null) {
-            errorStr = errorStr + otherConnectionMessages[i][j] + status[i][j] + "  ||  ";
+            errorStr = errorStr + otherConnectionMessages[i][j] + " -> " + status[i][j] + "  ||  ";
           }
         }
       }

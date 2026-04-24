@@ -76,4 +76,28 @@ public class KickerSubsystem extends SubsystemBase {
     kicker.simIterate();
     RoboRioSim.setVInVoltage(voltage);
   }
+
+  public String[] getConnections() {
+    String[] out = {null, null, null};
+
+    try {
+      kickerSpark.getAppliedOutput();
+    } catch (Exception e) {
+      out[0] = e.getClass().toString().substring(16);
+    }
+
+    try {
+      kickerSpark.getMotorTemperature();
+    } catch (Exception e) {
+      out[1] = e.getClass().toString().substring(16);
+    }
+
+    try {
+      kickerSpark.getEncoder().getPosition();
+    } catch (Exception e) {
+      out[2] = e.getClass().toString().substring(16);
+    }
+
+    return out;
+  }
 }

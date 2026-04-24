@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ConnectedMotorValue;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -186,5 +187,15 @@ public class HoodSubsystem extends SubsystemBase {
     double voltage = RoboRioSim.getVInVoltage();
     hood.simIterate();
     RoboRioSim.setVInVoltage(voltage);
+  }
+
+  public String[] getConnections(){
+    String[] out = {null};
+
+    if (hoodKraken.getConnectedMotor().getValue() == ConnectedMotorValue.Unknown) {
+      out[0] = "Not Connected";
+    }
+
+    return out;
   }
 }

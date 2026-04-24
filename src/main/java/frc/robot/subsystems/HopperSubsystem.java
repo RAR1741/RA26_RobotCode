@@ -76,4 +76,28 @@ public class HopperSubsystem extends SubsystemBase {
     hopper.simIterate();
     RoboRioSim.setVInVoltage(voltage);
   }
+
+  public String[] getConnections(){
+    String[] out = {null, null, null};
+
+    try {
+      hopperSpark.getAppliedOutput();
+    } catch (Exception e) {
+      out[0] = e.getClass().toString().substring(16);
+    }
+
+    try {
+      hopperSpark.getMotorTemperature();
+    } catch (Exception e) {
+      out[1] = e.getClass().toString().substring(16);
+    }
+
+    try {
+      hopperSpark.getEncoder().getPosition();
+    } catch (Exception e) {
+      out[2] = e.getClass().toString().substring(16);
+    }
+
+    return out;
+  }
 }

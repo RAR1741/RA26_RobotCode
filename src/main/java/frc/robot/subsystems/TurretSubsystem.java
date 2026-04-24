@@ -327,8 +327,8 @@ public class TurretSubsystem extends SubsystemBase {
     // No YAMS sim — add simulation model here if needed
   }
 
-  public String[] getTurretConnections() {
-    String[] out = {null, null, null};
+  public String[] getConnections() {
+    String[] out = {null, null, null, null, null};
 
     try {
       turretSpark.getAppliedOutput();
@@ -346,6 +346,14 @@ public class TurretSubsystem extends SubsystemBase {
       turretEncoder.getPosition();
     } catch (Exception e) {
       out[2] = e.getClass().toString().substring(16);
+    }
+
+    if (m12TAbsEncoder.isConnected()) {
+      out[3] = "Not Connected";
+    }
+
+    if (m13TAbsEncoder.isConnected()) {
+      out[4] = "Not Connected";
     }
 
     return out;

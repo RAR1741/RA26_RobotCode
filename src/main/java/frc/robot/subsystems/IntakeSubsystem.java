@@ -229,4 +229,38 @@ public class IntakeSubsystem extends SubsystemBase {
     rollerSmc.simIterate();
     pivotSmc.simIterate();
   }
+
+  public String[] getConnections(){
+    String[] out = {null};
+
+    try {
+      turretSpark.getAppliedOutput();
+    } catch (Exception e) {
+      out[0] = e.getClass().toString().substring(16);
+    }
+
+    try {
+      turretSpark.getMotorTemperature();
+    } catch (Exception e) {
+      out[1] = e.getClass().toString().substring(16);
+    }
+
+    try {
+      in.getPosition();
+    } catch (Exception e) {
+      out[2] = e.getClass().toString().substring(16);
+    }
+
+    if (pivotAbsEncoder.isConnected()) {
+      out[3] = "Not Connected";
+    }
+
+    if (pivotAbsEncoder.isConnected()) {
+      out[4] = "Not Connected";
+    }
+
+    return out;
+
+    return out;
+  }
 }
