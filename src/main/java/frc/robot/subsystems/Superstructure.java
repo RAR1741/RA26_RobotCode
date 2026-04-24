@@ -142,6 +142,10 @@ public class Superstructure extends SubsystemBase {
     return intake.setIntakeDeployed().asProxy().withName("Superstructure.intakeDeploy");
   }
 
+  public Command intakeJostleCommand() {
+    return intake.setIntakeJostle().asProxy().withName("Superstructure.intakeJostle");
+  }
+
   public Command hoodUpCommand() {
     return hood.setAngle(Degree.of(65)).asProxy().withName("Superstructure.hoodUp");
   }

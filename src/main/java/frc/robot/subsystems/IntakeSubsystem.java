@@ -7,6 +7,9 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.revrobotics.spark.SparkFlex;
@@ -176,6 +179,16 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command setIntakeStow() {
     return intakePivot.setAngle(IntakeConstants.k_IntakeStow);
+  }
+
+  public Command setIntakeJostle() {
+    double waitTime = 1.0; // seconds to wait at each position
+
+    return Commands.sequence(
+        intakePivot.setAngle(IntakeConstants.k_IntakeMaxWhileRoller).raceWith(Commands.waitSeconds(waitTime)),
+        intakePivot.setAngle(IntakeConstants.k_IntakeDeployed).raceWith(Commands.waitSeconds(waitTime)))
+        .repeatedly()
+        .withName("Intake.setIntakeJostle");
   }
 
   public Command setIntakeFeedPivot() {
