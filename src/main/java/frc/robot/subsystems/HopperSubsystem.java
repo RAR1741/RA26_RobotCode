@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -31,14 +32,15 @@ import yams.motorcontrollers.local.SparkWrapper;
 
 public class HopperSubsystem extends SubsystemBase {
 
-  private static final AngularVelocity HOPPER_RPM = RPM.of(4000);
+  private static final AngularVelocity HOPPER_RPM = RPM.of(1200);
 
   // Nova motor controller with NEO motor
   private SparkMax hopperSpark = new SparkMax(Constants.HopperConstants.kHopperMotorId, MotorType.kBrushless);
 
   private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.055, 0, 0)
+      .withClosedLoopController(0.0055, 0, 0)
+      .withFeedforward(new SimpleMotorFeedforward(0.191, 0.55558, 0.0))
       .withTelemetry("HopperMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(4))) // no gear reduction
       .withMotorInverted(true)
@@ -61,13 +63,14 @@ public class HopperSubsystem extends SubsystemBase {
     // this.setDefaultCommand(Commands.run(() -> hopper.setSpeed(RPM.of(0)), this));
   }
 
-  Supplier<AngularVelocity> hopperSpeedSupplier = () -> {
-    return RPM.of(Double.valueOf(DriverStation.getGameSpecificMessage()));
-  };
-
   public Command feedCommand() {
-    return hopper.setSpeed(hopperSpeedSupplier).withName("Hopper.Feed");
-    // return hopper.setSpeed(HOPPER_RPM).withName("Hopper.Feed");
+    // Uses the game data for hopper speed testing
+    // Supplier<AngularVelocity> hopperSpeedSupplier = () -> {
+    // return RPM.of(Double.valueOf(DriverStation.getGameSpecificMessage()));
+    // };
+    // return hopper.setSpeed(hopperSpeedSupplier).withName("Hopper.Feed");
+
+    return hopper.setSpeed(HOPPER_RPM).withName("Hopper.Feed");
   }
 
   public Command ejectCommand() {

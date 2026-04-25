@@ -6,12 +6,14 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -27,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Robot;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -115,11 +118,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public IntakeSubsystem() {
     this.setDefaultCommand(Commands.runOnce(() -> rollerSmc.setDutyCycle(0), this));
-    // this.setDefaultCommand(Commands.run(() -> roller.setSpeed(RPM.of(0)), this));
 
     pivotAbsEncoder = new REVThroughBoreEncoder(2);
-
-    // seedRelativeEncoderFromAbsolute();
   }
 
   private void seedRelativeEncoderFromAbsolute() {
@@ -150,14 +150,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command feedCommand() {
+    // TODO: maybe replace this with setIntakeJostle()
+
     return setIntakeFeedPivot();
-    // return Commands.parallel(
-    // setIntakeFeedPivot().asProxy(),
-    // Commands.sequence(
-    // roller.setSpeed(INTAKE_ROLLER_SPEED).withTimeout(IntakeConstants.k_feedUpTime),
-    // roller.setSpeed(RPM.of(0)).withTimeout(IntakeConstants.k_feedDownTime))
-    // .repeatedly())
-    // .withName("Intake.feedCommand");
   }
 
   public Command stopCommand() {
@@ -175,6 +170,40 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command rezero() {
     return Commands.runOnce(() -> seedRelativeEncoderFromAbsolute(), this).withName("IntakePivot.Rezero");
+  }
+
+  public Command homeSequence() {
+    final double homingDutyCycle = 0.10;
+    final double stallVelocityThreshold = 0.01; // motor rot/s
+
+    return Commands.sequence(
+        // Commands.runOnce(() -> {
+        // hoodKraken.getConfigurator().apply(
+        // new SoftwareLimitSwitchConfigs()
+        // .withForwardSoftLimitEnable(false)
+        // .withReverseSoftLimitEnable(false));
+        // }),
+        Commands.run(() -> pivotSmc.setDutyCycle(homingDutyCycle), this)
+            .withTimeout(0.5),
+        Commands.run(() -> pivotSmc.setDutyCycle(homingDutyCycle), this)
+            .until(() -> Math.abs(pivotSmc.getRotorVelocity().in(RPM)) < stallVelocityThreshold)
+            .withTimeout(5.0),
+        Commands.runOnce(() -> {
+          pivotSmc.setDutyCycle(0);
+          pivotSmc.setPosition(Rotations.of(0));
+          // intakePivot.setPosition(Rotations.of(0));
+        }, this),
+        Commands.runOnce(() -> {
+          // hood.getMotorController().setStatorCurrentLimit(RUNNING_CURRENT);
+
+          // TODO: Add this back... please
+          // hoodKraken.getConfigurator().apply(
+          // new SoftwareLimitSwitchConfigs()
+          // .withForwardSoftLimitEnable(true)
+          // .withForwardSoftLimitThreshold(getScaledLimit(MAX_ANGLE))
+          // .withReverseSoftLimitEnable(true)
+          // .withReverseSoftLimitThreshold(getScaledLimit(MIN_ANGLE)));
+        })).withName("Hood.Home").withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
   }
 
   public Command setIntakeStow() {
