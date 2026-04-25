@@ -248,4 +248,16 @@ public class LimeLightSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
   }
+
+  public String[] getConnections() {
+    String[] out = {null};
+
+    try {
+      poseEstimator.getPoseEstimate();
+    } catch (Exception e) {
+      out[0] = e.getClass().toString().substring(16);
+    }
+
+    return out;
+  }
 }

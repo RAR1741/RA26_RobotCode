@@ -231,35 +231,47 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public String[] getConnections(){
-    String[] out = {null};
+    String[] out = {null, null, null, null, null, null, null};
 
     try {
-      turretSpark.getAppliedOutput();
+      pivotLeaderSpark.getAppliedOutput();
     } catch (Exception e) {
       out[0] = e.getClass().toString().substring(16);
     }
 
     try {
-      turretSpark.getMotorTemperature();
+      pivotLeaderSpark.getMotorTemperature();
     } catch (Exception e) {
       out[1] = e.getClass().toString().substring(16);
     }
 
     try {
-      in.getPosition();
+      pivotLeaderSpark.getEncoder().getPosition();
     } catch (Exception e) {
       out[2] = e.getClass().toString().substring(16);
     }
 
-    if (pivotAbsEncoder.isConnected()) {
+    if (!pivotAbsEncoder.isConnected()) {
       out[3] = "Not Connected";
     }
 
-    if (pivotAbsEncoder.isConnected()) {
-      out[4] = "Not Connected";
+    try {
+      rollerSpark.getAppliedOutput();
+    } catch (Exception e) {
+      out[4] = e.getClass().toString().substring(16);
     }
 
-    return out;
+    try {
+      rollerSpark.getMotorTemperature();
+    } catch (Exception e) {
+      out[5] = e.getClass().toString().substring(16);
+    }
+
+    try {
+      rollerSpark.getEncoder().getPosition();
+    } catch (Exception e) {
+      out[6] = e.getClass().toString().substring(16);
+    }
 
     return out;
   }

@@ -261,7 +261,9 @@ public class Superstructure extends SubsystemBase {
     {
       "TurretSpark",
       "TurretMotor",
-      "TurretEncoder"
+      "TurretEncoder",
+      "TurretAbsEncoder12",
+      "TurretAbsEncoder13"
     }, {
       "HoodMotor"
     }, {
@@ -276,22 +278,25 @@ public class Superstructure extends SubsystemBase {
       "HopperMotor",
       "HopperEncoder"
     }, {
-      "IntakeSpinSpark",
-      "IntakeSpinMotor",
-      "IntakeSpinEncoder",
       "IntakeDeploySpark",
       "IntakeDeployMotor",
-      "IntakeDeployEncoder"
+      "IntakeDeployRelEncoder",
+      "IntakeDeployAbsEncoder",
+      "IntakeSpinSpark",
+      "IntakeSpinMotor",
+      "IntakeSpinEncoder"
     }, {
       "LimeLight1"
     }, {
       "LimeLight2"
-    }
+    } /* , {
+      "LEDs"
+    }*/
   };
 
   public Command showOtherConnections() {
     return Commands.runOnce(() -> {
-      String[][] status = {{}, {}, {}, {}, {}, {}, {}, {}};
+      String[][] status = {{}, {}, {}, {}, {}, {}, {}, {} /*, {}*/};
       status[0] = turret.getConnections();
       status[1] = hood.getConnections();
       status[2] = shooter.getConnections();
@@ -300,6 +305,7 @@ public class Superstructure extends SubsystemBase {
       status[5] = intake.getConnections();
       status[6] = limelightDown.getConnections();
       status[7] = limelightUp.getConnections();
+      // status[8] = leds.getConnections();
 
       String errorStr = "";
       for (int i = 0; i < status.length; i++) {
@@ -314,7 +320,9 @@ public class Superstructure extends SubsystemBase {
         errorStr = errorStr.substring(0, errorStr.length() - 6);
         Logger.recordOutput("ConnectionStatus/nonDrivetrainConnectionIssues", errorStr);
         System.out.println(errorStr);
-        // leds.setAllSolidColor(Color.kRed).withTimeout(3);
+        // if (status[8][0] == null) {
+        //   leds.setAllSolidColor(Color.kRed).withTimeout(3);
+        // }
       } else {
         Logger.recordOutput("ConnectionStatus/nonDrivetrainConnectionIssues", "No issues :D");
         System.out.println("No non-drivetrain connection issues :D");

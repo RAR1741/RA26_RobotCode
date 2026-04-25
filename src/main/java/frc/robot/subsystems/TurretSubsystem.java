@@ -348,11 +348,11 @@ public class TurretSubsystem extends SubsystemBase {
       out[2] = e.getClass().toString().substring(16);
     }
 
-    if (m12TAbsEncoder.isConnected()) {
+    if (!m12TAbsEncoder.isConnected()) {
       out[3] = "Not Connected";
     }
 
-    if (m13TAbsEncoder.isConnected()) {
+    if (!m13TAbsEncoder.isConnected()) {
       out[4] = "Not Connected";
     }
 
