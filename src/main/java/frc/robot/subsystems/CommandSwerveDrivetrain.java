@@ -241,6 +241,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_hasAppliedOperatorPerspective = true;
       });
     }
+
+    Logger.recordOutput("FieldSimulation/heading/pigeon", this.getState().RawHeading.getDegrees());
+    Logger.recordOutput("FieldSimulation/heading/pose", this.getState().Pose.getRotation().getDegrees());
+
+    Logger.recordOutput("FieldSimulation/heading/pigeonMod", this.getState().RawHeading.getDegrees() % 360.0);
+    Logger.recordOutput("FieldSimulation/heading/poseMod",
+        this.getState().Pose.getRotation().getDegrees() % 360.0);
   }
 
   private void startSimThread() {
@@ -333,12 +340,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
   public void goToPose(Pose2d pose) {
     Pose2d currentPose = this.getState().Pose;
-  
+
     ChassisSpeeds speed = ChassisSpeeds.fromFieldRelativeSpeeds(
         xController.calculate(currentPose.getX(), pose.getX()),
         yController.calculate(currentPose.getY(), pose.getY()),
         headingController.calculate(currentPose.getRotation().getRadians(), pose.getRotation().getRadians()),
-        currentPose.getRotation()); //look out cus i dont think this is angular vel
+        currentPose.getRotation()); // look out cus i dont think this is angular vel
 
     Logger.recordOutput("Auto/TargetPose", pose);
     Logger.recordOutput("Auto/CurrentPose", currentPose);
