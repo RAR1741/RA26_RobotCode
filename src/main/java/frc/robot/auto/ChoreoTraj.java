@@ -24,11 +24,11 @@ public record ChoreoTraj(
     Pose2d initialPoseBlue,
     Pose2d endPoseBlue
 ) {
-    public static final ChoreoTraj LeftBasic = new ChoreoTraj(
-        "LeftBasic",
+    public static final ChoreoTraj LeftBasicNoIntake = new ChoreoTraj(
+        "LeftBasicNoIntake",
         OptionalInt.empty(),
-        2.47262,
-        new Pose2d(3.60111, 7.37503, Rotation2d.fromRadians(3.14159)),
+        2.43821,
+        new Pose2d(3.56468, 7.40065, Rotation2d.fromRadians(3.14159)),
         new Pose2d(1.2503, 7.20585, Rotation2d.fromRadians(3.12983))
     );
     public static final ChoreoTraj LeftTrench = new ChoreoTraj(
@@ -64,15 +64,15 @@ public record ChoreoTraj(
     public static final ChoreoTraj RightBasic = new ChoreoTraj(
         "RightBasic",
         OptionalInt.empty(),
-        3.12472,
-        new Pose2d(3.64399, 0.63993, Rotation2d.fromRadians(3.14159)),
-        new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
+        5.83668,
+        new Pose2d(3.60705, 4.19734, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(0.61514, 0.66497, Rotation2d.fromRadians(3.14159))
     );
     public static final ChoreoTraj RightBasicNoIntake = new ChoreoTraj(
         "RightBasicNoIntake",
         OptionalInt.empty(),
-        3.12472,
-        new Pose2d(3.64399, 0.63993, Rotation2d.fromRadians(3.14159)),
+        3.05139,
+        new Pose2d(3.57099, 0.65704, Rotation2d.fromRadians(3.14159)),
         new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
     );
     public static final ChoreoTraj RightTrench = new ChoreoTraj(
@@ -121,13 +121,20 @@ public record ChoreoTraj(
         new Pose2d(2.16108, 2.62944, Rotation2d.fromRadians(-3.08112)),
         new Pose2d(1.62465, 0.98004, Rotation2d.fromRadians(3.14159))
     );
+    public static final ChoreoTraj CenterDepotOutpost = new ChoreoTraj(
+        "CenterDepotOutpost",
+        OptionalInt.empty(),
+        3.03648,
+        new Pose2d(3.55607, 0.66599, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
+    );
 
     /**
      * A map between trajectory names and their corresponding data.
      * This allows for trajectory data to be looked up with strings during runtime.
      */
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
-        Map.entry("LeftBasic", LeftBasic),
+        Map.entry("LeftBasicNoIntake", LeftBasicNoIntake),
         Map.entry("LeftTrench", LeftTrench),
         Map.entry("LeftTrenchBump", LeftTrenchBump),
         Map.entry("LeftTrenchBump$0", LeftTrenchBump$0),
@@ -139,7 +146,8 @@ public record ChoreoTraj(
         Map.entry("RightTrench$1", RightTrench$1),
         Map.entry("RightTrenchBump", RightTrenchBump),
         Map.entry("RightTrenchBump$0", RightTrenchBump$0),
-        Map.entry("RightTrenchBump$1", RightTrenchBump$1)
+        Map.entry("RightTrenchBump$1", RightTrenchBump$1),
+        Map.entry("CenterDepotOutpost", CenterDepotOutpost)
     );
 
     /**
