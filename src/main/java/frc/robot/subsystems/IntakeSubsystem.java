@@ -69,8 +69,8 @@ public class IntakeSubsystem extends SubsystemBase {
       pivotSmcConfig);
 
   private final ArmConfig intakePivotConfig = new ArmConfig(pivotSmc)
-      .withSoftLimits(Degrees.of(0), Degrees.of(1320))
-      .withHardLimit(Degrees.of(0), Degrees.of(1320))
+      // .withSoftLimits(Degrees.of(0), Degrees.of(1320))
+      // .withHardLimit(Degrees.of(0), Degrees.of(1320))
       .withStartingPosition(Degrees.of(0))
       .withLength(Feet.of(1))
       .withMass(Pounds.of(2))
@@ -168,24 +168,30 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command homeSequence() {
-    final double homingDutyCycle = -0.20;
+    final double homingDutyCycle = -0.50;
     final double stallVelocityThreshold = 0.01; // motor rot/s
 
     return Commands.sequence(
         // Commands.runOnce(() -> {
-        // hoodKraken.getConfigurator().apply(
-        // new SoftwareLimitSwitchConfigs()
-        // .withForwardSoftLimitEnable(false)
-        // .withReverseSoftLimitEnable(false));
+        // SparkMaxConfig config = new SparkMaxConfig();
+        // // config.configure(pivotLeaderSpark.configAccessor);
+        // config.apply(pivotLeaderSpark.configAccessor.absoluteEncoder);
+
+        // config.softLimit
+        // .forwardSoftLimitEnabled(false)
+        // .reverseSoftLimitEnabled(false);
+
+        // pivotLeaderSpark.configure(config, ResetMode.kNoResetSafeParameters,
+        // PersistMode.kNoPersistParameters);
         // }),
         Commands.run(() -> pivotSmc.setDutyCycle(homingDutyCycle), this)
             .withTimeout(0.5),
         Commands.run(() -> pivotSmc.setDutyCycle(homingDutyCycle), this)
             .until(() -> Math.abs(pivotSmc.getRotorVelocity().in(RPM)) < stallVelocityThreshold)
-            .withTimeout(5.0),
+            .withTimeout(10.0),
         Commands.runOnce(() -> {
           pivotSmc.setDutyCycle(0);
-          pivotSmc.setPosition(Rotations.of(0));
+          pivotSmc.setEncoderPosition(Rotations.of(0));
           // intakePivot.setPosition(Rotations.of(0));
         }, this),
         Commands.runOnce(() -> {
