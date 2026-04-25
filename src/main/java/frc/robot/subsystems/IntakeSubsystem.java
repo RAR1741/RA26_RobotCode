@@ -8,12 +8,8 @@ import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -29,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Robot;
 import frc.robot.wrappers.REVThroughBoreEncoder;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -173,7 +168,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command homeSequence() {
-    final double homingDutyCycle = 0.10;
+    final double homingDutyCycle = -0.20;
     final double stallVelocityThreshold = 0.01; // motor rot/s
 
     return Commands.sequence(
@@ -211,11 +206,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command setIntakeJostle() {
-    double waitTime = 1.0; // seconds to wait at each position
-
     return Commands.sequence(
-        intakePivot.setAngle(IntakeConstants.k_IntakeMaxWhileRoller).raceWith(Commands.waitSeconds(waitTime)),
-        intakePivot.setAngle(IntakeConstants.k_IntakeDeployed).raceWith(Commands.waitSeconds(waitTime)))
+        intakePivot.setAngle(IntakeConstants.k_IntakeMaxWhileRoller).raceWith(Commands.waitSeconds(0.75)),
+        intakePivot.setAngle(IntakeConstants.k_IntakeDeployed).raceWith(Commands.waitSeconds(2.0)))
         .repeatedly()
         .withName("Intake.setIntakeJostle");
   }

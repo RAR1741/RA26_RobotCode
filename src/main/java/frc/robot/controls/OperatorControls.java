@@ -25,7 +25,8 @@ public class OperatorControls {
 
     // controller.b().onTrue(superstructure.hoodDownCommand());
 
-    // controller.start().onTrue(superstructure.hoodHomeSequence());
+    controller.start().onTrue(superstructure.hoodHomeSequence());
+    controller.back().onTrue(superstructure.intakeHomeSequence());
 
     // Intake Pivot Rezero (for testing, not intended for driver use)
     // controller.back().onTrue(superstructure.intakeRezero().ignoringDisable(true));

@@ -158,6 +158,10 @@ public class Superstructure extends SubsystemBase {
     return hood.homeSequence().withName("Superstructure.hoodHome");
   }
 
+  public Command intakeHomeSequence() {
+    return intake.homeSequence().withName("Superstructure.intakeHome");
+  }
+
   public Command turretLeftCommand() {
     return turret.setAngle(Degrees.of(90)).asProxy().withName("Superstructure.turretLeft");
   }
