@@ -188,7 +188,7 @@ public class Constants {
 
   public static class SuperstructureConstants {
     public static final AngularVelocity k_shooterRPMTolerance = RPM.of(100);
-    public static final Angle k_turretTolerance = Degrees.of(2);
+    public static final Angle k_turretTolerance = Degrees.of(5);
     public static final Angle k_hoodTolerance = Degrees.of(2);
   }
 
