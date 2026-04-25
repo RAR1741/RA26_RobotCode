@@ -25,12 +25,14 @@ public final class Simulation {
     m_arena.resetFieldForAuto();
   }
 
-  public void periodic() {
+  public void periodic(Superstructure superstructure) {
     m_arena.simulationPeriodic();
 
     Logger.recordOutput("FieldSimulation/Fuel", m_arena.getGamePiecesArrayByType("Fuel"));
 
     Logger.recordOutput("Sim/RobotPose", m_swerve.getState().Pose);
+
+    superstructure.simulate();
   }
 
   public static Command fireFuel(CommandSwerveDrivetrain drivetrain, Superstructure superstructure) {

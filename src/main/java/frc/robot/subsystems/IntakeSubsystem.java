@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 
+import java.util.ArrayList;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.revrobotics.spark.SparkFlex;
@@ -15,9 +17,11 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,8 +41,11 @@ import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
+import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 
 public class IntakeSubsystem extends SubsystemBase {
+
+  private LoggedMechanism2d mech = new LoggedMechanism2d(Distance.ofBaseUnits(15.9, Inches), Distance.ofBaseUnits(12.0, Inches));
 
   private static final AngularVelocity INTAKE_ROLLER_SPEED = RPM.of(2000.0);
   private static final AngularVelocity EJECT_ROLLER_SPEED = RPM.of(3000.0);
@@ -109,6 +116,10 @@ public class IntakeSubsystem extends SubsystemBase {
   private boolean stallTimerRunning = false;
 
   private boolean hammerTime = false;
+
+  public LoggedMechanism2d getMech(){
+    return mech;
+  }
 
   public IntakeSubsystem() {
     this.setDefaultCommand(Commands.runOnce(() -> rollerSmc.setDutyCycle(0), this));

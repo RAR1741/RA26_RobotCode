@@ -181,6 +181,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void simulationPeriodic() {
-    sim.periodic();
+    sim.periodic(m_robotContainer.getSuperstructure());
   }
 }

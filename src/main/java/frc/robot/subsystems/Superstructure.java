@@ -254,4 +254,8 @@ public class Superstructure extends SubsystemBase {
   public TurretSubsystem getTurrenSubsystem(){
     return turret;
   }
+
+  public void simulate(){
+    Logger.recordOutput("Sim/Intake/Pose", intake.getMech());
+  }
 }

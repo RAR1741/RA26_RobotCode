@@ -111,6 +111,10 @@ public class RobotContainer {
     return traj;
   }
 
+  public Superstructure getSuperstructure(){
+    return superstructure;
+  }
+
   private void configureBindings() {
     DriverControls.configure(Constants.ControllerConstants.kDriverControllerPort, swerve, superstructure, logger);
     OperatorControls.configure(Constants.ControllerConstants.kOperatorControllerPort, swerve, superstructure);
