@@ -48,7 +48,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
       .withFollowers(Pair.of(followerTalon, true))
       .withControlMode(ControlMode.CLOSED_LOOP)
-      .withClosedLoopController(0.00936, 0, 0)
+      .withClosedLoopController(0.05936, 0, 0)
       .withFeedforward(new SimpleMotorFeedforward(0.191, 0.1276, 0.0))
       .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
       .withGearing(new MechanismGearing(GearBox.fromReductionStages(1)))

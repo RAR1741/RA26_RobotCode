@@ -3,11 +3,11 @@
     {
       "x": -8,
       "y": -8,
-      "width": 1680,
-      "height": 1077,
+      "width": 1664,
+      "height": 1062,
       "state": {
         "sidebar": {
-          "width": 296,
+          "width": 373,
           "expanded": [
             "/Tuning/Shooter/ShooterMotor",
             "/Tuning/Shooter/ShooterMotor/closedloop",
@@ -71,19 +71,20 @@
             "/Mechanisms/Hood/HoodMotor/control/feedforward",
             "/DriveState/Pose/translation",
             "/DriveState/Pose/rotation",
-            "/AdvantageKit/RealOutputs",
             "/AdvantageKit/RealOutputs/Limelight/limelight-up",
             "/AdvantageKit/RealOutputs/Limelight/limelight-down",
             "/Mechanisms/Turret/TurretMotor/rotor",
             "/AdvantageKit/RealOutputs/TURRET-MECH",
             "/AdvantageKit",
-            "/AdvantageKit/RealOutputs/Turret/MaxMotion",
-            "/AdvantageKit/RealOutputs/Turret/MaxMotion/trapezoidProfile",
-            "/AdvantageKit/RealOutputs/ShootOnTheMove"
+            "/AdvantageKit/RealOutputs/Turret/MotionPofile",
+            "/AdvantageKit/RealOutputs/Turret/MotionPofile/trapezoidProfile",
+            "/AdvantageKit/RealOutputs/ShootOnTheMove",
+            "/AdvantageKit/RealOutputs/Turret",
+            "/AdvantageKit/RealOutputs"
           ]
         },
         "tabs": {
-          "selected": 9,
+          "selected": 10,
           "tabs": [
             {
               "type": 0,
@@ -745,7 +746,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/PositionRots",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#e5b31b",
                       "size": "normal"
@@ -755,7 +756,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/SetpointRots",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#af2437",
                       "size": "normal"
@@ -795,7 +796,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/m12TAbsAngle",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#5f4528",
                       "size": "normal"
@@ -805,7 +806,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/m13TAbsAngle",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#2b66a2",
                       "size": "normal"
@@ -828,6 +829,16 @@
                     "visible": false,
                     "options": {
                       "color": "#80588e",
+                      "size": "normal"
+                    }
+                  },
+                  {
+                    "type": "stepped",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/outputVolts",
+                    "logType": "Number",
+                    "visible": false,
+                    "options": {
+                      "color": "#e48b32",
                       "size": "normal"
                     }
                   }
@@ -919,27 +930,17 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/SetpointRots",
-                    "logType": "Number",
-                    "visible": false,
-                    "options": {
-                      "color": "#e5b31b",
-                      "size": "normal"
-                    }
-                  },
-                  {
-                    "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/MaxMotion/PositionSetpointRots",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/MotionPofile/PositionReferenceRots",
                     "logType": "Number",
                     "visible": true,
                     "options": {
-                      "color": "#af2437",
+                      "color": "#3b875a",
                       "size": "normal"
                     }
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/MaxMotion/PositionGoalRots",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/MotionPofile/PositionGoalRots",
                     "logType": "Number",
                     "visible": true,
                     "options": {
@@ -953,7 +954,7 @@
                     "type": "stepped",
                     "logKey": "NT:/AdvantageKit/RealOutputs/Turret/outputVolts",
                     "logType": "Number",
-                    "visible": true,
+                    "visible": false,
                     "options": {
                       "color": "#3b875a",
                       "size": "normal"
@@ -961,7 +962,7 @@
                   },
                   {
                     "type": "stepped",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/MaxMotion/PositionSetpointVelocity",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/MotionPofile/PositionSetpointVelocity",
                     "logType": "Number",
                     "visible": false,
                     "options": {
@@ -973,7 +974,7 @@
                 "discreteSources": [
                   {
                     "type": "stripes",
-                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/MaxMotion/controlType",
+                    "logKey": "NT:/AdvantageKit/RealOutputs/Turret/MotionPofile/controlType",
                     "logType": "String",
                     "visible": true,
                     "options": {
@@ -1039,7 +1040,7 @@
                     "type": "stepped",
                     "logKey": "NT:/Mechanisms/Kicker/KickerMotor/motor/outputVoltage",
                     "logType": "Number",
-                    "visible": false,
+                    "visible": true,
                     "options": {
                       "color": "#e48b32",
                       "size": "normal"

@@ -12,9 +12,9 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -175,9 +175,6 @@ public class LimeLightSubsystem extends SubsystemBase {
 
       // Get MegaTag2 pose
       Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate();
-
-      Logger.recordOutput("FieldSimulation/heading/pigeon", drivetrain.getState().RawHeading.getDegrees());
-      Logger.recordOutput("FieldSimulation/heading/pose", drivetrain.getState().Pose.getRotation().getDegrees());
 
       // If the pose is present
       visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {

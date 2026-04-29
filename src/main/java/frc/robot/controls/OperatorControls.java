@@ -25,7 +25,8 @@ public class OperatorControls {
 
     // controller.b().onTrue(superstructure.hoodDownCommand());
 
-    // controller.start().onTrue(superstructure.hoodHomeSequence());
+    controller.start().onTrue(superstructure.hoodHomeSequence());
+    controller.back().onTrue(superstructure.intakeHomeSequence());
 
     // Intake Pivot Rezero (for testing, not intended for driver use)
     // controller.back().onTrue(superstructure.intakeRezero().ignoringDisable(true));
@@ -85,11 +86,13 @@ public class OperatorControls {
           inZone = false;
         }));
 
-    controller.rightTrigger().whileTrue(superstructure.feedAllCommandNoSafety());
+    controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
+    // controller.rightTrigger().whileTrue(superstructure.feedAllCommandNoSafety());
 
     // Intake pivot deployment
     controller.leftBumper().whileTrue(superstructure.intakeStowCommand());
     controller.rightBumper().whileTrue(superstructure.intakeDeployCommand());
+    controller.povUp().whileTrue(superstructure.intakeJostleCommand());
 
     controller.leftTrigger().whileTrue(superstructure.intakeCommand());
     // controller.back().onTrue(superstructure.intakeDeployAndRun().ignoringDisable(true));

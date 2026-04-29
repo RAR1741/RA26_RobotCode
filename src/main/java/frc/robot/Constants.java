@@ -39,18 +39,18 @@ public class Constants {
     public static final String upName = "limelight-up";
     public static final Pose3d upCameraOffset = new Pose3d(
         Inches.of(-12.25).in(Meters), // FORWARD
-        Inches.of(-6.75+3.625).in(Meters), // RIGHT
+        Inches.of(-6.75 + 3.625).in(Meters), // RIGHT
         Inches.of(17.75).in(Meters), // UP
         new Rotation3d(
-            0, // ROLL 
+            0, // ROLL
             Degrees.of(0).in(Radians), // PITCH
-            Degrees.of(-150).in(Radians)));  // YAW
+            Degrees.of(-150).in(Radians))); // YAW
 
     // LEFT
     public static final String downName = "limelight-down";
     public static final Pose3d downCameraOffset = new Pose3d(
         Inches.of(-12.25).in(Meters), // FORWARD
-        Inches.of(-6.75-3.875).in(Meters), // RIGHT
+        Inches.of(-6.75 - 3.875).in(Meters), // RIGHT
         Inches.of(17.75).in(Meters), // UP
         new Rotation3d(
             0, // ROLL
@@ -106,7 +106,7 @@ public class Constants {
 
     public static final Angle k_IntakeStow = Degrees.of(0);
     // public static final Angle k_IntakeFeed = Degrees.of(80);
-    public static final Angle k_IntakeMaxWhileRoller = Degrees.of(650);
+    public static final Angle k_IntakeMaxWhileRoller = Degrees.of(250);
     // public static final Angle k_IntakeDeployed = Degrees.of(148);
     public static final Angle k_IntakeDeployed = Degrees.of(1320);
 
@@ -187,8 +187,8 @@ public class Constants {
   }
 
   public static class SuperstructureConstants {
-    public static final AngularVelocity k_shooterRPMTolerance = RPM.of(100);
-    public static final Angle k_turretTolerance = Degrees.of(2);
+    public static final AngularVelocity k_shooterRPMTolerance = RPM.of(700);
+    public static final Angle k_turretTolerance = Degrees.of(5);
     public static final Angle k_hoodTolerance = Degrees.of(2);
   }
 

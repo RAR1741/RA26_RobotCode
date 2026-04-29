@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -68,8 +69,8 @@ public class IntakeSubsystem extends SubsystemBase {
       pivotSmcConfig);
 
   private final ArmConfig intakePivotConfig = new ArmConfig(pivotSmc)
-      .withSoftLimits(Degrees.of(0), Degrees.of(1320))
-      .withHardLimit(Degrees.of(0), Degrees.of(1320))
+      // .withSoftLimits(Degrees.of(0), Degrees.of(1320))
+      // .withHardLimit(Degrees.of(0), Degrees.of(1320))
       .withStartingPosition(Degrees.of(0))
       .withLength(Feet.of(1))
       .withMass(Pounds.of(2))
@@ -112,11 +113,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public IntakeSubsystem() {
     this.setDefaultCommand(Commands.runOnce(() -> rollerSmc.setDutyCycle(0), this));
-    // this.setDefaultCommand(Commands.run(() -> roller.setSpeed(RPM.of(0)), this));
 
     pivotAbsEncoder = new REVThroughBoreEncoder(2);
-
-    // seedRelativeEncoderFromAbsolute();
   }
 
   private void seedRelativeEncoderFromAbsolute() {
@@ -147,14 +145,9 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command feedCommand() {
+    // TODO: maybe replace this with setIntakeJostle()
+
     return setIntakeFeedPivot();
-    // return Commands.parallel(
-    // setIntakeFeedPivot().asProxy(),
-    // Commands.sequence(
-    // roller.setSpeed(INTAKE_ROLLER_SPEED).withTimeout(IntakeConstants.k_feedUpTime),
-    // roller.setSpeed(RPM.of(0)).withTimeout(IntakeConstants.k_feedDownTime))
-    // .repeatedly())
-    // .withName("Intake.feedCommand");
   }
 
   public Command stopCommand() {
@@ -174,8 +167,57 @@ public class IntakeSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> seedRelativeEncoderFromAbsolute(), this).withName("IntakePivot.Rezero");
   }
 
+  public Command homeSequence() {
+    final double homingDutyCycle = -0.50;
+    final double stallVelocityThreshold = 0.01; // motor rot/s
+
+    return Commands.sequence(
+        // Commands.runOnce(() -> {
+        // SparkMaxConfig config = new SparkMaxConfig();
+        // // config.configure(pivotLeaderSpark.configAccessor);
+        // config.apply(pivotLeaderSpark.configAccessor.absoluteEncoder);
+
+        // config.softLimit
+        // .forwardSoftLimitEnabled(false)
+        // .reverseSoftLimitEnabled(false);
+
+        // pivotLeaderSpark.configure(config, ResetMode.kNoResetSafeParameters,
+        // PersistMode.kNoPersistParameters);
+        // }),
+        Commands.run(() -> pivotSmc.setDutyCycle(homingDutyCycle), this)
+            .withTimeout(0.5),
+        Commands.run(() -> pivotSmc.setDutyCycle(homingDutyCycle), this)
+            .until(() -> Math.abs(pivotSmc.getRotorVelocity().in(RPM)) < stallVelocityThreshold)
+            .withTimeout(10.0),
+        Commands.runOnce(() -> {
+          pivotSmc.setDutyCycle(0);
+          pivotSmc.setEncoderPosition(Rotations.of(0));
+          // intakePivot.setPosition(Rotations.of(0));
+        }, this),
+        Commands.runOnce(() -> {
+          // hood.getMotorController().setStatorCurrentLimit(RUNNING_CURRENT);
+
+          // TODO: Add this back... please
+          // hoodKraken.getConfigurator().apply(
+          // new SoftwareLimitSwitchConfigs()
+          // .withForwardSoftLimitEnable(true)
+          // .withForwardSoftLimitThreshold(getScaledLimit(MAX_ANGLE))
+          // .withReverseSoftLimitEnable(true)
+          // .withReverseSoftLimitThreshold(getScaledLimit(MIN_ANGLE)));
+        })).withName("Hood.Home").withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
+  }
+
   public Command setIntakeStow() {
-    return intakePivot.setAngle(IntakeConstants.k_IntakeStow);
+    return intakePivot.setAngle(IntakeConstants.k_IntakeMaxWhileRoller);
+    // return intakePivot.setAngle(IntakeConstants.k_IntakeStow);
+  }
+
+  public Command setIntakeJostle() {
+    return Commands.sequence(
+        intakePivot.setAngle(IntakeConstants.k_IntakeMaxWhileRoller).raceWith(Commands.waitSeconds(0.75)),
+        intakePivot.setAngle(IntakeConstants.k_IntakeDeployed).raceWith(Commands.waitSeconds(2.0)))
+        .repeatedly()
+        .withName("Intake.setIntakeJostle");
   }
 
   public Command setIntakeFeedPivot() {

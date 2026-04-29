@@ -27,9 +27,9 @@ public class RARSparkWrapper extends SparkWrapper {
 
     Optional<Constraints> constraints = m_config.getTrapezoidProfile();
 
-    Logger.recordOutput("Turret/MaxMotion/trapezoidProfile/maxAcceleration",
+    Logger.recordOutput("Turret/MotionPofile/trapezoidProfile/maxAcceleration",
         constraints.map(c -> c.maxAcceleration).orElse(0.0));
-    Logger.recordOutput("Turret/MaxMotion/trapezoidProfile/maxVelocity",
+    Logger.recordOutput("Turret/MotionPofile/trapezoidProfile/maxVelocity",
         constraints.map(c -> c.maxVelocity).orElse(0.0));
 
     super.setPosition(angle);
