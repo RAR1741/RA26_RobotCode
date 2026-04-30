@@ -92,8 +92,13 @@ public class OperatorControls {
     // Intake pivot deployment
     controller.leftBumper().whileTrue(superstructure.intakeStowCommand());
     controller.rightBumper().whileTrue(superstructure.intakeDeployCommand());
-    controller.povUp().whileTrue(superstructure.intakeJostleCommand());
+    controller.povLeft().whileTrue(superstructure.intakeFullStowCommand());
 
+    // Intake jostle
+    controller.povUp().whileTrue(superstructure.intakeJostleCommand());
+    controller.povUp().onFalse(superstructure.intakeDeployCommand());
+
+    // Intake roller
     controller.leftTrigger().whileTrue(superstructure.intakeCommand());
     // controller.back().onTrue(superstructure.intakeDeployAndRun().ignoringDisable(true));
 

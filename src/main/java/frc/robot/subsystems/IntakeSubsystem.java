@@ -209,7 +209,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command setIntakeStow() {
     return intakePivot.setAngle(IntakeConstants.k_IntakeMaxWhileRoller);
-    // return intakePivot.setAngle(IntakeConstants.k_IntakeStow);
+  }
+
+  public Command setIntakeFullStow() {
+    return intakePivot.setAngle(IntakeConstants.k_IntakeStow);
   }
 
   public Command setIntakeJostle() {
