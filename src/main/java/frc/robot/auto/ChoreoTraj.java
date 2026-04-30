@@ -61,12 +61,12 @@ public record ChoreoTraj(
         new Pose2d(2.85601, 5.58222, Rotation2d.fromRadians(3.13818)),
         new Pose2d(1.76419, 6.79831, Rotation2d.fromRadians(3.14159))
     );
-    public static final ChoreoTraj RightBasic = new ChoreoTraj(
-        "RightBasic",
+    public static final ChoreoTraj CenterDepotOutpost = new ChoreoTraj(
+        "CenterDepotOutpost",
         OptionalInt.empty(),
-        5.83668,
+        4.28887,
         new Pose2d(3.60705, 4.19734, Rotation2d.fromRadians(3.14159)),
-        new Pose2d(0.61514, 0.66497, Rotation2d.fromRadians(3.14159))
+        new Pose2d(1.73291, 7.14145, Rotation2d.fromRadians(2.33812))
     );
     public static final ChoreoTraj RightBasicNoIntake = new ChoreoTraj(
         "RightBasicNoIntake",
@@ -121,11 +121,11 @@ public record ChoreoTraj(
         new Pose2d(2.16108, 2.62944, Rotation2d.fromRadians(-3.08112)),
         new Pose2d(1.62465, 0.98004, Rotation2d.fromRadians(3.14159))
     );
-    public static final ChoreoTraj CenterDepotOutpost = new ChoreoTraj(
-        "CenterDepotOutpost",
+    public static final ChoreoTraj RightBasic = new ChoreoTraj(
+        "RightBasic",
         OptionalInt.empty(),
-        3.03648,
-        new Pose2d(3.55607, 0.66599, Rotation2d.fromRadians(3.14159)),
+        3.05139,
+        new Pose2d(3.57099, 0.65704, Rotation2d.fromRadians(3.14159)),
         new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
     );
 
@@ -139,7 +139,7 @@ public record ChoreoTraj(
         Map.entry("LeftTrenchBump", LeftTrenchBump),
         Map.entry("LeftTrenchBump$0", LeftTrenchBump$0),
         Map.entry("LeftTrenchBump$1", LeftTrenchBump$1),
-        Map.entry("RightBasic", RightBasic),
+        Map.entry("CenterDepotOutpost", CenterDepotOutpost),
         Map.entry("RightBasicNoIntake", RightBasicNoIntake),
         Map.entry("RightTrench", RightTrench),
         Map.entry("RightTrench$0", RightTrench$0),
@@ -147,7 +147,7 @@ public record ChoreoTraj(
         Map.entry("RightTrenchBump", RightTrenchBump),
         Map.entry("RightTrenchBump$0", RightTrenchBump$0),
         Map.entry("RightTrenchBump$1", RightTrenchBump$1),
-        Map.entry("CenterDepotOutpost", CenterDepotOutpost)
+        Map.entry("RightBasic", RightBasic)
     );
 
     /**
