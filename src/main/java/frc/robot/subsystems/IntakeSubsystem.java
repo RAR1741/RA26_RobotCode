@@ -145,9 +145,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command feedCommand() {
-    // TODO: maybe replace this with setIntakeJostle()
-
-    return setIntakeFeedPivot();
+    return setIntakeJostle();
   }
 
   public Command stopCommand() {
