@@ -91,12 +91,14 @@ public class Constants {
 
     // COLORS ACCOSIATIONS
     // we are insane in the membrane :3
-    public static final Color autoColor = Color.kBlue;
+    public static final Color autoColor = Color.kPink;
     public static final Color teleColor = Color.kGreen;
     public static final Color disableColor = Color.kRed;
     public static final Color motorError = Color.kOrange;
     public static final Color sotmOnColor = Color.kYellow;
     public static final Color onTargetColor = Color.kPurple;
+    public static final Color decapColor = Color.kRed;
+    public static final Color ejectColor = Color.kBlue;
   }
 
   public static class IntakeConstants {

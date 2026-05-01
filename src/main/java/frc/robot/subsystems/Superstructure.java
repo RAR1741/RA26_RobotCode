@@ -176,6 +176,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command turretCenterCommand() {
     return Commands.parallel(
+        // this.getLEDs().setAllSolidColor(LEDConstants.),
         shooter.stopCommand(),
         hood.setAngle(hood.MAX_ANGLE),
         turret.setAngle(Degrees.of(0))).withName("Superstructure.turretCenter");
@@ -191,6 +192,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command ejectAllFuel() {
     return Commands.parallel(
+        this.getLEDs().setAllSolidColor(LEDConstants.ejectColor),
         intake.ejectCommand(),
         hopper.ejectCommand(),
         kicker.ejectCommand()).withName("Superstructure.ejectAllFuel");

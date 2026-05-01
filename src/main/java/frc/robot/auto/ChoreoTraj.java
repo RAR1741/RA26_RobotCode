@@ -128,6 +128,13 @@ public record ChoreoTraj(
         new Pose2d(2.16108, 2.62944, Rotation2d.fromRadians(-3.08112)),
         new Pose2d(1.62465, 0.98004, Rotation2d.fromRadians(3.14159))
     );
+    public static final ChoreoTraj CenterBack = new ChoreoTraj(
+        "CenterBack",
+        OptionalInt.empty(),
+        0.91142,
+        new Pose2d(3.60705, 4.19734, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(1.79906, 3.73373, Rotation2d.fromRadians(3.14159))
+    );
 
     /**
      * A map between trajectory names and their corresponding data.
@@ -147,7 +154,8 @@ public record ChoreoTraj(
         Map.entry("RightTrench$1", RightTrench$1),
         Map.entry("RightTrenchBump", RightTrenchBump),
         Map.entry("RightTrenchBump$0", RightTrenchBump$0),
-        Map.entry("RightTrenchBump$1", RightTrenchBump$1)
+        Map.entry("RightTrenchBump$1", RightTrenchBump$1),
+        Map.entry("CenterBack", CenterBack)
     );
 
     /**

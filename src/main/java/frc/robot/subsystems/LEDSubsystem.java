@@ -168,12 +168,12 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public Color darken(Color color){
-        return color;
-        // double factor = 0.7;
+        // return color;
+        double factor = 0.1 * 255;
 
-        // return new Color(Math.max((int)(color.red  *factor), 0),
-        //                 Math.max((int)(color.green *factor), 0),
-        //                 Math.max((int)(color.blue  *factor), 0));
+        return new Color(Math.max((int)(color.red  * factor), 0),
+                        Math.max((int)(color.green * factor), 0),
+                        Math.max((int)(color.blue  * factor), 0));
     }
 
     // replaces AddressableLEDBufferView, so that you can access the actual buffer and indices

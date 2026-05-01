@@ -2,6 +2,7 @@ package frc.robot.controls;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.commands.ShootOnTheMoveCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
@@ -68,6 +69,7 @@ public class OperatorControls {
             operatorOveride = false;
           }
           inZone = true;
+          superstructure.getLEDs().setAllSolidColor(LEDConstants.decapColor);
         }));
 
     superstructure.getStateManager().inDecapitationZoneTrigger.onFalse(
@@ -82,6 +84,7 @@ public class OperatorControls {
 
             Sotm.schedule();
             operatorOveride = true;
+            superstructure.getLEDs().setAllSolidColor(LEDConstants.sotmOnColor);
           }
           inZone = false;
         }));
