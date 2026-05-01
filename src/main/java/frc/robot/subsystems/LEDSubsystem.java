@@ -57,7 +57,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     public Command setAllSolidColor(Color color) {
         return Commands.run(() -> {
-            buffer = solidColor(allLEDs, color);
+            buffer = solidColor(allLEDs, darken(color));
         }); // i dont even know why buffer is reassigned, this makes no sense
     }
 
@@ -165,6 +165,15 @@ public class LEDSubsystem extends SubsystemBase {
         }
 
         return view.buffer;
+    }
+
+    public Color darken(Color color){
+        return color;
+        // double factor = 0.7;
+
+        // return new Color(Math.max((int)(color.red  *factor), 0),
+        //                 Math.max((int)(color.green *factor), 0),
+        //                 Math.max((int)(color.blue  *factor), 0));
     }
 
     // replaces AddressableLEDBufferView, so that you can access the actual buffer and indices

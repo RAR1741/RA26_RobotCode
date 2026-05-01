@@ -86,8 +86,8 @@ public class Constants {
   }
 
   public static class LEDConstants {
-    public static final int k_port = 9; // TODO: CHANGE
-    public static final int k_length = 17; // TODO: CHANGE
+    public static final int k_port = 0; // TODO: CHANGE
+    public static final int k_length = 300; // TODO: CHANGE
 
     // COLORS ACCOSIATIONS
     // we are insane in the membrane :3
@@ -95,7 +95,8 @@ public class Constants {
     public static final Color teleColor = Color.kGreen;
     public static final Color disableColor = Color.kRed;
     public static final Color motorError = Color.kOrange;
-    public static final Color sotmOnColor = Color.kPurple;
+    public static final Color sotmOnColor = Color.kYellow;
+    public static final Color onTargetColor = Color.kPurple;
   }
 
   public static class IntakeConstants {
