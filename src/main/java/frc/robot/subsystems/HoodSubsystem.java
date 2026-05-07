@@ -43,7 +43,7 @@ import yams.motorcontrollers.remote.TalonFXWrapper;
 public class HoodSubsystem extends SubsystemBase {
   public Angle MIN_ANGLE = Degrees.of(40);
   public Angle MAX_ANGLE = Degrees.of(80);
-  public Angle MAX_SAFE_ANGLE = Degrees.of(70);
+  public Angle MAX_SAFE_ANGLE = Degrees.of(80);
 
   private Current ZEROING_CURRENT = Amps.of(15.0);
   private Current RUNNING_CURRENT = Amps.of(20.0);

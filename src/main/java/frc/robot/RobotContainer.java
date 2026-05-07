@@ -14,6 +14,7 @@ import choreo.util.ChoreoAllianceFlipUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -25,7 +26,7 @@ import frc.robot.controls.OperatorControls;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Superstructure;
-//import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
   private final Telemetry logger = new Telemetry();
@@ -149,7 +150,7 @@ public class RobotContainer {
     }
   }
 
-  //public LEDSubsystem getLEDs() {
-  //  return superstructure.leds;
-  //}
+  public LEDSubsystem getLEDs() {
+   return superstructure.leds;
+  }
 }

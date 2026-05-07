@@ -86,16 +86,19 @@ public class Constants {
   }
 
   public static class LEDConstants {
-    public static final int k_port = 9; // TODO: CHANGE
-    public static final int k_length = 17; // TODO: CHANGE
+    public static final int k_port = 0; // TODO: CHANGE
+    public static final int k_length = 300; // TODO: CHANGE
 
     // COLORS ACCOSIATIONS
     // we are insane in the membrane :3
-    public static final Color autoColor = Color.kBlue;
+    public static final Color autoColor = Color.kRed;
     public static final Color teleColor = Color.kGreen;
     public static final Color disableColor = Color.kRed;
     public static final Color motorError = Color.kOrange;
-    public static final Color sotmOnColor = Color.kPurple;
+    public static final Color sotmOnColor = Color.kOrange;
+    public static final Color onTargetColor = Color.kPurple;
+    public static final Color decapColor = Color.kRed;
+    public static final Color ejectColor = Color.kBlue;
   }
 
   public static class IntakeConstants {
@@ -149,8 +152,8 @@ public class Constants {
     // - Old m13: (0.593744 - 0.587949) 0.005795 * 360 = 2.0862 deg
     // - New m13: (0.649539 - 0.64658) 0.002959 * 360 = 1.06524 deg
 
-    public static final double M12_OFFSET = 0.790021;
-    public static final double M13_OFFSET = 0.23406;
+    public static final double M12_OFFSET = 0.939548;
+    public static final double M13_OFFSET = 0.931182;
 
     public static final double m12Frequency = 965.0; // Hz
     public static final double m13Frequency = 982.0; // Hz

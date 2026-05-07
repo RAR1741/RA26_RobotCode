@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.subsystems.StateManager.StateManager;
 
@@ -26,7 +27,7 @@ public class Superstructure extends SubsystemBase {
   public final TurretSubsystem turret;
   public final HoodSubsystem hood;
   public final ShooterSubsystem shooter;
-  // public final LEDSubsystem leds;
+  public final LEDSubsystem leds;
 
   public final CommandSwerveDrivetrain drivetrain;
 
@@ -57,7 +58,7 @@ public class Superstructure extends SubsystemBase {
     this.turret = new TurretSubsystem();
     this.hood = new HoodSubsystem(stateManager);
     this.shooter = new ShooterSubsystem();
-    // this.leds = new LEDSubsystem();
+    this.leds = new LEDSubsystem();
 
     this.limelightUp = new LimeLightSubsystem(drivetrain,
         LimelightConstants.upName,
@@ -72,11 +73,14 @@ public class Superstructure extends SubsystemBase {
         .and(shooter.isAtTarget)
         .and(turret.isAtTarget)
         .and(hood.isAtTarget);
+
+    isReadyToShoot.onTrue(leds.setAllSolidColor(LEDConstants.onTargetColor));
+    isReadyToShoot.onFalse(leds.setAllSolidColor(LEDConstants.sotmOnColor));
   }
 
-  // public LEDSubsystem getLEDs(){
-  // return this.leds;
-  // }
+  public LEDSubsystem getLEDs(){
+    return this.leds;
+  }
 
   public Command feedAllCommand() {
     return Commands.waitUntil(isReadyToShoot)
@@ -106,7 +110,7 @@ public class Superstructure extends SubsystemBase {
     return Commands.waitUntil(isReadyToShoot)
         .andThen(
             Commands.parallel(
-                // intake.feedCommand(),
+                intake.feedCommand(),
                 hopper.feedCommand(),
                 kicker.feedCommand())
                 .onlyWhile(isReadyToShoot))
@@ -136,6 +140,10 @@ public class Superstructure extends SubsystemBase {
 
   public Command intakeStowCommand() {
     return intake.setIntakeStow().asProxy().withName("Superstructure.intakeStow");
+  }
+
+  public Command intakeFullStowCommand() {
+    return intake.setIntakeFullStow().asProxy().withName("Superstructure.intakeFullStow");
   }
 
   public Command intakeDeployCommand() {
@@ -168,6 +176,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command turretCenterCommand() {
     return Commands.parallel(
+        // this.getLEDs().setAllSolidColor(LEDConstants.),
         shooter.stopCommand(),
         hood.setAngle(hood.MAX_ANGLE),
         turret.setAngle(Degrees.of(0))).withName("Superstructure.turretCenter");
@@ -183,6 +192,7 @@ public class Superstructure extends SubsystemBase {
 
   public Command ejectAllFuel() {
     return Commands.parallel(
+        this.getLEDs().setAllSolidColor(LEDConstants.ejectColor),
         intake.ejectCommand(),
         hopper.ejectCommand(),
         kicker.ejectCommand()).withName("Superstructure.ejectAllFuel");
