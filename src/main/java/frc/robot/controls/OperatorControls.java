@@ -107,4 +107,8 @@ public class OperatorControls {
 
     controller.povDown().whileTrue(superstructure.ejectAllFuel());
   }
+
+  public boolean isSotmOn(){
+    return shooting;
+  }
 }
