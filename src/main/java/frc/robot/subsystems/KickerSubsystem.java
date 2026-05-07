@@ -65,6 +65,10 @@ public class KickerSubsystem extends SubsystemBase {
     return kicker.setSpeed(KICKER_RPM.unaryMinus()).withName("Kicker.Eject");
   }
 
+  public Command stopCommand() {
+    return kicker.setSpeed(RPM.of(0)).withName("Kicker.Stop");
+  }
+
   @Override
   public void periodic() {
     kicker.updateTelemetry();

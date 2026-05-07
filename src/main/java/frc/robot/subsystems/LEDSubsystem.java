@@ -1,11 +1,10 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants.LEDConstants;
-import frc.robot.RobotContainer;
+// import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.AddressableLED;
 
-// import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,22 +36,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //led.setData(convertLEDBufferIntoSimlish(buffer));
         led.setData(buffer);
-    }
-
-    @SuppressWarnings("unused")
-    private static byte[] convertLEDBufferIntoSimlish(AddressableLEDBuffer buffer) {
-        int length = buffer.getLength();
-        byte[] data = new byte[length * 3];
-        
-        for (int i = 0; i < length; i++) {
-            data[i * 3]     = (byte) buffer.getRed(i);
-            data[i * 3 + 1] = (byte) buffer.getGreen(i);
-            data[i * 3 + 2] = (byte) buffer.getBlue(i);
-        }
-        
-        return data;
     }
 
     public Command setAllSolidColor(Color color) {
@@ -88,6 +72,18 @@ public class LEDSubsystem extends SubsystemBase {
     public Command setAllRainbowChase(int ms) {
         return Commands.run(() -> {
             buffer = rainbowChase(allLEDs, ms, 0);
+        });
+    }
+
+    public Command setAllRainbowBreathe(int ms) {
+        return Commands.run(() -> {
+            buffer = rainbowBreathe(allLEDs, ms, 0);
+        });
+    }
+
+    public Command setAllRedBreathe(int ms) {
+        return Commands.run(() -> {
+            buffer = redBreathe(allLEDs, ms, 0);
         });
     }
 
@@ -141,6 +137,28 @@ public class LEDSubsystem extends SubsystemBase {
 
         for (int i = 0; i < length; i++) {
           view.setHSV(i, (int) (180.0 * ((firstPixelHue + i / length) % 1.0)), 255, 64);
+        }
+
+        return view.buffer;
+    };
+
+    private AddressableLEDBuffer rainbowBreathe(LEDBufferView view, int ms, int offset) {
+        int length = view.getLength();
+        double hue = System.currentTimeMillis() / (double) ms;
+
+        for (int i = 0; i < length; i++) {
+          view.setHSV(i, (int) (180.0 * (hue % 1.0)), 255, 64);
+        }
+
+        return view.buffer;
+    };
+
+    private AddressableLEDBuffer redBreathe(LEDBufferView view, int ms, int offset) {
+        int length = view.getLength();
+        double arg = 2 * Math.PI * System.currentTimeMillis() / (double) ms;
+
+        for (int i = 0; i < length; i++) {
+          view.setRGB(i, (int) (48.0 - 48.0 * Math.cos(arg)), 0, 0);
         }
 
         return view.buffer;
@@ -201,6 +219,18 @@ public class LEDSubsystem extends SubsystemBase {
             if (i < 0 || i >= this.getLength()) {
                 return;
             }
+            if (reversed) {
+                buffer.setLED(end - i, color);
+            } else {
+                buffer.setLED(i + start, color);
+            }
+        }
+
+        public void setRGB(int i, int r, int g, int b) {
+            if (i < 0 || i >= this.getLength()) {
+                return;
+            }
+            Color color = new Color(r, g, b);
             if (reversed) {
                 buffer.setLED(end - i, color);
             } else {

@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import static edu.wpi.first.units.Units.RPM;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -190,6 +191,33 @@ public class Superstructure extends SubsystemBase {
     return turret.rezero().asProxy().withName("Superstructure.turretRezero");
   }
 
+  public Command demoShootUPCommand() {
+    return Commands.sequence(
+      turretCenterCommand(),
+      hoodDownCommand(),
+      leds.setSplitRainbowChase(1500),
+      shooter.setSpeed(RPM.of(6000)),
+      kicker.feedCommand()
+    );
+  }
+
+  public Command demoShootForwardCommand() {
+    return Commands.sequence(
+      turretCenterCommand(),
+      hoodUpCommand(),
+      leds.setAllRainbowBreathe(1500),
+      shooter.shoot(),
+      kicker.feedCommand()
+    );
+  }
+
+  public Command demoStopShooting() {
+    return Commands.sequence(
+      kicker.stopCommand(),
+      shooter.stopCommand()
+    );
+  }
+
   public Command ejectAllFuel() {
     return Commands.parallel(
         this.getLEDs().setAllSolidColor(LEDConstants.ejectColor),
@@ -204,7 +232,7 @@ public class Superstructure extends SubsystemBase {
         turret.setAngle(Degrees.of(0)).asProxy()).withName("Superstructure.stopAll");
   }
 
-  public Command aimDynamicCommand(
+  public Command aimDynamicCommand (
       Supplier<AngularVelocity> shooterSpeedSupplier,
       Supplier<Angle> turretAngleSupplier,
       Supplier<Angle> hoodAngleSupplier,

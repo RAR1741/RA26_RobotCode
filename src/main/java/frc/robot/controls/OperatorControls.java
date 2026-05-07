@@ -20,9 +20,12 @@ public class OperatorControls {
 
     // controller.rightTrigger().whileTrue(superstructure.shootCommand());
 
-    // controller.x().whileTrue(superstructure.intakeDeployAndRun());
+    controller.x().onTrue(superstructure.demoShootUPCommand());
 
-    // controller.y().onTrue(superstructure.hoodUpCommand());
+    controller.b().onTrue(superstructure.demoShootForwardCommand());
+
+    controller.x().onFalse(superstructure.demoStopShooting());
+    controller.b().onFalse(superstructure.demoStopShooting());
 
     // controller.b().onTrue(superstructure.hoodDownCommand());
 
