@@ -20,12 +20,11 @@ public class OperatorControls {
 
     // controller.rightTrigger().whileTrue(superstructure.shootCommand());
 
-    controller.x().onTrue(superstructure.demoShootUPCommand());
+    // controller.x().whileTrue(superstructure.demoShootUPCommand());
+    // controller.b().whileTrue(superstructure.demoShootForwardCommand());
 
-    controller.b().onTrue(superstructure.demoShootForwardCommand());
-
-    controller.x().onFalse(superstructure.demoStopShooting());
-    controller.b().onFalse(superstructure.demoStopShooting());
+    // controller.x().onFalse(superstructure.demoStopShooting());
+    // controller.b().onFalse(superstructure.demoStopShooting());
 
     // controller.b().onTrue(superstructure.hoodDownCommand());
 
@@ -92,8 +91,8 @@ public class OperatorControls {
           inZone = false;
         }));
 
-    controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
-    // controller.rightTrigger().whileTrue(superstructure.feedAllCommandNoSafety());
+    // controller.rightTrigger().whileTrue(superstructure.feedAllCommand());
+    controller.rightTrigger().whileTrue(superstructure.feedAllCommandNoSafety());
 
     // Intake pivot deployment
     controller.leftBumper().whileTrue(superstructure.intakeStowCommand());
@@ -111,7 +110,7 @@ public class OperatorControls {
     controller.povDown().whileTrue(superstructure.ejectAllFuel());
   }
 
-  public boolean isSotmOn(){
+  public boolean isSotmOn() {
     return shooting;
   }
 }

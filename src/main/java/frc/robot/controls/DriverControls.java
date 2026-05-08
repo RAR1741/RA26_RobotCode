@@ -117,9 +117,15 @@ public class DriverControls {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        controller.povLeft().onTrue(superstructure.turretLeftCommand());
-        controller.povRight().onTrue(superstructure.turretRightCommand());
-        controller.povUp().onTrue(superstructure.turretCenterCommand());
+        // controller.povLeft().onTrue(superstructure.turretLeftCommand());
+        // controller.povRight().onTrue(superstructure.turretRightCommand());
+        // controller.povUp().onTrue(superstructure.turretCenterCommand());
+
+        controller.povUp().onTrue(superstructure.demoShootUPCommand());
+        controller.povLeft().onTrue(superstructure.demoShootForwardSlowCommand());
+        controller.povRight().onTrue(superstructure.demoShootForwardFastCommand());
+        controller.povDown().onTrue(superstructure.demoShootFARCommand());
+        controller.start().whileTrue(superstructure.turretCenterCommand());
 
         // controller.leftBumper().onTrue(superstructure.turretRezeroCommand().ignoringDisable(true));
 

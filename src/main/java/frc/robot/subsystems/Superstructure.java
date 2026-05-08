@@ -79,7 +79,7 @@ public class Superstructure extends SubsystemBase {
     isReadyToShoot.onFalse(leds.setAllSolidColor(LEDConstants.sotmOnColor));
   }
 
-  public LEDSubsystem getLEDs(){
+  public LEDSubsystem getLEDs() {
     return this.leds;
   }
 
@@ -192,30 +192,41 @@ public class Superstructure extends SubsystemBase {
   }
 
   public Command demoShootUPCommand() {
-    return Commands.sequence(
-      turretCenterCommand(),
-      hoodDownCommand(),
-      leds.setSplitRainbowChase(1500),
-      shooter.setSpeed(RPM.of(6000)),
-      kicker.feedCommand()
-    );
+    return Commands.parallel(
+        turret.setAngle(Degrees.of(0)),
+        hood.setAngle(hood.MAX_ANGLE),
+        leds.setSplitRainbowChase(1500),
+        shooter.setSpeed(RPM.of(6000)));
   }
 
-  public Command demoShootForwardCommand() {
-    return Commands.sequence(
-      turretCenterCommand(),
-      hoodUpCommand(),
-      leds.setAllRainbowBreathe(1500),
-      shooter.shoot(),
-      kicker.feedCommand()
-    );
+  public Command demoShootFARCommand() {
+    return Commands.parallel(
+        turret.setAngle(Degrees.of(0)),
+        hood.setAngle(Degrees.of(45)),
+        leds.setSplitRainbowChase(1500),
+        shooter.setSpeed(RPM.of(6000)));
+  }
+
+  public Command demoShootForwardSlowCommand() {
+    return Commands.parallel(
+        turret.setAngle(Degrees.of(0)),
+        hood.setAngle(Degree.of(65)),
+        leds.setAllRainbowBreathe(1500),
+        shooter.setSpeed(RPM.of(1700)));
+  }
+
+  public Command demoShootForwardFastCommand() {
+    return Commands.parallel(
+        turret.setAngle(Degrees.of(0)),
+        hood.setAngle(Degree.of(65)),
+        leds.setAllRainbowBreathe(1500),
+        shooter.setSpeed(RPM.of(3000)));
   }
 
   public Command demoStopShooting() {
-    return Commands.sequence(
-      kicker.stopCommand(),
-      shooter.stopCommand()
-    );
+    return Commands.parallel(
+        kicker.stopCommand(),
+        shooter.stopCommand());
   }
 
   public Command ejectAllFuel() {
@@ -232,7 +243,7 @@ public class Superstructure extends SubsystemBase {
         turret.setAngle(Degrees.of(0)).asProxy()).withName("Superstructure.stopAll");
   }
 
-  public Command aimDynamicCommand (
+  public Command aimDynamicCommand(
       Supplier<AngularVelocity> shooterSpeedSupplier,
       Supplier<Angle> turretAngleSupplier,
       Supplier<Angle> hoodAngleSupplier,
