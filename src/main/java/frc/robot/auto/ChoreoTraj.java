@@ -24,6 +24,13 @@ public record ChoreoTraj(
     Pose2d initialPoseBlue,
     Pose2d endPoseBlue
 ) {
+    public static final ChoreoTraj CenterBack = new ChoreoTraj(
+        "CenterBack",
+        OptionalInt.empty(),
+        0.91142,
+        new Pose2d(3.60705, 4.19734, Rotation2d.fromRadians(3.14159)),
+        new Pose2d(1.79906, 3.73373, Rotation2d.fromRadians(3.14159))
+    );
     public static final ChoreoTraj CenterDepotOutpost = new ChoreoTraj(
         "CenterDepotOutpost",
         OptionalInt.empty(),
@@ -128,12 +135,12 @@ public record ChoreoTraj(
         new Pose2d(2.16108, 2.62944, Rotation2d.fromRadians(-3.08112)),
         new Pose2d(1.62465, 0.98004, Rotation2d.fromRadians(3.14159))
     );
-    public static final ChoreoTraj CenterBack = new ChoreoTraj(
-        "CenterBack",
+    public static final ChoreoTraj RightFollow = new ChoreoTraj(
+        "RightFollow",
         OptionalInt.empty(),
-        0.91142,
-        new Pose2d(3.60705, 4.19734, Rotation2d.fromRadians(3.14159)),
-        new Pose2d(1.79906, 3.73373, Rotation2d.fromRadians(3.14159))
+        5.59526,
+        new Pose2d(3.5929, 0.58487, Rotation2d.fromRadians(1.5708)),
+        new Pose2d(2.59891, 2.10509, Rotation2d.fromRadians(3.14159))
     );
 
     /**
@@ -141,6 +148,7 @@ public record ChoreoTraj(
      * This allows for trajectory data to be looked up with strings during runtime.
      */
     public static final Map<String, ChoreoTraj> ALL_TRAJECTORIES = Map.ofEntries(
+        Map.entry("CenterBack", CenterBack),
         Map.entry("CenterDepotOutpost", CenterDepotOutpost),
         Map.entry("LeftBasicNoIntake", LeftBasicNoIntake),
         Map.entry("LeftTrench", LeftTrench),
@@ -155,7 +163,7 @@ public record ChoreoTraj(
         Map.entry("RightTrenchBump", RightTrenchBump),
         Map.entry("RightTrenchBump$0", RightTrenchBump$0),
         Map.entry("RightTrenchBump$1", RightTrenchBump$1),
-        Map.entry("CenterBack", CenterBack)
+        Map.entry("RightFollow", RightFollow)
     );
 
     /**
