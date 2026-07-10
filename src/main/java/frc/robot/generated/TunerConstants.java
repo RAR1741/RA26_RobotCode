@@ -72,7 +72,7 @@ public class TunerConstants {
         private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
         // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
         private static final Pigeon2Configuration pigeonConfigs = new Pigeon2Configuration()
-                                                                        .withGyroTrim(new GyroTrimConfigs().withGyroScalarZ(3.5-9.6)); // to counter act the stupid 90deg problem
+                                                                        .withGyroTrim(new GyroTrimConfigs().withGyroScalarZ(-7.1)); // to counter act the stupid 90deg problem
 
         // CAN bus that the devices are located on;
         // All swerve devices must share the same CAN bus

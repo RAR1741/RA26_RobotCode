@@ -89,6 +89,13 @@ public record ChoreoTraj(
         new Pose2d(3.57099, 0.65704, Rotation2d.fromRadians(3.14159)),
         new Pose2d(0.63534, 0.68251, Rotation2d.fromRadians(3.12983))
     );
+    public static final ChoreoTraj RightFollow = new ChoreoTraj(
+        "RightFollow",
+        OptionalInt.empty(),
+        5.59526,
+        new Pose2d(3.5929, 0.58487, Rotation2d.fromRadians(1.5708)),
+        new Pose2d(2.59891, 2.10509, Rotation2d.fromRadians(3.14159))
+    );
     public static final ChoreoTraj RightTrench = new ChoreoTraj(
         "RightTrench",
         OptionalInt.empty(),
@@ -135,12 +142,28 @@ public record ChoreoTraj(
         new Pose2d(2.16108, 2.62944, Rotation2d.fromRadians(-3.08112)),
         new Pose2d(1.62465, 0.98004, Rotation2d.fromRadians(3.14159))
     );
-    public static final ChoreoTraj RightFollow = new ChoreoTraj(
-        "RightFollow",
+    public static final ChoreoTraj LeftFollow = new ChoreoTraj(
+        "LeftFollow",
         OptionalInt.empty(),
-        5.59526,
-        new Pose2d(3.5929, 0.58487, Rotation2d.fromRadians(1.5708)),
-        new Pose2d(2.59891, 2.10509, Rotation2d.fromRadians(3.14159))
+        12.89073,
+        new Pose2d(3.53177, 7.62527, Rotation2d.fromRadians(-1.5708)),
+        new Pose2d(4.46318, 7.62527, Rotation2d.fromRadians(0))
+    );
+    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
+    public static final ChoreoTraj LeftFollow$0 = new ChoreoTraj(
+        "LeftFollow",
+        OptionalInt.of(0),
+        8.35986,
+        new Pose2d(3.53177, 7.62527, Rotation2d.fromRadians(-1.5708)),
+        new Pose2d(2.85601, 5.58222, Rotation2d.fromRadians(3.13802))
+    );
+    /** ERROR: Can only use letters, 0-9, and _. Can't use $. Rename it in the Choreo app to fix this error. */
+    public static final ChoreoTraj LeftFollow$1 = new ChoreoTraj(
+        "LeftFollow",
+        OptionalInt.of(1),
+        4.53087,
+        new Pose2d(2.85601, 5.58222, Rotation2d.fromRadians(3.13802)),
+        new Pose2d(4.46318, 7.62527, Rotation2d.fromRadians(0))
     );
 
     /**
@@ -157,13 +180,16 @@ public record ChoreoTraj(
         Map.entry("LeftTrenchBump$1", LeftTrenchBump$1),
         Map.entry("RightBasic", RightBasic),
         Map.entry("RightBasicNoIntake", RightBasicNoIntake),
+        Map.entry("RightFollow", RightFollow),
         Map.entry("RightTrench", RightTrench),
         Map.entry("RightTrench$0", RightTrench$0),
         Map.entry("RightTrench$1", RightTrench$1),
         Map.entry("RightTrenchBump", RightTrenchBump),
         Map.entry("RightTrenchBump$0", RightTrenchBump$0),
         Map.entry("RightTrenchBump$1", RightTrenchBump$1),
-        Map.entry("RightFollow", RightFollow)
+        Map.entry("LeftFollow", LeftFollow),
+        Map.entry("LeftFollow$0", LeftFollow$0),
+        Map.entry("LeftFollow$1", LeftFollow$1)
     );
 
     /**
